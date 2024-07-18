@@ -265,6 +265,9 @@ void VKApp::CreateImageViews()
 	}
 
 }
+void VKApp::CreateGraphicsPipeline()
+{
+}
 SwapChainSupportDetails VKApp::QuerySwapChainSupport(VkPhysicalDevice device)
 {
 	SwapChainSupportDetails details;

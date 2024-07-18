@@ -51,8 +51,9 @@ private:
     void CleanUp();
     void CreateInstance();
     void CreateSurface();
-    void CreateImageViews();
     void CreateSwapChain();
+    void CreateImageViews();
+    void CreateGraphicsPipeline();
     void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     void SetupDebugMessenger();
     void CreateLogicalDevice();
