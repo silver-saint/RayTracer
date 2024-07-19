@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <vector>
 #include <cstring>
+#include <fstream>
 #include <cstdlib>
 #include <optional>
 #include <algorithm>
@@ -58,6 +59,7 @@ private:
     void SetupDebugMessenger();
     void CreateLogicalDevice();
     bool IsDeviceSuitable(VkPhysicalDevice device);
+    //static std::vector<char> readFile(const std::string& filename);
     bool CheckValidationLayerSupport();
     VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
     SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);

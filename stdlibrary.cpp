@@ -9,7 +9,6 @@ int stdlib::StringLength(const char* str)
     }
     return count;
 }
-
 bool stdlib::StringCompare(const char* str1, const char* str2)
 {
     const int strLen1 = StringLength(str1);

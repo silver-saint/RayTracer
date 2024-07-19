@@ -139,7 +139,16 @@ bool VKApp::IsDeviceSuitable(VkPhysicalDevice device)
 
 	return indices.isComplete() && extensionsSupported && swapChainAdequate;
 }
+/*
+std::vector<char> VKApp::readFile(const std::string& filename)
+{
+	std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
+	if (!file.is_open()) {
+		throw std::runtime_error("failed to open file!");
+	}
+}
+*/
 
 void VKApp::PickPhysicalDevice()
 {
