@@ -351,7 +351,7 @@ void VKApp::CreateGraphicsPipeline()
 	multisampling.sampleShadingEnable = VK_FALSE;
 	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+	VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
 	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
 
@@ -370,12 +370,12 @@ void VKApp::CreateGraphicsPipeline()
 		VK_DYNAMIC_STATE_VIEWPORT,
 		VK_DYNAMIC_STATE_SCISSOR
 	};
-	VkPipelineDynamicStateCreateInfo dynamicState{};
+	VkPipelineDynamicStateCreateInfo dynamicState = {};
 	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 	dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 	dynamicState.pDynamicStates = dynamicStates.data();
 
-	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	pipelineLayoutInfo.setLayoutCount = 0;
 	pipelineLayoutInfo.pushConstantRangeCount = 0;
