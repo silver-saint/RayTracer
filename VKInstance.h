@@ -59,9 +59,9 @@ private:
     void SetupDebugMessenger();
     void CreateLogicalDevice();
     bool IsDeviceSuitable(VkPhysicalDevice device);
-    //static std::vector<char> readFile(const std::string& filename);
     bool CheckValidationLayerSupport();
     VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+    VkShaderModule createShaderModule(const std::vector<char>& code);
     SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
@@ -84,4 +84,5 @@ private:
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
     std::vector<VkImageView> swapChainImageViews;
+    VkPipelineLayout pipelineLayout;
 };
