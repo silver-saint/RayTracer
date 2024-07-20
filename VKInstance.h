@@ -50,6 +50,7 @@ private:
     void InitVulkan();
 
     void MainLoop();
+    void DrawFrame();
     void PickPhysicalDevice();
     void CleanUp();
     void CreateInstance();
@@ -58,6 +59,11 @@ private:
     void CreateImageViews();
     void CreateRenderPass();
     void CreateGraphicsPipeline();
+    void CreateFrameBuffers();
+    void CreateCommandPool();
+    void CreateCommandBuffer();
+    void CreateSyncObjects();
+    void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
     void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     void SetupDebugMessenger();
     void CreateLogicalDevice();
@@ -89,4 +95,12 @@ private:
     std::vector<VkImageView> swapChainImageViews;
     VkRenderPass renderPass;
     VkPipelineLayout pipelineLayout;
+    VkPipeline graphicsPipeline;
+    std::vector<VkFramebuffer> swapChainFramebuffers;
+    VkCommandPool commandPool;
+    VkCommandBuffer commandBuffer;
+    VkSemaphore imageAvailableSemaphore;
+    VkSemaphore renderFinishedSemaphore;
+    VkFence inFlightFence;
+
 };
