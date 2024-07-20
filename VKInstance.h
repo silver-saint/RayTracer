@@ -8,6 +8,8 @@
 #include <cstring>
 #include <fstream>
 #include <cstdlib>
+#include <cstdint>
+#include <limits>
 #include <optional>
 #include <algorithm>
 #include <set>
@@ -17,7 +19,7 @@ struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
     std::optional<uint32_t> presentFamily;
     bool isComplete() {
-        return graphicsFamily.has_value() /* && presentFamily.has_value()*/;
+        return graphicsFamily.has_value()  && presentFamily.has_value();
     }
 };
 
@@ -54,6 +56,7 @@ private:
     void CreateSurface();
     void CreateSwapChain();
     void CreateImageViews();
+    void CreateRenderPass();
     void CreateGraphicsPipeline();
     void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     void SetupDebugMessenger();
@@ -84,5 +87,6 @@ private:
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
     std::vector<VkImageView> swapChainImageViews;
+    VkRenderPass renderPass;
     VkPipelineLayout pipelineLayout;
 };
