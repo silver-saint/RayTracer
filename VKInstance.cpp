@@ -386,7 +386,7 @@ void VKApp::CreateRenderPass()
 	}
 }
 VkShaderModule VKApp::createShaderModule(const std::vector<char>& code) {
-	VkShaderModuleCreateInfo createInfo{};
+	VkShaderModuleCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	createInfo.codeSize = code.size();
 	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
@@ -537,7 +537,7 @@ void VKApp::CreateCommandPool()
 {
 	QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
 
-	VkCommandPoolCreateInfo poolInfo{};
+	VkCommandPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
