@@ -104,6 +104,7 @@ private:
     void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
     void CopyBuffer(VkBuffer srcBuffer, VkBuffer destBuffer, VkDeviceSize size);
     void CreateVertexBuffer();
+    void CreateIndexBuffer();
     void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
     void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     void SetupDebugMessenger();
@@ -152,15 +153,19 @@ private:
     VkCommandPool commandPool;
 
     VkBuffer vertexBuffer;
+    VkDeviceMemory vertexBufferMemory;
+    VkBuffer indexBuffer;
+    VkDeviceMemory indexBufferMemory;
     const std::vector<Vertex> vertices = {
-    {{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-    {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+    {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+    {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+    {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
     };
     
-    VkDeviceMemory vertexBufferMemory;
-    
-    
+    const std::vector<uint16_t> indices = { 0,1,2,2,3,0 };
+
+
     std::vector<VkCommandBuffer> commandBuffers;
     
     std::vector<VkSemaphore> imageAvailableSemaphores;
