@@ -146,7 +146,7 @@
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="stdlibrary.cpp" />
     <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="ValidationLayers.cpp" />
+    <ClCompile Include="VkCtx.cpp" />
     <ClCompile Include="VKInstance.cpp" />
     <ClCompile Include="VkWindow.cpp" />
   </ItemGroup>
@@ -154,7 +154,7 @@
     <ClInclude Include="stdlibrary.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="types.h" />
-    <ClInclude Include="ValidationLayers.h" />
+    <ClInclude Include="VkCtx.h" />
     <ClInclude Include="VKInstance.h" />
     <ClInclude Include="VkWindow.h" />
   </ItemGroup>

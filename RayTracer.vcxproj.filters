@@ -30,7 +30,7 @@
     <ClCompile Include="Triangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ValidationLayers.cpp">
+    <ClCompile Include="VkCtx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClInclude Include="Triangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ValidationLayers.h">
+    <ClInclude Include="VkCtx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
