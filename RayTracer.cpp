@@ -1,15 +1,9 @@
-#include "VKInstance.h"
+#include "Triangle.h"
 
 int main() {
-    VKApp app;
-
-    try {
-        app.run();
-    }
-    catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-
+    engine::Triangle app;
+    
+    app.run();
+    
     return EXIT_SUCCESS;
 }

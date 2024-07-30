@@ -1165,4 +1165,3 @@ bool VKApp::CheckValidationLayerSupport()
 	return true;
 }
 
-

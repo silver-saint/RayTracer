@@ -1,0 +1,33 @@
+#include "vkWindow.h"
+
+engine::VkWindow::VkWindow(ui32 w, ui32 h, const std::string name)
+	: width(w), height(h), windowName(name) 
+{
+	InitWindow();
+}
+
+engine::VkWindow::~VkWindow()
+{
+	glfwDestroyWindow(window);
+}
+
+bool engine::VkWindow::IsOpen()
+{
+	return !glfwWindowShouldClose(window);
+}
+
+void engine::VkWindow::InitWindow()
+{
+	if (!glfwInit())
+	{
+		std::println("Error, couldn't init GLFW");
+	}
+	
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+	if (!window)
+	{
+		std::println("Error, couldn't init Window.");
+	}
+}

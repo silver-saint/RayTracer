@@ -131,6 +131,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.283.0\Include;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,11 +145,18 @@
   <ItemGroup>
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="stdlibrary.cpp" />
+    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="ValidationLayers.cpp" />
     <ClCompile Include="VKInstance.cpp" />
+    <ClCompile Include="VkWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdlibrary.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="types.h" />
+    <ClInclude Include="ValidationLayers.h" />
     <ClInclude Include="VKInstance.h" />
+    <ClInclude Include="VkWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
