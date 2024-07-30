@@ -25,3 +25,18 @@ bool stdlib::StringCompare(const char* str1, const char* str2)
     }
     return true;
 }
+/*
+std::vector<int> stdlib::BackInserter(std::vector<int> listToInsertIn, std::vector<int> list)
+{
+    if (list.size() == 0)
+    {
+        return {};
+    }
+    for (size_t i = 0; i < list.size(); i++)
+    {
+        listToInsertIn.push_back(list[i]);
+    }
+    return listToInsertIn;
+}
+
+*/

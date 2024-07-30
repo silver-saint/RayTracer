@@ -1,11 +1,11 @@
 #pragma once
-
+#include <vector>
 namespace stdlib
 {
     //functions
     int StringLength(const char* str);
     bool StringCompare(const char* str1, const char* str2);
- 
+   // std::vector<int> BackInserter(std::vector<int> listToInsertIn, std::vector<int> list);
     //Data structures
 
     /*
