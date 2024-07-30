@@ -14,7 +14,7 @@ namespace engine
 	public:
 		
 		VkWindow() = delete;
-		VkWindow(ui32 w, ui32 h, const std::string name);
+		VkWindow(ui32 w, ui32 h, const std::string& name);
 		VkWindow(const VkWindow&) = delete;
 		VkWindow& operator=(const VkWindow&) = delete;
 		~VkWindow();

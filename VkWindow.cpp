@@ -1,6 +1,6 @@
 #include "vkWindow.h"
 
-engine::VkWindow::VkWindow(ui32 w, ui32 h, const std::string name)
+engine::VkWindow::VkWindow(ui32 w, ui32 h, const std::string& name)
 	: width(w), height(h), windowName(name) 
 {
 	InitWindow();
