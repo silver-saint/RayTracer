@@ -134,7 +134,7 @@ private:
     SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-    bool CheckDeviceExtensrionSupport(VkPhysicalDevice device);
+    bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
     static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
     void cleanupSwapChain();
     //member variables

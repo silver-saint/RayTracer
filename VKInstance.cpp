@@ -218,7 +218,7 @@ bool VKApp::IsDeviceSuitable(VkPhysicalDevice device)
 {
 	QueueFamilyIndices indices = findQueueFamilies(device);
 
-	bool extensionsSupported = CheckDeviceExtensionSupport(device);
+	bool extensionsSupported = CheckDeviceExtensrionSupport(device);
 
 	bool swapChainAdequate = false;
 	if (extensionsSupported) {
