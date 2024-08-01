@@ -87,7 +87,7 @@ namespace engine
 		{
 			if (availableExtensions.find(requiredExtensions[i]) == availableExtensions.end())
 			{
-				std::println("Missing required GLFW extension");
+				std::runtime_error("Missing required GLFW extension");
 			}
 		}
 	}
@@ -102,11 +102,24 @@ namespace engine
 	}
 
 
+	uint32_t VkCtx::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
+	{
+		VkPhysicalDeviceMemoryProperties memProperties;
+		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+
+		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+			if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+				return i;
+			}
+		}
+
+		std::runtime_error("failed to find suitable memory type!");
+	}
+
 	void VkCtx::CreateInstance()
 	{
 		if (enableValidationLayers && !CheckValidationLayerSupport()) {
-			std::println("validation layers requested, but not available!");
-
+			std::runtime_error("validation layers requested, but not available!");
 		}
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -149,8 +162,7 @@ namespace engine
 		VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
 		if (result != VK_SUCCESS)
 		{
-			std::println("Couldn't create instance!");
-			return;
+			std::runtime_error("Couldn't create instance!");
 		}
 
 	}
@@ -176,7 +188,7 @@ namespace engine
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 		if (deviceCount == 0) {
-			 std::println("failed to find GPUs with Vulkan support!");
+			 std::runtime_error("failed to find GPUs with Vulkan support!");
 		}
 		std::vector<VkPhysicalDevice> devices(deviceCount);
 		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
@@ -189,7 +201,7 @@ namespace engine
 		}
 
 		if (physicalDevice == VK_NULL_HANDLE) {
-			std::println("failed to find a suitable GPU!");
+			std::runtime_error("failed to find a suitable GPU!");
 		}
 
 
@@ -241,6 +253,21 @@ namespace engine
 
 		vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 		vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+	}
+
+	void VkCtx::CreateCommandPool()
+	{
+		QueueFamilyIndices queueFamilyIndices = FindQueueFamilies(physicalDevice);
+
+		VkCommandPoolCreateInfo poolInfo = {};
+		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+
+		if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create command pool!");
+		}
+
 	}
 
 	QueueFamilyIndices VkCtx::FindQueueFamilies(VkPhysicalDevice device)
