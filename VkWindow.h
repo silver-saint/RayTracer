@@ -19,6 +19,8 @@ namespace engine
 		VkWindow& operator=(const VkWindow&) = delete;
 		~VkWindow();
 		bool IsOpen();
+		void GetWinSurface(VkInstance inst, VkSurfaceKHR* surface);
+		GLFWwindow* GetGlfwWin() { return window; };
 	private:
 		void InitWindow();
 		const std::string windowName;

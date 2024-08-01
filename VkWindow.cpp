@@ -16,6 +16,14 @@ bool engine::VkWindow::IsOpen()
 	return !glfwWindowShouldClose(window);
 }
 
+void engine::VkWindow::GetWinSurface(VkInstance inst, VkSurfaceKHR* surface)
+{
+	if (glfwCreateWindowSurface(inst, window, nullptr, surface) != VK_SUCCESS)
+	{
+		std::println("failed to create window surface!");
+	}
+}
+
 void engine::VkWindow::InitWindow()
 {
 	if (!glfwInit())
