@@ -181,6 +181,8 @@ namespace engine
 			throw std::runtime_error("Couldn't create instance!");
 		}
 
+		HasRequiredExtensions();
+
 	}
 	void VkCtx::SetupDebugMessenger()
 	{
