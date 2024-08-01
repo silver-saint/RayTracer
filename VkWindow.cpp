@@ -20,7 +20,7 @@ void engine::VkWindow::GetWinSurface(VkInstance inst, VkSurfaceKHR* surface)
 {
 	if (glfwCreateWindowSurface(inst, window, nullptr, surface) != VK_SUCCESS)
 	{
-		std::println("failed to create window surface!");
+		std::runtime_error("failed to create window surface!");
 	}
 }
 
@@ -28,7 +28,7 @@ void engine::VkWindow::InitWindow()
 {
 	if (!glfwInit())
 	{
-		std::println("Error, couldn't init GLFW");
+		std::runtime_error("Error, couldn't init GLFW");
 	}
 	
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -36,6 +36,6 @@ void engine::VkWindow::InitWindow()
 	window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
 	if (!window)
 	{
-		std::println("Error, couldn't init Window.");
+		std::runtime_error("Error, couldn't init Window.");
 	}
 }

@@ -37,13 +37,23 @@ namespace engine
 		VkCtx& operator=(const VkCtx&) = delete;
 		VkCtx(VkCtx&&) = delete;
 		VkCtx& operator=(VkCtx&&) = delete;
+
+		VkCommandPool GetCommandPool() { return commandPool; }
+		VkDevice GetDevice() { return device; }
+		VkSurfaceKHR GetSurface() { return surface; }
+		VkQueue GetgraphicsQueue() { return graphicsQueue; }
+		VkQueue GetpresentQueue() { return presentQueue; }
+		SwapChainSupportDetails GetSwapChainSupport() { return QuerySwapChainSupport(physicalDevice); }
+		uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+		QueueFamilyIndices FindPhysicalQueueFamilies() { return FindQueueFamilies(physicalDevice); }
+
 	private:
 		void CreateInstance();
 		void SetupDebugMessenger();
 		void CreateSurface();
 		void PickPhysicalDevice();
 		void CreateLogicalDevice();
-		// void CreateCommandPool();
+		void CreateCommandPool();
 
 
 
