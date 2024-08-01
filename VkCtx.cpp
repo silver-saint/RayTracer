@@ -32,11 +32,25 @@ namespace engine
 
 	VkCtx::VkCtx(VkWindow& window) : win(window)
 	{
-
+		CreateInstance();
+		SetupDebugMessenger();
+		CreateSurface();
+		PickPhysicalDevice();
+		CreateLogicalDevice();
+		CreateCommandPool();
 	}
 
 	VkCtx::~VkCtx()
 	{
+		vkDestroyCommandPool(device, commandPool, nullptr);
+		vkDestroyDevice(device, nullptr);
+
+		if (enableValidationLayers) {
+			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+		}
+
+		vkDestroySurfaceKHR(instance, surface, nullptr);
+		vkDestroyInstance(instance, nullptr);
 	}
 
 	bool VkCtx::IsDeviceSuitable(VkPhysicalDevice device)
@@ -87,10 +101,12 @@ namespace engine
 		{
 			if (availableExtensions.find(requiredExtensions[i]) == availableExtensions.end())
 			{
-				std::runtime_error("Missing required GLFW extension");
+				throw std::runtime_error("Missing required GLFW extensions");
 			}
 		}
 	}
+
+
 
 	void VkCtx::PopulateDebugInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
 	{
@@ -162,7 +178,7 @@ namespace engine
 		VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
 		if (result != VK_SUCCESS)
 		{
-			std::runtime_error("Couldn't create instance!");
+			throw std::runtime_error("Couldn't create instance!");
 		}
 
 	}
@@ -188,7 +204,7 @@ namespace engine
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 		if (deviceCount == 0) {
-			 std::runtime_error("failed to find GPUs with Vulkan support!");
+			throw std::runtime_error("failed to find GPUs with Vulkan support!");
 		}
 		std::vector<VkPhysicalDevice> devices(deviceCount);
 		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
@@ -201,7 +217,7 @@ namespace engine
 		}
 
 		if (physicalDevice == VK_NULL_HANDLE) {
-			std::runtime_error("failed to find a suitable GPU!");
+			throw std::runtime_error("failed to find a suitable GPU!");
 		}
 
 
@@ -351,23 +367,22 @@ namespace engine
 		return true;
 	}
 	bool VkCtx::CheckExtensionSupport(VkPhysicalDevice device) {
-			uint32_t extensionCount;
-			vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+		uint32_t extensionCount;
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
-			std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-			vkEnumerateDeviceExtensionProperties(
-				device,
-				nullptr,
-				&extensionCount,
-				availableExtensions.data());
+		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+		vkEnumerateDeviceExtensionProperties(
+			device,
+			nullptr,
+			&extensionCount,
+			availableExtensions.data());
 
-			std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
+		std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
 
-			for (const auto& extension : availableExtensions) {
-				requiredExtensions.erase(extension.extensionName);
-			}
-
-			return requiredExtensions.empty();
+		for (const auto& extension : availableExtensions) {
+			requiredExtensions.erase(extension.extensionName);
 		}
+
+		return requiredExtensions.empty();
 	}
 }

@@ -48,6 +48,28 @@ namespace engine
 		uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		QueueFamilyIndices FindPhysicalQueueFamilies() { return FindQueueFamilies(physicalDevice); }
 
+		VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, 
+										   VkImageTiling tiling, VkFormatFeatureFlags features);
+		void CreateBuffer(
+			VkDeviceSize size,
+			VkBufferUsageFlags usage,
+			VkMemoryPropertyFlags properties,
+			VkBuffer& buffer,
+			VkDeviceMemory& bufferMemory);
+		VkCommandBuffer BeginSingleTimeCommands();
+		void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+		void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+		void CopyBufferToImage(
+			VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount);
+
+		void CreateImageWithInfo(
+			const VkImageCreateInfo& imageInfo,
+			VkMemoryPropertyFlags properties,
+			VkImage& image,
+			VkDeviceMemory& imageMemory);
+
+		VkPhysicalDeviceProperties properties;
+
 	private:
 		void CreateInstance();
 		void SetupDebugMessenger();
@@ -62,10 +84,10 @@ namespace engine
 		bool IsDeviceSuitable(VkPhysicalDevice device);
 		std::vector<const char*> GetRequiredExtensions();
 		bool CheckValidationLayerSupport();
-		bool CheckExtensionSupport(VkPhysicalDevice device);
 		QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
-		void HasRequiredExtensions();
 		void PopulateDebugInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+		void HasRequiredExtensions();
+		bool CheckExtensionSupport(VkPhysicalDevice device);
 		SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
 		
 		
