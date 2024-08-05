@@ -1,6 +1,7 @@
 #pragma once
 #include "VkCtx.h"
 #include <memory>
+#include <array>
 #include <string>
 namespace engine
 
@@ -16,9 +17,11 @@ namespace engine
 		SwapChain& operator=(const SwapChain&) = delete;
 		VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+		VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 		VkFramebuffer GetFrameBuffer(size_t idx) const { return swapChainFramebuffers[idx]; }
 		VkRenderPass GetRenderPass() { return renderPass; }
 		size_t ImageCount() const { return swapChainImages.size(); }
+		VkFormat GetSwapChainImageFormat() { return swapChainImageFormat; }
 		VkImageView GetImageView(size_t idx) const { return swapChainImageViews[idx]; }
 		ui32 Width() const { return swapChainExtent.width; }
 		ui32 Height() const { return swapChainExtent.height; }
