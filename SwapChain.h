@@ -20,8 +20,9 @@ namespace engine
 		VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 		VkFramebuffer GetFrameBuffer(size_t idx) const { return swapChainFramebuffers[idx]; }
 		VkRenderPass GetRenderPass() { return renderPass; }
-		size_t ImageCount() const { return swapChainImages.size(); }
+		size_t GetImageCount() const { return swapChainImages.size(); }
 		VkFormat GetSwapChainImageFormat() { return swapChainImageFormat; }
+		VkExtent2D GetSwapChainExtent() const { return swapChainExtent; }
 		VkImageView GetImageView(size_t idx) const { return swapChainImageViews[idx]; }
 		ui32 Width() const { return swapChainExtent.width; }
 		ui32 Height() const { return swapChainExtent.height; }
