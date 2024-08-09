@@ -24,7 +24,7 @@ namespace engine
 		std::vector<VkPresentModeKHR> presentModes;
 	};
 
-	class VkCtx
+	class VkDeviceCtx
 	{
 	public:
 #ifdef NDEBUG
@@ -32,18 +32,18 @@ namespace engine
 #else
 		const bool enableValidationLayers = true;
 #endif
-		VkCtx(VkWindow& window);
-		~VkCtx();
-		VkCtx(const VkCtx&) = delete;
-		VkCtx& operator=(const VkCtx&) = delete;
-		VkCtx(VkCtx&&) = delete;
-		VkCtx& operator=(VkCtx&&) = delete;
+		VkDeviceCtx(VkWindow& window);
+		~VkDeviceCtx();
+		VkDeviceCtx(const VkDeviceCtx&) = delete;
+		VkDeviceCtx& operator=(const VkDeviceCtx&) = delete;
+		VkDeviceCtx(VkDeviceCtx&&) = delete;
+		VkDeviceCtx& operator=(VkDeviceCtx&&) = delete;
 
 		VkCommandPool GetCommandPool() { return commandPool; }
 		VkDevice GetDevice() { return device; }
 		VkSurfaceKHR GetSurface() { return surface; }
-		VkQueue GetgraphicsQueue() { return graphicsQueue; }
-		VkQueue GetpresentQueue() { return presentQueue; }
+		VkQueue GetGraphicsQueue() { return graphicsQueue; }
+		VkQueue GetPresentQueue() { return presentQueue; }
 		SwapChainSupportDetails GetSwapChainSupport() { return QuerySwapChainSupport(physicalDevice); }
 		uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		QueueFamilyIndices FindPhysicalQueueFamilies() { return FindQueueFamilies(physicalDevice); }

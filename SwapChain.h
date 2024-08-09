@@ -10,8 +10,8 @@ namespace engine
 	{
 	public:
 		static constexpr i32 MAX_FRAMES_IN_FLIGHT = 2;
-		SwapChain(VkCtx& contextRef, VkExtent2D windowExtent);
-		SwapChain(VkCtx& contextRef, VkExtent2D windowExtent, std::shared_ptr<SwapChain> previous);
+		SwapChain(VkDeviceCtx& contextRef, VkExtent2D windowExtent);
+		SwapChain(VkDeviceCtx& contextRef, VkExtent2D windowExtent, std::shared_ptr<SwapChain> previous);
 		~SwapChain();
 		SwapChain(const SwapChain&) = delete;
 		SwapChain& operator=(const SwapChain&) = delete;
@@ -61,7 +61,7 @@ namespace engine
 		std::vector<VkImage> swapChainImages;
 		std::vector<VkImageView> swapChainImageViews;
 
-		VkCtx& context;
+		VkDeviceCtx& context;
 		VkExtent2D windowExtent;
 
 		VkSwapchainKHR swapChain;

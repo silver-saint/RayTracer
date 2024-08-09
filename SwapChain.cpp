@@ -1,33 +1,120 @@
 #include "SwapChain.h"
 
-engine::SwapChain::SwapChain(VkCtx& contextRef, VkExtent2D windowExtent)
-	:context(contextRef), windowExtent(windowExtent)
+engine::SwapChain::SwapChain(VkDeviceCtx& contextRef, VkExtent2D windowExtent)
+	: context {contextRef}, windowExtent {windowExtent}
 {
 	init();
 }
 
-engine::SwapChain::SwapChain(VkCtx& contextRef, VkExtent2D windowExtent, std::shared_ptr<SwapChain> previous)
-	: context(contextRef), windowExtent(windowExtent), oldSwapChain (previous)
+engine::SwapChain::SwapChain(VkDeviceCtx& contextRef, VkExtent2D windowExtent, std::shared_ptr<SwapChain> previous)
+	: context {contextRef}, windowExtent {windowExtent}, oldSwapChain {previous}
 {
+	init();
+	oldSwapChain = nullptr;
 }
 
 engine::SwapChain::~SwapChain()
 {
+	for (auto imageView : swapChainImageViews) {
+		vkDestroyImageView(context.GetDevice(), imageView, nullptr);
+	}
+	swapChainImageViews.clear();
+
+	if (swapChain != nullptr) {
+		vkDestroySwapchainKHR(context.GetDevice(), swapChain, nullptr);
+		swapChain = nullptr;
+	}
+
+	for (int i = 0; i < depthImages.size(); i++) {
+		vkDestroyImageView(context.GetDevice(), depthImageViews[i], nullptr);
+		vkDestroyImage(context.GetDevice(), depthImages[i], nullptr);
+		vkFreeMemory(context.GetDevice(), depthImageMemorys[i], nullptr);
+	}
+
+	for (auto framebuffer : swapChainFramebuffers) {
+		vkDestroyFramebuffer(context.GetDevice(), framebuffer, nullptr);
+	}
+
+	//vkDestroyRenderPass(context.GetDevice(), renderPass, nullptr);
+
+	// cleanup synchronization objects
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		vkDestroySemaphore(context.GetDevice(), renderFinishedSemaphores[i], nullptr);
+		vkDestroySemaphore(context.GetDevice(), imageAvailableSemaphores[i], nullptr);
+		vkDestroyFence(context.GetDevice(), inFlightFences[i], nullptr);
+	}
 }
 
 VkFormat engine::SwapChain::FindDepthFormat()
 {
-	return VkFormat();
+	return context.FindSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },VK_IMAGE_TILING_OPTIMAL,VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 }
 
 VkResult engine::SwapChain::AcquireNextImage(uint32_t* imageIndex)
 {
-	return VkResult();
+	vkWaitForFences(context.GetDevice(),
+		1,
+		&inFlightFences[currentFrame],
+		VK_TRUE,
+		std::numeric_limits<uint64_t>::max());
+
+	VkResult result = vkAcquireNextImageKHR(
+		context.GetDevice(),
+		swapChain,
+		std::numeric_limits<uint64_t>::max(),
+		imageAvailableSemaphores[currentFrame],  // must be a not signaled semaphore
+		VK_NULL_HANDLE,
+		imageIndex);
+
+	return result;
 }
 
 VkResult engine::SwapChain::SubmitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex)
 {
-	return VkResult();
+	if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
+		vkWaitForFences(context.GetDevice(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
+	}
+	imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
+
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+	std::array<VkSemaphore, 1> waitSemaphores = { imageAvailableSemaphores[currentFrame] };
+	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = waitSemaphores.data();
+	submitInfo.pWaitDstStageMask = waitStages;
+
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = buffers;
+
+	std::array<VkSemaphore, 1> signalSemaphores = { renderFinishedSemaphores[currentFrame] };
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = signalSemaphores.data();
+
+	vkResetFences(context.GetDevice(), 1, &inFlightFences[currentFrame]);
+	if (vkQueueSubmit(context.GetGraphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) !=
+		VK_SUCCESS) {
+		throw std::runtime_error("failed to submit draw command buffer!");
+	}
+
+	VkPresentInfoKHR presentInfo = {};
+	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+	presentInfo.waitSemaphoreCount = 1;
+	presentInfo.pWaitSemaphores = signalSemaphores.data();
+
+	std::array<VkSwapchainKHR, 1> swapChains = { swapChain };
+	presentInfo.swapchainCount = 1;
+	presentInfo.pSwapchains = swapChains.data();
+
+	presentInfo.pImageIndices = imageIndex;
+
+	auto result = vkQueuePresentKHR(context.GetPresentQueue(), &presentInfo);
+
+	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+	return result;
 }
 VkSurfaceFormatKHR engine::SwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
 	for (const auto& availableFormat : availableFormats) {
@@ -145,7 +232,8 @@ void engine::SwapChain::CreateSwapChain()
 void engine::SwapChain::CreateImageViews()
 {
 	swapChainImageViews.resize(swapChainImages.size());
-	for (size_t i = 0; i < swapChainImages.size(); i++) {
+	for (size_t i = 0; i < swapChainImages.size(); i++) 
+	{
 		VkImageViewCreateInfo viewInfo = {};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		viewInfo.image = swapChainImages[i];
@@ -157,8 +245,8 @@ void engine::SwapChain::CreateImageViews()
 		viewInfo.subresourceRange.baseArrayLayer = 0;
 		viewInfo.subresourceRange.layerCount = 1;
 
-		if (vkCreateImageView(context.GetDevice(), &viewInfo, nullptr, &swapChainImageViews[i]) !=
-			VK_SUCCESS) {
+		if (vkCreateImageView(context.GetDevice(), &viewInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) 
+		{
 			throw std::runtime_error("failed to create texture image view!");
 		}
 	}
@@ -191,7 +279,7 @@ void engine::SwapChain::CreateDepthResources()
 		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		imageInfo.flags = 0;
 
-		context.CreateImageWithInfo(imageInfo,VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,depthImages[i],depthImageMemorys[i]);
+		context.CreateImageWithInfo(imageInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImages[i], depthImageMemorys[i]);
 
 		VkImageViewCreateInfo viewInfo = {};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -204,7 +292,8 @@ void engine::SwapChain::CreateDepthResources()
 		viewInfo.subresourceRange.baseArrayLayer = 0;
 		viewInfo.subresourceRange.layerCount = 1;
 
-		if (vkCreateImageView(context.GetDevice(), &viewInfo, nullptr, &depthImageViews[i]) != VK_SUCCESS) {
+		if (vkCreateImageView(context.GetDevice(), &viewInfo, nullptr, &depthImageViews[i]) != VK_SUCCESS) 
+		{
 			throw std::runtime_error("failed to create texture image view!");
 		}
 	}
@@ -288,11 +377,8 @@ void engine::SwapChain::CreateFramebuffers()
 		framebufferInfo.height = swapChainExtent.height;
 		framebufferInfo.layers = 1;
 
-		if (vkCreateFramebuffer(
-			context.GetDevice(),
-			&framebufferInfo,
-			nullptr,
-			&swapChainFramebuffers[i]) != VK_SUCCESS) {
+		if (vkCreateFramebuffer(context.GetDevice(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) 
+		{
 			throw std::runtime_error("failed to create framebuffer!");
 		}
 	}

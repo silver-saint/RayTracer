@@ -7,3 +7,5 @@ void engine::Triangle::run()
 		glfwPollEvents();
 	}
 }
+
+engine::Triangle::~Triangle() {}

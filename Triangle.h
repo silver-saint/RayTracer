@@ -6,6 +6,7 @@ namespace engine
 	{
 	public:
 		void run();
+		~Triangle();
 	private:
 		static constexpr ui32 WIDTH = 800;
 		static constexpr ui32 HEIGHT = 600;

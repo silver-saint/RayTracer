@@ -30,7 +30,7 @@ namespace engine
 		return VK_FALSE;
 	}
 
-	VkCtx::VkCtx(VkWindow& window) : win(window)
+	VkDeviceCtx::VkDeviceCtx(VkWindow& window) : win(window)
 	{
 		CreateInstance();
 		SetupDebugMessenger();
@@ -40,10 +40,10 @@ namespace engine
 		CreateCommandPool();
 	}
 
-	VkCtx::~VkCtx()
+	VkDeviceCtx::~VkDeviceCtx()
 	{
 		vkDestroyCommandPool(device, commandPool, nullptr);
-		vkDestroyDevice(device, nullptr);
+		//vkDestroyDevice(device, nullptr);
 
 		if (enableValidationLayers) {
 			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
@@ -53,7 +53,7 @@ namespace engine
 		vkDestroyInstance(instance, nullptr);
 	}
 
-	bool VkCtx::IsDeviceSuitable(VkPhysicalDevice device)
+	bool VkDeviceCtx::IsDeviceSuitable(VkPhysicalDevice device)
 	{
 		QueueFamilyIndices indices = FindQueueFamilies(device);
 
@@ -72,7 +72,7 @@ namespace engine
 			supportedFeatures.samplerAnisotropy;
 	}
 
-	std::vector<const char*> VkCtx::GetRequiredExtensions()
+	std::vector<const char*> VkDeviceCtx::GetRequiredExtensions()
 	{
 		ui32 glfwExtensionCount = 0;
 		auto requiredExtensionNames = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -84,7 +84,7 @@ namespace engine
 		return RequiredExtensions;
 	}
 
-	void VkCtx::HasRequiredExtensions()
+	void VkDeviceCtx::HasRequiredExtensions()
 	{
 		ui32 extensionCount;
 		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -108,7 +108,7 @@ namespace engine
 
 
 
-	void VkCtx::PopulateDebugInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
+	void VkDeviceCtx::PopulateDebugInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
 	{
 		createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -118,7 +118,7 @@ namespace engine
 	}
 
 
-	uint32_t VkCtx::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
+	uint32_t VkDeviceCtx::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 	{
 		VkPhysicalDeviceMemoryProperties memProperties;
 		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
@@ -132,24 +132,25 @@ namespace engine
 		throw std::runtime_error("failed to find suitable memory type!");
 	}
 
-	VkFormat VkCtx::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+	VkFormat VkDeviceCtx::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
 	{
-		for (VkFormat format : candidates) {
+		for (VkFormat format : candidates)
+		{
 			VkFormatProperties props;
 			vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
-
-			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
+			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
+			{
 				return format;
 			}
-			else if (
-				tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
+			else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
+			{
 				return format;
 			}
 		}
 		throw std::runtime_error("failed to find supported format!");
 	}
 
-	void VkCtx::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
+	void VkDeviceCtx::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 	{
 		VkBufferCreateInfo bufferInfo = {};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -176,7 +177,7 @@ namespace engine
 		vkBindBufferMemory(device, buffer, bufferMemory, 0);
 	}
 
-	VkCommandBuffer VkCtx::BeginSingleTimeCommands()
+	VkCommandBuffer VkDeviceCtx::BeginSingleTimeCommands()
 	{
 		VkCommandBufferAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -195,7 +196,7 @@ namespace engine
 		return commandBuffer;
 	}
 
-	void VkCtx::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
+	void VkDeviceCtx::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 	{
 		vkEndCommandBuffer(commandBuffer);
 
@@ -210,7 +211,7 @@ namespace engine
 		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 	}
 
-	void VkCtx::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+	void VkDeviceCtx::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 	{
 		VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
 		VkBufferCopy copyRegion = {};
@@ -222,7 +223,7 @@ namespace engine
 		EndSingleTimeCommands(commandBuffer);
 	}
 
-	void VkCtx::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount)
+	void VkDeviceCtx::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount)
 	{
 
 		VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
@@ -250,7 +251,7 @@ namespace engine
 		EndSingleTimeCommands(commandBuffer);
 	}
 
-	void VkCtx::CreateImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+	void VkDeviceCtx::CreateImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
 	{
 		if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create image!");
@@ -273,9 +274,10 @@ namespace engine
 		}
 	}
 
-	void VkCtx::CreateInstance()
+	void VkDeviceCtx::CreateInstance()
 	{
-		if (enableValidationLayers && !CheckValidationLayerSupport()) {
+		if (enableValidationLayers && !CheckValidationLayerSupport()) 
+		{
 			throw std::runtime_error("validation layers requested, but not available!");
 		}
 		VkApplicationInfo appInfo = {};
@@ -309,7 +311,8 @@ namespace engine
 			PopulateDebugInfo(debugCreateInfo);
 			createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
 		}
-		else {
+		else 
+		{
 			createInfo.enabledLayerCount = 0;
 
 			createInfo.pNext = nullptr;
@@ -325,7 +328,7 @@ namespace engine
 		HasRequiredExtensions();
 
 	}
-	void VkCtx::SetupDebugMessenger()
+	void VkDeviceCtx::SetupDebugMessenger()
 	{
 		if (!enableValidationLayers) return;
 
@@ -337,12 +340,12 @@ namespace engine
 		}
 	}
 
-	void VkCtx::CreateSurface()
+	void VkDeviceCtx::CreateSurface()
 	{
 		win.GetWinSurface(instance, &surface);
 	}
 
-	void VkCtx::PickPhysicalDevice()
+	void VkDeviceCtx::PickPhysicalDevice()
 	{
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -366,7 +369,7 @@ namespace engine
 
 	}
 
-	void VkCtx::CreateLogicalDevice()
+	void VkDeviceCtx::CreateLogicalDevice()
 	{
 		QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
 
@@ -398,11 +401,13 @@ namespace engine
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-		if (enableValidationLayers) {
+		if (enableValidationLayers) 
+		{
 			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
 			createInfo.ppEnabledLayerNames = validationLayers.data();
 		}
-		else {
+		else 
+		{
 			createInfo.enabledLayerCount = 0;
 		}
 
@@ -414,7 +419,7 @@ namespace engine
 		vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 	}
 
-	void VkCtx::CreateCommandPool()
+	void VkDeviceCtx::CreateCommandPool()
 	{
 		QueueFamilyIndices queueFamilyIndices = FindQueueFamilies(physicalDevice);
 
@@ -429,7 +434,7 @@ namespace engine
 
 	}
 
-	QueueFamilyIndices VkCtx::FindQueueFamilies(VkPhysicalDevice device)
+	QueueFamilyIndices VkDeviceCtx::FindQueueFamilies(VkPhysicalDevice device)
 	{
 		QueueFamilyIndices indices;
 
@@ -459,7 +464,7 @@ namespace engine
 		return indices;
 	}
 
-	SwapChainSupportDetails VkCtx::QuerySwapChainSupport(VkPhysicalDevice device)
+	SwapChainSupportDetails VkDeviceCtx::QuerySwapChainSupport(VkPhysicalDevice device)
 	{
 		SwapChainSupportDetails details;
 
@@ -484,7 +489,7 @@ namespace engine
 		return details;
 	}
 
-	bool VkCtx::CheckValidationLayerSupport()
+	bool VkDeviceCtx::CheckValidationLayerSupport()
 	{
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -509,7 +514,7 @@ namespace engine
 
 		return true;
 	}
-	bool VkCtx::CheckExtensionSupport(VkPhysicalDevice device) {
+	bool VkDeviceCtx::CheckExtensionSupport(VkPhysicalDevice device) {
 		uint32_t extensionCount;
 		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
