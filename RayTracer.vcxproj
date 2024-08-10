@@ -148,7 +148,7 @@
     <ClCompile Include="stdlibrary.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="VkCtx.cpp" />
+    <ClCompile Include="VkDeviceCtx.cpp" />
     <ClCompile Include="VkWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -157,7 +157,7 @@
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="types.h" />
-    <ClInclude Include="VkCtx.h" />
+    <ClInclude Include="VkDeviceCtx.h" />
     <ClInclude Include="VkWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
