@@ -1,5 +1,5 @@
 #include "VkDeviceCtx.h"
-
+#include <iostream>
 
 namespace engine
 {
@@ -25,7 +25,7 @@ namespace engine
 
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
-		std::println("validation layer: ", "{}", pCallbackData->pMessage);
+		std::cerr << "Validation Layer: " << pCallbackData->pMessage << std::endl;
 
 		return VK_FALSE;
 	}
@@ -43,7 +43,7 @@ namespace engine
 	VkDeviceCtx::~VkDeviceCtx()
 	{
 		vkDestroyCommandPool(device, commandPool, nullptr);
-		//vkDestroyDevice(device, nullptr);
+		vkDestroyDevice(device, nullptr);
 
 		if (enableValidationLayers) {
 			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);

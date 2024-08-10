@@ -1,14 +1,29 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "VkDeviceCtx.h"
 namespace engine
 {
+	struct PipeLineConfigInfo {};
 	class Pipeline
 	{
 	public:
-		Pipeline(const std::string& vertexFP, const std::string& fragmentFP);
+		Pipeline(VkDeviceCtx &deviceRef,
+				 const std::string& vertexFP, 
+				 const std::string& fragmentFP,
+				 const PipeLineConfigInfo& configInfo);
+		~Pipeline() {};
+		Pipeline(const Pipeline&) = delete;
+		void operator=(const Pipeline&) = delete;
+		static PipeLineConfigInfo DefaultPipeLineConfigInfo(ui32 w, ui32 h);
+
 	private:
 		static std::vector<char> readFile(const std::string& fp);
-		void CreateGraphicsPipeLine(const std::string& vertexFP, const std::string& fragmentFP);
+		void CreateGraphicsPipeLine(const std::string& vertexFP, const std::string& fragmentFP, const PipeLineConfigInfo& configInfo);
+		void CreateShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
+		VkDeviceCtx& device;
+		VkPipeline graphicsPipeline;
+		VkShaderModule vertexShaderModule;
+		VkShaderModule fragmentShaderModule;
 	};
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "VkWindow.h"
 #include "Pipeline.h"
+#include "VkDeviceCtx.h"
 namespace engine
 {
 	class Triangle
@@ -12,7 +13,8 @@ namespace engine
 		static constexpr ui32 WIDTH = 800;
 		static constexpr ui32 HEIGHT = 600;
 		VkWindow Window = { WIDTH, HEIGHT, "Triangle" };
-		Pipeline Pipeline = { "Shaders/vert.spv", "Shaders/frag.spv" };
+		VkDeviceCtx device = {Window};
+		Pipeline Pipeline = { device, "Shaders/vert.spv", "Shaders/frag.spv", Pipeline::DefaultPipeLineConfigInfo(WIDTH, HEIGHT)};
 	};
 
 }

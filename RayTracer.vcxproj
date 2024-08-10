@@ -145,7 +145,6 @@
   <ItemGroup>
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RayTracer.cpp" />
-    <ClCompile Include="stdlibrary.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="VkDeviceCtx.cpp" />
@@ -153,7 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pipeline.h" />
-    <ClInclude Include="stdlibrary.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="types.h" />
