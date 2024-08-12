@@ -26,7 +26,7 @@ namespace engine
 				 const std::string& vertexFP, 
 				 const std::string& fragmentFP,
 				 const PipeLineConfigInfo& configInfo);
-		~Pipeline() {};
+		~Pipeline();
 		Pipeline(const Pipeline&) = delete;
 		void operator=(const Pipeline&) = delete;
 		static PipeLineConfigInfo DefaultPipeLineConfigInfo(ui32 w, ui32 h);
