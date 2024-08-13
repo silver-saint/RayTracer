@@ -20,13 +20,14 @@ namespace engine
 		VkWindow& operator=(const VkWindow&) = delete;
 		~VkWindow();
 		bool IsOpen();
+		VkExtent2D GetExtent() { return { width, height }; }
 		void GetWinSurface(VkInstance inst, VkSurfaceKHR* surface);
 		GLFWwindow* GetGlfwWin() { return window; };
 	private:
 		void InitWindow();
 		const std::string windowName;
-		ui32 width;
-		ui32 height;
+		const ui32 width;
+		const ui32 height;
 		GLFWwindow* window;
 	};
 }

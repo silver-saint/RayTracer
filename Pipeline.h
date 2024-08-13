@@ -8,7 +8,6 @@ namespace engine
 	{
 		VkViewport viewport;
 		VkRect2D scissor;
-		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo raserizationInfo;
 		VkPipelineMultisampleStateCreateInfo multisampleInfo;
