@@ -17,9 +17,13 @@ engine::Pipeline::~Pipeline()
 	vkDestroyPipeline(device.GetDevice(), graphicsPipeline, nullptr);
 }
 
-engine::PipeLineConfigInfo engine::Pipeline::DefaultPipeLineConfigInfo(ui32 w, ui32 h)
+void engine::Pipeline::BindPipeline(VkCommandBuffer commandBuffer)
 {
-	PipeLineConfigInfo configInfo = {};
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+}
+
+void engine::Pipeline::DefaultPipeLineConfigInfo(PipeLineConfigInfo& configInfo, ui32 w, ui32 h)
+{
 
 
 	configInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -36,6 +40,15 @@ engine::PipeLineConfigInfo engine::Pipeline::DefaultPipeLineConfigInfo(ui32 w, u
 	
 	configInfo.scissor.offset = { 0,0 };
 	configInfo.scissor.extent = { w,h };
+
+	configInfo.viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	configInfo.viewportInfo.viewportCount = 1;
+	configInfo.viewportInfo.pViewports = &configInfo.viewport;
+	configInfo.viewportInfo.scissorCount = 1;
+	configInfo.viewportInfo.pScissors = &configInfo.scissor;
+
+
+
 
 	configInfo.raserizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	configInfo.raserizationInfo.depthClampEnable = VK_FALSE;
@@ -65,6 +78,7 @@ engine::PipeLineConfigInfo engine::Pipeline::DefaultPipeLineConfigInfo(ui32 w, u
 
 	configInfo.colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	configInfo.colorBlendInfo.logicOpEnable = VK_FALSE;
+	configInfo.colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;
 	configInfo.colorBlendInfo.attachmentCount = 1;
 	configInfo.colorBlendInfo.pAttachments = &configInfo.colorBlendAttachment;
 	configInfo.colorBlendInfo.blendConstants[0] = 0.0f;
@@ -83,8 +97,6 @@ engine::PipeLineConfigInfo engine::Pipeline::DefaultPipeLineConfigInfo(ui32 w, u
 	configInfo.depthStencilInfo.front = {};
 	configInfo.depthStencilInfo.back = {};
 
-
-	return configInfo;
 }
 
 std::vector<char> engine::Pipeline::readFile(const std::string& fp)
@@ -150,23 +162,13 @@ void engine::Pipeline::CreateGraphicsPipeLine(const std::string& vertexFP, const
 	vertexInputInfo.pVertexAttributeDescriptions = nullptr;
 	vertexInputInfo.pVertexBindingDescriptions = nullptr;
 
-	VkPipelineViewportStateCreateInfo viewportInfo = {};
-	viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-	viewportInfo.pNext = nullptr;
-	viewportInfo.flags = 0;
-	viewportInfo.viewportCount = 1;
-	viewportInfo.pViewports = &configInfo.viewport;
-	viewportInfo.scissorCount = 1;
-	viewportInfo.pScissors = &configInfo.scissor;
-
-
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.stageCount = 2;
 	pipelineInfo.pStages = shaderStages.data();
 	pipelineInfo.pVertexInputState = &vertexInputInfo;
 	pipelineInfo.pInputAssemblyState = &configInfo.inputAssemblyInfo;
-	pipelineInfo.pViewportState = &viewportInfo;
+	pipelineInfo.pViewportState = &configInfo.viewportInfo;
 	pipelineInfo.pRasterizationState = &configInfo.raserizationInfo;
 	pipelineInfo.pMultisampleState = &configInfo.multisampleInfo;
 	pipelineInfo.pColorBlendState = &configInfo.colorBlendInfo;

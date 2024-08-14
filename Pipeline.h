@@ -6,8 +6,11 @@ namespace engine
 {
 	struct PipeLineConfigInfo 
 	{
+		PipeLineConfigInfo() = default;
+		PipeLineConfigInfo& operator=(const PipeLineConfigInfo&) = delete;
 		VkViewport viewport;
 		VkRect2D scissor;
+		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo raserizationInfo;
 		VkPipelineMultisampleStateCreateInfo multisampleInfo;
@@ -17,7 +20,9 @@ namespace engine
 		VkPipelineLayout pipelineLayout = nullptr;
 		VkRenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
+
 	};
+
 	class Pipeline
 	{
 	public:
@@ -28,7 +33,8 @@ namespace engine
 		~Pipeline();
 		Pipeline(const Pipeline&) = delete;
 		void operator=(const Pipeline&) = delete;
-		static PipeLineConfigInfo DefaultPipeLineConfigInfo(ui32 w, ui32 h);
+		void BindPipeline(VkCommandBuffer commandBuffer);
+		static void DefaultPipeLineConfigInfo(PipeLineConfigInfo& configInfo, ui32 w, ui32 h);
 
 	private:
 		static std::vector<char> readFile(const std::string& fp);
