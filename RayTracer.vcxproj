@@ -145,14 +145,14 @@
   <ItemGroup>
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RayTracer.cpp" />
-    <ClCompile Include="SwapChain.cpp" />
+    <ClCompile Include="VkSwapChain.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="VkDeviceCtx.cpp" />
     <ClCompile Include="VkWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pipeline.h" />
-    <ClInclude Include="SwapChain.h" />
+    <ClInclude Include="VkSwapChain.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="VkDeviceCtx.h" />

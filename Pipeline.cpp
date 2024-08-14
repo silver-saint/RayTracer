@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <array>
 #include <print>
+#include <cassert>
 engine::Pipeline::Pipeline(VkDeviceCtx& deviceRef, const std::string& vertexFP, const std::string& fragmentFP, const PipeLineConfigInfo& configInfo)
 	: device {deviceRef}
 {
@@ -116,11 +117,15 @@ void engine::Pipeline::CreateShaderModule(const std::vector<char>& code, VkShade
 
 void engine::Pipeline::CreateGraphicsPipeLine(const std::string& vertexFP, const std::string& fragmentFP, const PipeLineConfigInfo& configInfo)
 {
+	assert(configInfo.pipelineLayout != VK_NULL_HANDLE && "No pipeline Layout provided in ConfigInfo.");
+	assert(configInfo.renderPass != VK_NULL_HANDLE && "No Renderpass provided in ConfigInfo.");
+
 	std::vector<char> vertex = readFile(vertexFP);
 	std::vector<char> fragment = readFile(fragmentFP);
 
 	CreateShaderModule(vertex, &vertexShaderModule);
 	CreateShaderModule(fragment, &fragmentShaderModule);
+
 	std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
 	shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -151,6 +156,7 @@ void engine::Pipeline::CreateGraphicsPipeLine(const std::string& vertexFP, const
 	viewportInfo.flags = 0;
 	viewportInfo.viewportCount = 1;
 	viewportInfo.pViewports = &configInfo.viewport;
+	viewportInfo.scissorCount = 1;
 	viewportInfo.pScissors = &configInfo.scissor;
 
 

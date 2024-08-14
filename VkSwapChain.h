@@ -6,14 +6,14 @@
 namespace engine
 
 {
-	class SwapChain
+	class VkSwapChain
 	{
 	public:
 		static constexpr i32 MAX_FRAMES_IN_FLIGHT = 2;
-		SwapChain(VkDeviceCtx& deviceRef, VkExtent2D extent);
-		~SwapChain();
-		SwapChain(const SwapChain&) = delete;
-		SwapChain& operator=(const SwapChain&) = delete;
+		VkSwapChain(VkDeviceCtx& deviceRef, VkExtent2D extent);
+		~VkSwapChain();
+		VkSwapChain(const VkSwapChain&) = delete;
+		VkSwapChain& operator=(const VkSwapChain&) = delete;
 		VkFramebuffer GetFrameBuffer(size_t idx) const { return swapChainFramebuffers[idx]; }
 		VkRenderPass GetRenderPass() { return renderPass; }
 		VkImageView GetImageView(size_t idx) const { return swapChainImageViews[idx]; }
