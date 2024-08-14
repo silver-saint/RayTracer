@@ -75,7 +75,8 @@ void engine::Pipeline::DefaultPipeLineConfigInfo(PipeLineConfigInfo& configInfo,
 	configInfo.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
 	configInfo.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
 	configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
+	//colorwritemask is mandatory to get anything to render do remember!
+	configInfo.colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	configInfo.colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	configInfo.colorBlendInfo.logicOpEnable = VK_FALSE;
 	configInfo.colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;
