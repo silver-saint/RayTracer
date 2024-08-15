@@ -5,6 +5,7 @@
 #include "Pipeline.h"
 #include "VkDeviceCtx.h"
 #include "VkSwapChain.h"
+#include "VertexParser.h"
 namespace engine
 {
 	class Triangle
@@ -16,6 +17,7 @@ namespace engine
 		Triangle(const Triangle&) = delete;
 		void run();
 	private:
+		void LoadVertexParser();
 		void CreatePipelineLayout();
 		void CreatePipeline();
 		void CreateCmdBuffers();
@@ -28,6 +30,7 @@ namespace engine
 		std::unique_ptr<Pipeline> Vkpipeline;
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers; 
+		std::unique_ptr<VertexParser> vertexParser;
 	};
 
 }
