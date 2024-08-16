@@ -11,6 +11,7 @@ namespace engine
 	public:
 		static constexpr i32 MAX_FRAMES_IN_FLIGHT = 2;
 		VkSwapChain(VkDeviceCtx& deviceRef, VkExtent2D extent);
+		VkSwapChain(VkDeviceCtx& deviceRef, VkExtent2D extent, std::shared_ptr<VkSwapChain> previous);
 		~VkSwapChain();
 		VkSwapChain(const VkSwapChain&) = delete;
 		VkSwapChain& operator=(const VkSwapChain&) = delete;
@@ -33,6 +34,7 @@ namespace engine
 
 
 	private:
+		void Init();
 		void CreateSwapChain();
 		void CreateImageViews();
 		void CreateDepthResources();
@@ -60,6 +62,8 @@ namespace engine
 		VkExtent2D windowExtent;
 
 		VkSwapchainKHR swapChain;
+		std::shared_ptr<VkSwapChain> oldSwapChain;
+
 
 		std::vector<VkSemaphore> imageAvailableSemaphores;
 		std::vector<VkSemaphore> renderFinishedSemaphores;

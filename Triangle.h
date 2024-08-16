@@ -21,6 +21,7 @@ namespace engine
 		void CreatePipelineLayout();
 		void CreatePipeline();
 		void CreateCmdBuffers();
+		void FreeCmdBuffers();
 		void DrawFrame();
 		void RecreateSwapChain();
 		void RecordCommandBuffer(i32 imgIdx);

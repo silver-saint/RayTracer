@@ -43,8 +43,10 @@ namespace engine
 
 	void Triangle::CreatePipeline()
 	{
+		assert(swapChain != nullptr && "Cannot create pipeline before swapchain");
+		assert(pipelineLayout != nullptr && "Cannot create pipelinelayout before swapchain");
 		PipeLineConfigInfo pipelineConfig = {};
-		Pipeline::DefaultPipeLineConfigInfo(pipelineConfig, swapChain->Width(), swapChain->Height());
+		Pipeline::DefaultPipeLineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass = swapChain->GetRenderPass();
 		pipelineConfig.pipelineLayout = pipelineLayout;
 		Vkpipeline = std::make_unique<Pipeline>(device, "shaders/vert.spv", "shaders/frag.spv", pipelineConfig);
@@ -65,6 +67,12 @@ namespace engine
 		}
 
 
+	}
+
+	void Triangle::FreeCmdBuffers()
+	{
+		vkFreeCommandBuffers(device.GetDevice(), device.GetCommandPool(), static_cast<ui32>(commandBuffers.size()), commandBuffers.data());
+		commandBuffers.clear();
 	}
 
 	void Triangle::DrawFrame()
@@ -104,8 +112,20 @@ namespace engine
 			glfwWaitEvents();
 		}
 		vkDeviceWaitIdle(device.GetDevice());
-		swapChain = nullptr;
-		swapChain = std::make_unique<VkSwapChain>(device, extent);
+		if (swapChain == nullptr)
+		{
+			swapChain = std::make_unique<VkSwapChain>(device, extent);
+		}
+		else
+		{
+			swapChain = std::make_unique<VkSwapChain>(device, extent, std::move(swapChain));
+			if (swapChain->GetImageCount() != commandBuffers.size())
+			{
+				FreeCmdBuffers();
+				CreateCmdBuffers();
+			}
+		}
+		//if renderpasses are compatible, do nothing.
 		CreatePipeline();
 	}
 
@@ -132,6 +152,19 @@ namespace engine
 		renderPassInfo.pClearValues = clearValues.data();
 
 		vkCmdBeginRenderPass(commandBuffers[imgIdx], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+		VkViewport viewport = {};
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		viewport.height = static_cast<f32>(swapChain->Height());
+		viewport.width = static_cast<f32>(swapChain->Width());
+
+		VkRect2D scissor = { {0,0}, swapChain->GetSwapChainExtent() };
+		vkCmdSetViewport(commandBuffers[imgIdx], 0, 1, &viewport);
+		vkCmdSetScissor(commandBuffers[imgIdx], 0, 1, &scissor);
+
 		Vkpipeline->BindPipeline(commandBuffers[imgIdx]);
 		vertexParser->Bind(commandBuffers[imgIdx]);
 		vertexParser->Draw(commandBuffers[imgIdx]);
