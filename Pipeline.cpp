@@ -2,7 +2,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <array>
-#include "VertexParser.h"
+#include "VkVertexParser.h"
 #include <print>
 #include <cassert>
 namespace engine

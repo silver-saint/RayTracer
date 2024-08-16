@@ -1,9 +1,13 @@
-#include "VertexParser.h"
+#include "VkVertexParser.h"
 #include <cassert>
 #include <cstring>
 #include <array>
 namespace engine
 {
+    glm::vec3 Vertex::SetColor(glm::vec3 Color)
+    {
+        return Color;
+    }
     std::vector<VkVertexInputAttributeDescription> Vertex::GetAttributeDescriptions()
     {
         //binding location format offset
@@ -17,19 +21,19 @@ namespace engine
         return { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} };
     }
 
-    VertexParser::VertexParser(VkDeviceCtx& deviceRef, const std::vector<Vertex>& vertices)
+    VkVertexParser::VkVertexParser(VkDeviceCtx& deviceRef, const std::vector<Vertex>& vertices)
         : device{ deviceRef }
     {
         CreateVertexBuffers(vertices);
     }
 
-    VertexParser::~VertexParser()
+    VkVertexParser::~VkVertexParser()
     {
         vkDestroyBuffer(device.GetDevice(), vertexBuffer, nullptr);
         vkFreeMemory(device.GetDevice(), vertexBufferMemory, nullptr);
     }
 
-    void VertexParser::Bind(VkCommandBuffer commandBuffer)
+    void VkVertexParser::Bind(VkCommandBuffer commandBuffer)
     {
         std::array<VkBuffer, 1> buffers = { vertexBuffer };
         std::array<VkDeviceSize, 1> offsets = { 0 };
@@ -37,12 +41,12 @@ namespace engine
 
     }
 
-    void VertexParser::Draw(VkCommandBuffer commandBuffer)
+    void VkVertexParser::Draw(VkCommandBuffer commandBuffer)
     {
         vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
     }
 
-    void VertexParser::CreateVertexBuffers(const std::vector<Vertex> vertices)
+    void VkVertexParser::CreateVertexBuffers(const std::vector<Vertex> vertices)
     {
         vertexCount = static_cast<ui32>(vertices.size());
         assert(vertexCount >= 3 && "Vertices to create a Triangle must be 3!");

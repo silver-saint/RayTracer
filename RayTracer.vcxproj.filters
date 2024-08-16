@@ -33,7 +33,7 @@
     <ClCompile Include="Pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VertexParser.cpp">
+    <ClCompile Include="VkVertexParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClInclude Include="Pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VertexParser.h">
+    <ClInclude Include="VkVertexParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

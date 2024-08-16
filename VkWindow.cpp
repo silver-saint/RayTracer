@@ -1,41 +1,54 @@
 #include "vkWindow.h"
 
-engine::VkWindow::VkWindow(ui32 w, ui32 h, const std::string& name)
-	: width(w), height(h), windowName(name) 
+namespace engine
 {
-	InitWindow();
-}
-
-engine::VkWindow::~VkWindow()
-{
-	glfwDestroyWindow(window);
-}
-
-bool engine::VkWindow::IsOpen()
-{
-	return !glfwWindowShouldClose(window);
-}
-
-void engine::VkWindow::GetWinSurface(VkInstance inst, VkSurfaceKHR* surface)
-{
-	if (glfwCreateWindowSurface(inst, window, nullptr, surface) != VK_SUCCESS)
+	VkWindow::VkWindow(i32 w, i32 h, const std::string& name)
+		: width(w), height(h), windowName(name)
 	{
-		throw std::runtime_error("failed to create window surface!");
+		InitWindow();
 	}
-}
 
-void engine::VkWindow::InitWindow()
-{
-	if (!glfwInit())
+	VkWindow::~VkWindow()
 	{
-		throw std::runtime_error("Error, couldn't init GLFW");
+		glfwDestroyWindow(window);
 	}
-	
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
-	if (!window)
+
+	bool VkWindow::IsOpen()
 	{
-		throw std::runtime_error("Error, couldn't init Window.");
+		return !glfwWindowShouldClose(window);
 	}
-}
+	void VkWindow::FrameBufferResizedCallBack(GLFWwindow* window, i32 w, i32 h)
+	{
+		auto Window = reinterpret_cast<VkWindow*>(glfwGetWindowUserPointer(window));
+		Window->frameBufferResized = true;
+		Window->width = w;
+		Window->height = h;
+	}
+
+	void VkWindow::GetWinSurface(VkInstance inst, VkSurfaceKHR* surface)
+	{
+		if (glfwCreateWindowSurface(inst, window, nullptr, surface) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create window surface!");
+		}
+	}
+
+	void VkWindow::InitWindow()
+	{
+		if (!glfwInit())
+		{
+			throw std::runtime_error("Error, couldn't init GLFW");
+		}
+
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+		window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+		if (!window)
+		{
+			throw std::runtime_error("Error, couldn't init Window.");
+		}
+		glfwSetWindowUserPointer(window, this);
+		glfwSetFramebufferSizeCallback(window, FrameBufferResizedCallBack);
+	}
+
+} //namespace engine

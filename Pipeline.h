@@ -6,7 +6,7 @@ namespace engine
 {
 	struct PipeLineConfigInfo 
 	{
-		PipeLineConfigInfo() = default;
+		//PipeLineConfigInfo() = default;
 		PipeLineConfigInfo& operator=(const PipeLineConfigInfo&) = delete;
 		VkViewport viewport;
 		VkRect2D scissor;

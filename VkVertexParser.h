@@ -1,4 +1,7 @@
 #pragma once
+
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include "VkDeviceCtx.h"
 namespace engine
@@ -7,17 +10,18 @@ namespace engine
 	{
 		glm::vec2 pos;
 		glm::vec3 color;
+		static glm::vec3 SetColor(glm::vec3 Color);
 		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
 		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
 	};
-	class VertexParser
+	class VkVertexParser
 	{
 	public:
-		VertexParser() = delete;
-		VertexParser(VkDeviceCtx& deviceRef, const std::vector<Vertex>& vertices);
-		~VertexParser();
-		VertexParser(const VkDeviceCtx&) = delete;
-		VertexParser& operator=(const VkDeviceCtx&) = delete;
+		VkVertexParser() = delete;
+		VkVertexParser(VkDeviceCtx& deviceRef, const std::vector<Vertex>& vertices);
+		~VkVertexParser();
+		VkVertexParser(const VkDeviceCtx&) = delete;
+		VkVertexParser& operator=(const VkDeviceCtx&) = delete;
 
 		void Bind(VkCommandBuffer commandBuffer);
 		void Draw(VkCommandBuffer commandBuffer);

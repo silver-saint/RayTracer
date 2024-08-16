@@ -15,19 +15,24 @@ namespace engine
 	public:
 		
 		VkWindow() = delete;
-		VkWindow(ui32 w, ui32 h, const std::string& name);
+		VkWindow(i32 w, i32 h, const std::string& name);
 		VkWindow(const VkWindow&) = delete;
 		VkWindow& operator=(const VkWindow&) = delete;
 		~VkWindow();
 		bool IsOpen();
-		VkExtent2D GetExtent() { return { width, height }; }
+		VkExtent2D GetExtent() { return { static_cast<ui32>(width), static_cast<ui32>(height) }; }
+		int WasWindowResized() { return frameBufferResized; }
+		void ResetWindowResizedFlag() { frameBufferResized = false; };
 		void GetWinSurface(VkInstance inst, VkSurfaceKHR* surface);
 		GLFWwindow* GetGlfwWin() { return window; };
 	private:
+		static void FrameBufferResizedCallBack(GLFWwindow* window, i32 w, i32 h);
 		void InitWindow();
 		const std::string windowName;
-		const ui32 width;
-		const ui32 height;
+		i32 width;
+		i32 height;
 		GLFWwindow* window;
+		bool frameBufferResized = false;
 	};
 }
+//namespace engine
