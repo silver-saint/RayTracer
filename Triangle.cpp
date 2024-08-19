@@ -15,15 +15,16 @@ namespace engine
 
 	void Triangle::LoadVertexParser()
 	{
-		const std::vector<Vertex> vertices = {
+		Builder builder;
+		 builder.vertices = {
 			{ {-1.0f, 1.0f}, { 1.0f, 1.0f, 0.0f }},
-			{ {0.0f, 1.0f},  { 1.0f, 1.0f, 0.0f }},
 			{ {-0.5f, 0.0f}, { 1.0f, 1.0f, 0.0f }},
-			{{0.0f, 1.0f}, { 1.0f, 1.0f, 0.0f }},
-			{{0.5f, 1.0f}, { 1.0f, 1.0f, 0.0f }},
+			{ {0.0f, 1.0f},  { 1.0f, 1.0f, 0.0f }},
+			{{0.5f, 0.0f}, { 1.0f, 1.0f, 0.0f }},
 			{{1.0f, 1.0f}, { 1.0f, 1.0f, 0.0f }}
 	};
-		vertexParser = std::make_unique<VkVertexParser>(device, vertices);
+		 builder.indicies = { 0,1,2,2,3,4 };
+		vertexParser = std::make_unique<VkVertexParser>(device, builder);
 	}
 
 	void Triangle::CreatePipelineLayout()

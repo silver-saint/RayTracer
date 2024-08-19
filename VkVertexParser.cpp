@@ -21,16 +21,23 @@ namespace engine
         return { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} };
     }
 
-    VkVertexParser::VkVertexParser(VkDeviceCtx& deviceRef, const std::vector<Vertex>& vertices)
+    VkVertexParser::VkVertexParser(VkDeviceCtx& deviceRef, const Builder& builder)
         : device{ deviceRef }
     {
-        CreateVertexBuffers(vertices);
+        CreateVertexBuffers(builder.vertices);
+        CreateIndexBuffers(builder.indicies);
     }
 
     VkVertexParser::~VkVertexParser()
     {
         vkDestroyBuffer(device.GetDevice(), vertexBuffer, nullptr);
         vkFreeMemory(device.GetDevice(), vertexBufferMemory, nullptr);
+
+        if (hasIndexBuffer)
+        {
+            vkDestroyBuffer(device.GetDevice(), indexBuffer, nullptr);
+            vkFreeMemory(device.GetDevice(), indexBufferMemory, nullptr);
+        }
     }
 
     void VkVertexParser::Bind(VkCommandBuffer commandBuffer)
@@ -39,14 +46,26 @@ namespace engine
         std::array<VkDeviceSize, 1> offsets = { 0 };
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers.data(), offsets.data());
 
+        if (hasIndexBuffer)
+        {
+            vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+        }
+
     }
 
     void VkVertexParser::Draw(VkCommandBuffer commandBuffer)
     {
-        vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+        if (hasIndexBuffer)
+        {
+            vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
+        }
+        else
+        {
+            vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+        }
     }
 
-    void VkVertexParser::CreateVertexBuffers(const std::vector<Vertex> vertices)
+    void VkVertexParser::CreateVertexBuffers(const std::vector<Vertex>& vertices)
     {
         vertexCount = static_cast<ui32>(vertices.size());
         assert(vertexCount >= 3 && "Vertices to create a Triangle must be 3!");
@@ -56,6 +75,21 @@ namespace engine
         vkMapMemory(device.GetDevice(), vertexBufferMemory, 0, bufferSize, 0, &data);
         std::memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
         vkUnmapMemory(device.GetDevice(), vertexBufferMemory);
+    }
+    void VkVertexParser::CreateIndexBuffers(const std::vector<ui32>& indicies)
+    {
+        indexCount = static_cast<ui32>(indicies.size());
+        hasIndexBuffer = indexCount > 0;
+        if (!hasIndexBuffer)
+        {
+            return;
+        }
+        VkDeviceSize bufferSize = sizeof(indicies[0]) * indexCount;
+        device.CreateBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, indexBuffer, indexBufferMemory);
+        void* data;
+        vkMapMemory(device.GetDevice(), indexBufferMemory, 0, bufferSize, 0, &data);
+        std::memcpy(data, indicies.data(), static_cast<size_t>(bufferSize));
+        vkUnmapMemory(device.GetDevice(), indexBufferMemory);
     }
 }
 //namespace engine
