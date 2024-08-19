@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="VkVertexParser.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="VkWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="VkVertexParser.h" />
     <ClInclude Include="VkSwapChain.h" />

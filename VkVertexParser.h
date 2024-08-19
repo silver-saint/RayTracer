@@ -10,7 +10,7 @@ namespace engine
 	{
 		glm::vec2 pos;
 		glm::vec3 color;
-		static glm::vec3 SetColor(glm::vec3 Color);
+		//static glm::vec3 SetColor(glm::vec3 Color);
 		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
 		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
 	};

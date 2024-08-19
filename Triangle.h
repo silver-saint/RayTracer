@@ -6,6 +6,7 @@
 #include "VkDeviceCtx.h"
 #include "VkSwapChain.h"
 #include "VkVertexParser.h"
+#include "Menu.h"
 namespace engine
 {
 	class Triangle
@@ -34,6 +35,7 @@ namespace engine
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers; 
 		std::unique_ptr<VkVertexParser> vertexParser;
+		Menu menu;
 	};
 
 }

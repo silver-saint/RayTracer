@@ -1,6 +1,7 @@
 #include "Triangle.h"
 #include <stdexcept>
 #include <array>
+
 namespace engine
 {
 	void Triangle::run()
@@ -15,15 +16,33 @@ namespace engine
 
 	void Triangle::LoadVertexParser()
 	{
+		
 		Builder builder;
-		 builder.vertices = {
-			{ {-1.0f, 1.0f}, { 1.0f, 1.0f, 0.0f }},
-			{ {-0.5f, 0.0f}, { 1.0f, 1.0f, 0.0f }},
-			{ {0.0f, 1.0f},  { 1.0f, 1.0f, 0.0f }},
-			{{0.5f, 0.0f}, { 1.0f, 1.0f, 0.0f }},
-			{{1.0f, 1.0f}, { 1.0f, 1.0f, 0.0f }}
-	};
-		 builder.indicies = { 0,1,2,2,3,4 };
+		int in = menu.GetInput();
+		if (in != 0)
+		{
+			builder.vertices = 
+			{
+			   {{-1.0f, 1.0f}, { 1.0f, 1.0f, 0.0f }},
+			   {{-0.5f, 0.0f}, { 1.0f, 1.0f, 0.0f }},
+			   {{0.0f, 1.0f},  { 1.0f, 1.0f, 0.0f }},
+			   {{0.5f, 0.0f}, { 1.0f, 1.0f, 0.0f }},
+			   {{1.0f, 1.0f}, { 1.0f, 1.0f, 0.0f }},
+			   {{0.0f, -1.0f}, {1.0f, 1.0f, 0.0f}}
+			};
+			builder.indicies = { 0,1,2,2,3,4,1,5,3 };
+
+		}
+		else
+		{
+			builder.vertices = 
+			{
+			   {{0.0f, -0.5f}, { 1.0f, 0.0f, 0.0f }},
+			   {{0.5f, 0.5f}, { 0.0f, 1.0f, 0.0f }},
+			   {{-0.5f, 0.5f},  { 0.0f, 0.0f, 1.0f }}
+			};
+			builder.indicies = { 0,1,2 };
+		}
 		vertexParser = std::make_unique<VkVertexParser>(device, builder);
 	}
 
