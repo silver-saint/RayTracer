@@ -4,10 +4,6 @@
 #include <array>
 namespace engine
 {
-    glm::vec3 Vertex::SetColor(glm::vec3 Color)
-    {
-        return Color;
-    }
     std::vector<VkVertexInputAttributeDescription> Vertex::GetAttributeDescriptions()
     {
         //binding location format offset
@@ -70,11 +66,22 @@ namespace engine
         vertexCount = static_cast<ui32>(vertices.size());
         assert(vertexCount >= 3 && "Vertices to create a Triangle must be 3!");
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertexCount;
-        device.CreateBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBuffer, vertexBufferMemory);
+
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+        device.CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+        
         void* data;
-        vkMapMemory(device.GetDevice(), vertexBufferMemory, 0, bufferSize, 0, &data);
+        vkMapMemory(device.GetDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
         std::memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
-        vkUnmapMemory(device.GetDevice(), vertexBufferMemory);
+        vkUnmapMemory(device.GetDevice(), stagingBufferMemory);
+        
+        device.CreateBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+        device.CopyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+      
+        vkDestroyBuffer(device.GetDevice(), stagingBuffer, nullptr);
+        vkFreeMemory(device.GetDevice(), stagingBufferMemory, nullptr);
+
     }
     void VkVertexParser::CreateIndexBuffers(const std::vector<ui32>& indicies)
     {
@@ -85,11 +92,22 @@ namespace engine
             return;
         }
         VkDeviceSize bufferSize = sizeof(indicies[0]) * indexCount;
-        device.CreateBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, indexBuffer, indexBufferMemory);
+
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+        
+        device.CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+        
         void* data;
-        vkMapMemory(device.GetDevice(), indexBufferMemory, 0, bufferSize, 0, &data);
+        vkMapMemory(device.GetDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
         std::memcpy(data, indicies.data(), static_cast<size_t>(bufferSize));
-        vkUnmapMemory(device.GetDevice(), indexBufferMemory);
+        vkUnmapMemory(device.GetDevice(), stagingBufferMemory);
+        
+        device.CreateBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
+        device.CopyBuffer(stagingBuffer, indexBuffer, bufferSize);
+       
+        vkDestroyBuffer(device.GetDevice(), stagingBuffer, nullptr);
+        vkFreeMemory(device.GetDevice(), stagingBufferMemory, nullptr);
     }
 }
 //namespace engine
