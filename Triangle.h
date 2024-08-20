@@ -36,7 +36,6 @@ namespace engine
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers; 
 		std::unique_ptr<VkVertexParser> vertexParser;
-		Menu menu;
 
 	};
 
