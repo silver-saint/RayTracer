@@ -255,7 +255,7 @@ namespace engine
 	{
 		VkFormat depthFormat = FindDepthFormat();
 		VkExtent2D swapChainExtent = GetSwapChainExtent();
-
+		swapChainDepthFormat = depthFormat;
 		depthImages.resize(GetImageCount());
 		depthImageMemorys.resize(GetImageCount());
 		depthImageViews.resize(GetImageCount());

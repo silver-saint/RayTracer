@@ -146,6 +146,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RayTracer.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="VkVertexParser.cpp" />
     <ClCompile Include="VkSwapChain.cpp" />
     <ClCompile Include="Triangle.cpp" />
@@ -155,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Pipeline.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="VkVertexParser.h" />
     <ClInclude Include="VkSwapChain.h" />
     <ClInclude Include="Triangle.h" />

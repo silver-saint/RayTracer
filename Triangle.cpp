@@ -1,11 +1,11 @@
 #include "Triangle.h"
 #include <stdexcept>
 #include <array>
-
 namespace engine
 {
 	void Triangle::run()
 	{
+
 		while (Window.IsOpen())
 		{
 			glfwPollEvents();
@@ -18,8 +18,15 @@ namespace engine
 	{
 		
 		Builder builder;
-		int in = menu.GetInput();
-		if (in != 0)
+		Menu menu;
+
+		while (menu.GetInput() == 0)
+		{
+			menu.Init();
+
+		}
+		
+		if (menu.GetInput() != 0)
 		{
 			builder.vertices = 
 			{

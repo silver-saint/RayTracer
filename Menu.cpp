@@ -1,7 +1,9 @@
 #include "Menu.h"
 
 
-void Menu::run()
+
+
+void Menu::Init()
 {
 	PrintMessage();
 	verifyInput();

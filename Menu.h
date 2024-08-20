@@ -4,9 +4,8 @@
 class Menu
 {
 public:
-	Menu() = default;
+	void Init();
 	int GetInput() const { return input; }
-	void run();
 	void verifyInput();
 	void PrintMessage();
 private:

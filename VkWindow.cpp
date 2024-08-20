@@ -5,6 +5,7 @@ namespace engine
 	VkWindow::VkWindow(i32 w, i32 h, const std::string& name)
 		: width(w), height(h), windowName(name)
 	{
+	
 		InitWindow();
 	}
 
@@ -35,6 +36,7 @@ namespace engine
 
 	void VkWindow::InitWindow()
 	{
+
 		if (!glfwInit())
 		{
 			throw std::runtime_error("Error, couldn't init GLFW");
