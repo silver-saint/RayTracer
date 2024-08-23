@@ -4,7 +4,7 @@
 namespace engine
 {
 	Renderer::Renderer(VkWindow& window, VkDeviceCtx& deviceCtx)
-		: Window{window}, device{deviceCtx}, isFrameStarted{false}
+		: window{window}, device{deviceCtx}
 	{
 		RecreateSwapChain();
 		CreateCmdBuffers();
@@ -46,17 +46,21 @@ namespace engine
 
 	void Renderer::EndFrame()
 	{
-		assert(!isFrameStarted && "Can't call this function while is not in progress.");
+		assert(isFrameStarted && "Can't call this function while is not in progress.");
 		auto cmdbuff = GetCurrentCmdBuffer();
 		if (vkEndCommandBuffer(cmdbuff) != VK_SUCCESS)
 		{
-			throw std::runtime_error("Couldn't bind command buffer");
+			throw std::runtime_error("Couldn't record command buffer");
 		}
 		auto result = swapChain->SubmitCommandBuffers(&cmdbuff, &currImgIdx);
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || Window.WasWindowResized())
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.WasWindowResized())
 		{
-			Window.ResetWindowResizedFlag();
+			window.ResetWindowResizedFlag();
 			RecreateSwapChain();
+		}
+		else if (result != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to present swap chain image!");
 		}
 		isFrameStarted = false;
 		currFrameIdx = (currFrameIdx + 1) % VkSwapChain::MAX_FRAMES_IN_FLIGHT;
@@ -98,11 +102,11 @@ namespace engine
 
 	void Renderer::EndSwapChainRenderPass(VkCommandBuffer cmdbuff)
 	{
+		assert(isFrameStarted && "Can't call endSwapChainRenderPass if frame is not in progress");
+		assert(
+			cmdbuff == GetCurrentCmdBuffer() &&
+			"Can't end render pass on command buffer from a different frame");
 		vkCmdEndRenderPass(cmdbuff);
-		if (vkEndCommandBuffer(cmdbuff) != VK_SUCCESS)
-		{
-			throw std::runtime_error("Couldn't bind command buffer");
-		}
 	}
 
 	void Renderer::CreateCmdBuffers()
@@ -132,10 +136,10 @@ namespace engine
 
 	void Renderer::RecreateSwapChain()
 	{
-		auto extent = Window.GetExtent();
+		auto extent = window.GetExtent();
 		while (extent.width == 0 || extent.height == 0)
 		{
-			extent = Window.GetExtent();
+			extent = window.GetExtent();
 			glfwWaitEvents();
 		}
 		vkDeviceWaitIdle(device.GetDevice());

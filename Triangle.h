@@ -6,6 +6,7 @@
 #include "VkDeviceCtx.h"
 #include "VkSwapChain.h"
 #include "VkVertexParser.h"
+#include "Renderer.h"
 #include "Menu.h"
 
 namespace engine
@@ -22,19 +23,13 @@ namespace engine
 		void LoadVertexParser();
 		void CreatePipelineLayout();
 		void CreatePipeline();
-		void CreateCmdBuffers();
-		void FreeCmdBuffers();
-		void DrawFrame();
-		void RecreateSwapChain();
-		void RecordCommandBuffer(i32 imgIdx);
 		static constexpr ui32 WIDTH = 800;
 		static constexpr ui32 HEIGHT = 600;
-		VkWindow Window = { WIDTH, HEIGHT, "Triangle" };
-		VkDeviceCtx device = {Window};
-		std::unique_ptr<VkSwapChain> swapChain;
+		VkWindow window = { WIDTH, HEIGHT, "Triangle" };
+		VkDeviceCtx device = {window};
 		std::unique_ptr<Pipeline> Vkpipeline;
+		Renderer renderer = { window, device };
 		VkPipelineLayout pipelineLayout;
-		std::vector<VkCommandBuffer> commandBuffers; 
 		std::unique_ptr<VkVertexParser> vertexParser;
 
 	};

@@ -2,10 +2,8 @@
 #include <memory>
 #include <vector>
 #include "VkWindow.h"
-#include "Pipeline.h"
 #include "VkDeviceCtx.h"
 #include "VkSwapChain.h"
-#include "Menu.h"
 #include <cassert>
 namespace engine
 {
@@ -24,7 +22,7 @@ namespace engine
 		VkCommandBuffer GetCurrentCmdBuffer() const
 		{
 			assert(isFrameStarted && "Cannot get commandBuffer when frame is not in progress");
-			return commandBuffers[currImgIdx];
+			return commandBuffers[currFrameIdx];
 		}
 		void BeginSwapChainRenderPass(VkCommandBuffer cmdbuff);
 		void EndSwapChainRenderPass(VkCommandBuffer cmdbuff);
@@ -34,16 +32,16 @@ namespace engine
 			return currFrameIdx;
 		}
 
-	private:;
+	private:
 		   void CreateCmdBuffers();
 		   void FreeCmdBuffers();
 		   void RecreateSwapChain();
-		   VkWindow& Window;
+		   VkWindow& window;
 		   VkDeviceCtx& device;
 		   std::unique_ptr<VkSwapChain> swapChain;
 		   std::vector<VkCommandBuffer> commandBuffers;
 		   ui32 currImgIdx;
-		   i32 currFrameIdx;
-		   bool isFrameStarted;
+		   i32 currFrameIdx = 0;
+		   bool isFrameStarted = false;
 	};
 }
