@@ -16,19 +16,15 @@ namespace engine
 
 	void Triangle::LoadVertexParser()
 	{
-		
+
 		Builder builder;
-		Menu menu;
-
-		while (menu.GetInput() == 0)
+		static Menu menu;
+		menu.Init();
+		switch (menu.GetInput())
 		{
-			menu.Init();
-
-		}
-		
-		if (menu.GetInput() != 0)
+		case 1:
 		{
-			builder.vertices = 
+			builder.vertices =
 			{
 			   {{-1.0f, 1.0f}, { 1.0f, 1.0f, 0.0f }},
 			   {{-0.5f, 0.0f}, { 1.0f, 1.0f, 0.0f }},
@@ -38,17 +34,31 @@ namespace engine
 			   {{0.0f, -1.0f}, {1.0f, 1.0f, 0.0f}}
 			};
 			builder.indicies = { 0,1,2,2,3,4,1,5,3 };
-
+			break;
 		}
-		else
+		case 2:
 		{
-			builder.vertices = 
+			builder.vertices =
+			{
+			   {{-0.5f, -0.5f}, { 1.0f, 1.0f, 0.0f }},
+			   {{0.5f, -0.5f}, { 1.0f, 1.0f, 0.0f }},
+			   {{0.5f, 0.5f},  { 1.0f, 1.0f, 0.0f }},
+			   {{-0.5f, 0.5f}, { 1.0f, 1.0f, 0.0f }},
+			};
+			builder.indicies = { 0,1,2,2,3,0 };
+			break;
+		}
+		default:
+		{
+			builder.vertices =
 			{
 			   {{0.0f, -0.5f}, { 1.0f, 0.0f, 0.0f }},
 			   {{0.5f, 0.5f}, { 0.0f, 1.0f, 0.0f }},
 			   {{-0.5f, 0.5f},  { 0.0f, 0.0f, 1.0f }}
 			};
 			builder.indicies = { 0,1,2 };
+			break;
+		}
 		}
 		vertexParser = std::make_unique<VkVertexParser>(device, builder);
 	}
