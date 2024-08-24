@@ -200,7 +200,7 @@ namespace engine
 	{
 		vkEndCommandBuffer(commandBuffer);
 
-		VkSubmitInfo submitInfo{};
+		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &commandBuffer;
@@ -228,7 +228,7 @@ namespace engine
 
 		VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
 
-		VkBufferImageCopy region{};
+		VkBufferImageCopy region = {};
 		region.bufferOffset = 0;
 		region.bufferRowLength = 0;
 		region.bufferImageHeight = 0;

@@ -31,7 +31,7 @@ namespace engine
 
 		VkResult AcquireNextImage(uint32_t* imgIdx);
 		VkResult SubmitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imgIdx);
-		bool compareSwapFormats(const VkSwapChain& swapChain) const {
+		bool CompareSwapFormats(const VkSwapChain& swapChain) const {
 			return swapChain.swapChainDepthFormat == swapChainDepthFormat &&
 				swapChain.swapChainImageFormat == swapChainImageFormat;
 		}
