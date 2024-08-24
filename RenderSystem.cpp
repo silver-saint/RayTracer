@@ -12,12 +12,23 @@ namespace engine
 	RenderSystem::RenderSystem(VkDeviceCtx& deviceCtxRef, VkRenderPass renderPass)
 		:device{deviceCtxRef}
 	{
+
 		createPipelineLayout();
 		createPipeline(renderPass);
 	}
 	RenderSystem::~RenderSystem()
 	{
 		vkDestroyPipelineLayout(device.GetDevice(), pipelineLayout, nullptr);
+	}
+	void RenderSystem::RenderObjects(VkCommandBuffer cmdbuffer, std::vector<GameObject>& gameObjects)
+	{
+		Vkpipeline->BindPipeline(cmdbuffer);
+
+		for (auto& obj : gameObjects)
+		{
+			obj.parser->Bind(cmdbuffer);
+			obj.parser->Draw(cmdbuffer);
+		}
 	}
 	void RenderSystem::createPipelineLayout()
 	{

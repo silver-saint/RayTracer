@@ -150,18 +150,10 @@ namespace engine
 		}
 		else
 		{
-		//	std::shared_ptr<VkSwapChain> oldSwapChain = std::move(swapChain);
+			std::shared_ptr<VkSwapChain> oldSwapChain = std::move(swapChain);
 			swapChain = std::make_unique<VkSwapChain>(device, extent);
-			/*
 			if (!oldSwapChain->CompareSwapFormats(*swapChain.get())) {
 				throw std::runtime_error("Swap chain image(or depth) format has changed!");
-			}
-			*/
-
-			if (swapChain->GetImageCount() != commandBuffers.size())
-			{
-				FreeCmdBuffers();
-				CreateCmdBuffers();
 			}
 		}
 		

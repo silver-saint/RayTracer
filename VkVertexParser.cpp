@@ -66,7 +66,7 @@ namespace engine
         vertexCount = static_cast<ui32>(vertices.size());
         assert(vertexCount >= 3 && "Vertices to create a Triangle must be 3!");
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertexCount;
-        bufferSize = bufferSize / 4096 + (bufferSize % 4096 ? 4096 : 0);
+      //  bufferSize = bufferSize / 4096 + (bufferSize % 4096 ? 4096 : 0);
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
         device.CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
@@ -92,7 +92,7 @@ namespace engine
             return;
         }
         VkDeviceSize bufferSize = sizeof(indicies[0]) * indexCount;
-        bufferSize = bufferSize / 4096 + (bufferSize % 4096 ? 4096 : 0);
+       // bufferSize = bufferSize / 4096 + (bufferSize % 4096 ? 4096 : 0);
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
         

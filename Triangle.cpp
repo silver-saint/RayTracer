@@ -12,6 +12,7 @@ namespace engine
 			if (auto commandbuffer = renderer.BeginFrame())
 			{
 				renderer.BeginSwapChainRenderPass(commandbuffer);
+				renderSystem.RenderObjects(commandbuffer, gameObjects);
 				renderer.EndSwapChainRenderPass(commandbuffer);
 				renderer.EndFrame();
 			}
@@ -19,7 +20,7 @@ namespace engine
 		vkDeviceWaitIdle(device.GetDevice());
 	}
 
-	void Triangle::LoadVertexParser()
+	void Triangle::LoadGameObjects()
 	{
 
 		Builder builder;
@@ -65,12 +66,17 @@ namespace engine
 			break;
 		}
 		}
-		vertexParser = std::make_unique<VkVertexParser>(device, builder);
+		auto modelVertices = std::make_shared<VkVertexParser>(device, builder);
+
+		auto triangle = GameObject::CreateGameObject();
+		triangle.parser = modelVertices;
+		gameObjects.push_back(std::move(triangle));
 	}
 	
 	Triangle::Triangle()
 	{
-		LoadVertexParser();
+		LoadGameObjects();
+		
 	}
 
 	Triangle::~Triangle() {}

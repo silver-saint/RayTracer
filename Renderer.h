@@ -36,6 +36,7 @@ namespace engine
 		   void CreateCmdBuffers();
 		   void FreeCmdBuffers();
 		   void RecreateSwapChain();
+
 		   VkWindow& window;
 		   VkDeviceCtx& device;
 		   std::unique_ptr<VkSwapChain> swapChain;
