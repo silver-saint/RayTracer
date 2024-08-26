@@ -28,7 +28,9 @@ namespace engine
 		{
 			obj.parser->Bind(cmdbuffer);
 			obj.parser->Draw(cmdbuffer);
+
 		}
+
 	}
 	void RenderSystem::createPipelineLayout()
 	{

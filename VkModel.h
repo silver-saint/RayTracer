@@ -18,14 +18,14 @@ namespace engine
 		std::vector<Vertex> vertices = {};
 		std::vector<ui32> indicies = {};
 	};
-	class VkVertexParser
+	class VkModel
 	{
 	public:
-		VkVertexParser() = delete;
-		VkVertexParser(VkDeviceCtx& deviceRef, const Builder& builder);
-		~VkVertexParser();
-		VkVertexParser(const VkDeviceCtx&) = delete;
-		VkVertexParser& operator=(const VkDeviceCtx&) = delete;
+		VkModel() = delete;
+		VkModel(VkDeviceCtx& deviceRef, const Builder& builder);
+		~VkModel();
+		VkModel(const VkDeviceCtx&) = delete;
+		VkModel& operator=(const VkDeviceCtx&) = delete;
 
 		void Bind(VkCommandBuffer commandBuffer);
 		void Draw(VkCommandBuffer commandBuffer);

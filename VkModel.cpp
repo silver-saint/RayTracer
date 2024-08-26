@@ -1,4 +1,4 @@
-#include "VkVertexParser.h"
+#include "VkModel.h"
 #include <cassert>
 #include <cstring>
 #include <array>
@@ -17,14 +17,14 @@ namespace engine
         return { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} };
     }
 
-    VkVertexParser::VkVertexParser(VkDeviceCtx& deviceRef, const Builder& builder)
+    VkModel::VkModel(VkDeviceCtx& deviceRef, const Builder& builder)
         : device{ deviceRef }
     {
         CreateVertexBuffers(builder.vertices);
         CreateIndexBuffers(builder.indicies);
     }
 
-    VkVertexParser::~VkVertexParser()
+    VkModel::~VkModel()
     {
         vkDestroyBuffer(device.GetDevice(), vertexBuffer, nullptr);
         vkFreeMemory(device.GetDevice(), vertexBufferMemory, nullptr);
@@ -36,7 +36,7 @@ namespace engine
         }
     }
 
-    void VkVertexParser::Bind(VkCommandBuffer commandBuffer)
+    void VkModel::Bind(VkCommandBuffer commandBuffer)
     {
         std::array<VkBuffer, 1> buffers = { vertexBuffer };
         std::array<VkDeviceSize, 1> offsets = { 0 };
@@ -49,7 +49,7 @@ namespace engine
 
     }
 
-    void VkVertexParser::Draw(VkCommandBuffer commandBuffer)
+    void VkModel::Draw(VkCommandBuffer commandBuffer)
     {
         if (hasIndexBuffer)
         {
@@ -61,7 +61,7 @@ namespace engine
         }
     }
 
-    void VkVertexParser::CreateVertexBuffers(const std::vector<Vertex>& vertices)
+    void VkModel::CreateVertexBuffers(const std::vector<Vertex>& vertices)
     {
         vertexCount = static_cast<ui32>(vertices.size());
         assert(vertexCount >= 3 && "Vertices to create a Triangle must be 3!");
@@ -83,7 +83,7 @@ namespace engine
         vkFreeMemory(device.GetDevice(), stagingBufferMemory, nullptr);
 
     }
-    void VkVertexParser::CreateIndexBuffers(const std::vector<ui32>& indicies)
+    void VkModel::CreateIndexBuffers(const std::vector<ui32>& indicies)
     {
         indexCount = static_cast<ui32>(indicies.size());
         hasIndexBuffer = indexCount > 0;

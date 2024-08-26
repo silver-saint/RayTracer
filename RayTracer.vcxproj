@@ -148,7 +148,7 @@
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
-    <ClCompile Include="VkVertexParser.cpp" />
+    <ClCompile Include="VkModel.cpp" />
     <ClCompile Include="VkSwapChain.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="VkDeviceCtx.cpp" />
@@ -160,7 +160,7 @@
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderSystem.h" />
-    <ClInclude Include="VkVertexParser.h" />
+    <ClInclude Include="VkModel.h" />
     <ClInclude Include="VkSwapChain.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="types.h" />

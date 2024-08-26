@@ -34,7 +34,7 @@ namespace engine
 		isFrameStarted = true;
 
 		auto cmdbuff = GetCurrentCmdBuffer();
-
+		vkResetCommandBuffer(cmdbuff, 0);
 		VkCommandBufferBeginInfo beginInfo = {};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		if (vkBeginCommandBuffer(cmdbuff, &beginInfo) != VK_SUCCESS)

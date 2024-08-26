@@ -66,7 +66,7 @@ namespace engine
 			break;
 		}
 		}
-		auto modelVertices = std::make_shared<VkVertexParser>(device, builder);
+		auto modelVertices = std::make_shared<VkModel>(device, builder);
 
 		auto triangle = GameObject::CreateGameObject();
 		triangle.parser = modelVertices;

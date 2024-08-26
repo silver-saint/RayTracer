@@ -207,7 +207,6 @@ namespace engine
 
 		vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
 		vkQueueWaitIdle(graphicsQueue);
-
 		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 	}
 

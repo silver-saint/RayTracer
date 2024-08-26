@@ -2,7 +2,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <array>
-#include "VkVertexParser.h"
+#include "VkModel.h"
 #include <print>
 #include <cassert>
 namespace engine
@@ -23,6 +23,7 @@ namespace engine
 	void Pipeline::BindPipeline(VkCommandBuffer commandBuffer)
 	{
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+
 	}
 
 	void Pipeline::DefaultPipeLineConfigInfo(PipeLineConfigInfo& configInfo)

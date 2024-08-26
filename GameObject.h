@@ -1,6 +1,6 @@
 #pragma once
 #include "types.h"
-#include "VkVertexParser.h"
+#include "VkModel.h"
 #include <memory>
 namespace engine
 {
@@ -25,7 +25,7 @@ namespace engine
 		GameObject(GameObject&&) = default;
 		id_t GetId() const { return id; }
 
-		std::shared_ptr<VkVertexParser> parser = {};
+		std::shared_ptr<VkModel> parser = {};
 		glm::vec3 color = {};
 		TransformComponent Transform2D = {};
 	private:
