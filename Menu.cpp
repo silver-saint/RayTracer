@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-
+Menu menu;
 
 
 void Menu::Init()

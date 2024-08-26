@@ -24,8 +24,6 @@ namespace engine
 	{
 
 		Builder builder;
-		static Menu menu;
-		menu.Init();
 		switch (menu.GetInput())
 		{
 		case 1:
