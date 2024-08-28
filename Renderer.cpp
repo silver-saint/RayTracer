@@ -35,7 +35,7 @@ namespace engine
 
 		auto cmdbuff = GetCurrentCmdBuffer();
 		vkResetCommandBuffer(cmdbuff, 0);
-		VkCommandBufferBeginInfo beginInfo = {};
+		VkCommandBufferBeginInfo beginInfo {};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		if (vkBeginCommandBuffer(cmdbuff, &beginInfo) != VK_SUCCESS)
 		{
@@ -71,29 +71,29 @@ namespace engine
 		assert(isFrameStarted && "Can't call BeginSwapChainRenderPass if frame is not in progress.");
 		assert(cmdbuff == GetCurrentCmdBuffer() && "Can't begin render pass on the command buffer from a different frame");
 
-		VkRenderPassBeginInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = swapChain->GetRenderPass();
+		VkRenderPassBeginInfo renderPassInfo {};
+		renderPassInfo.sType       = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass  = swapChain->GetRenderPass();
 		renderPassInfo.framebuffer = swapChain->GetFrameBuffer(currImgIdx);
 
 		renderPassInfo.renderArea.offset = { 0,0 };
 		renderPassInfo.renderArea.extent = swapChain->GetSwapChainExtent();
 
-		std::array<VkClearValue, 2> clearValues = {};
-		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
-		clearValues[1].depthStencil = { 1.0f, 0 };
+		std::array<VkClearValue, 2> clearValues {};
+		clearValues[0].color           = { 0.1f, 0.1f, 0.1f, 1.0f };
+		clearValues[1].depthStencil    = { 1.0f, 0 };
 		renderPassInfo.clearValueCount = static_cast<ui32>(clearValues.size());
-		renderPassInfo.pClearValues = clearValues.data();
+		renderPassInfo.pClearValues    = clearValues.data();
 
 		vkCmdBeginRenderPass(cmdbuff, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-		VkViewport viewport = {};
-		viewport.x = 0.0f;
-		viewport.y = 0.0f;
+		VkViewport viewport {};
+		viewport.x		  = 0.0f;
+		viewport.y		  = 0.0f;
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-		viewport.height = static_cast<f32>(swapChain->Height());
-		viewport.width = static_cast<f32>(swapChain->Width());
+		viewport.height   = static_cast<f32>(swapChain->Height());
+		viewport.width    = static_cast<f32>(swapChain->Width());
 
 		VkRect2D scissor = { {0,0}, swapChain->GetSwapChainExtent() };
 		vkCmdSetViewport(cmdbuff, 0, 1, &viewport);
@@ -112,10 +112,10 @@ namespace engine
 	void Renderer::CreateCmdBuffers()
 	{
 		commandBuffers.resize(VkSwapChain::MAX_FRAMES_IN_FLIGHT);
-		VkCommandBufferAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool = device.GetCommandPool();
+		VkCommandBufferAllocateInfo allocInfo {};
+		allocInfo.sType				 = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.level				 = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool		 = device.GetCommandPool();
 		allocInfo.commandBufferCount = static_cast<ui32>(commandBuffers.size());
 
 		if (vkAllocateCommandBuffers(device.GetDevice(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)

@@ -28,7 +28,7 @@ namespace engine
 		{
 			PushConstantData push {};
 			push.offset = {0.0f, 0.0f};
-			push.color = { 1.0f, 1.0f, 0.5f };
+			push.color = { 1.0f, 1.0f, 0.0f };
 			vkCmdPushConstants(cmdbuffer, pipelineLayout, 
 				VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT,
 				0, 
@@ -43,16 +43,16 @@ namespace engine
 	{
 		VkPushConstantRange pushConstantRange {};
 		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-		pushConstantRange.offset = 0;
-		pushConstantRange.size = sizeof(PushConstantData);
+		pushConstantRange.offset     = 0;
+		pushConstantRange.size       = sizeof(PushConstantData);
 
 
-		VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
-		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 0;
-		pipelineLayoutInfo.pSetLayouts = nullptr;
+		VkPipelineLayoutCreateInfo pipelineLayoutInfo {};
+		pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		pipelineLayoutInfo.setLayoutCount         = 0;
+		pipelineLayoutInfo.pSetLayouts            = nullptr;
 		pipelineLayoutInfo.pushConstantRangeCount = 1;
-		pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
+		pipelineLayoutInfo.pPushConstantRanges    = &pushConstantRange;
 
 		if (vkCreatePipelineLayout(device.GetDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
 		{
@@ -62,10 +62,10 @@ namespace engine
 	void RenderSystem::createPipeline(VkRenderPass renderPass)
 	{
 		assert(pipelineLayout != nullptr && "Cannot create pipelinelayout before swapchain");
-		PipeLineConfigInfo pipelineConfig = {};
+		PipeLineConfigInfo pipelineConfig {};
 		Pipeline::DefaultPipeLineConfigInfo(pipelineConfig);
-		pipelineConfig.renderPass = renderPass;
+		pipelineConfig.renderPass     = renderPass;
 		pipelineConfig.pipelineLayout = pipelineLayout;
-		Vkpipeline = std::make_unique<Pipeline>(device, "shaders/vert.spv", "shaders/frag.spv", pipelineConfig);
+		Vkpipeline                    = std::make_unique<Pipeline>(device, "shaders/vert.spv", "shaders/frag.spv", pipelineConfig);
 	}
 }
