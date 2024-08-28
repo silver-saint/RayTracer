@@ -32,6 +32,7 @@ namespace engine
 	private:
 		void CreateVertexBuffers(const std::vector<Vertex> &vertices);
 		void CreateIndexBuffers(const std::vector<ui32> &indicies);
+		//void CreateImageBuffer();
 		VkDeviceCtx& device;
 		VkBuffer vertexBuffer;
 		VkDeviceMemory vertexBufferMemory;
