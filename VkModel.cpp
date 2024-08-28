@@ -109,5 +109,8 @@ namespace engine
         vkDestroyBuffer(device.GetDevice(), stagingBuffer, nullptr);
         vkFreeMemory(device.GetDevice(), stagingBufferMemory, nullptr);
     }
+    void VkModel::CreateImageBuffer()
+    {
+    }
 }
 //namespace engine
