@@ -1,9 +1,9 @@
 #include "Triangle.h"
+#include "Rectangle.h"
 
 int main() {
 
-    menu.Init();
-    engine::Triangle app;
+    engine::Rectangle app;
     app.run();
     
     return EXIT_SUCCESS;

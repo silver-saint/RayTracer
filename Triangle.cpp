@@ -24,6 +24,7 @@ namespace engine
 	{
 
 		Builder builder;
+		/*
 		switch (menu.GetInput())
 		{
 		case 1:
@@ -63,7 +64,15 @@ namespace engine
 			builder.indicies = { 0,1,2 };
 			break;
 		}
-		}
+		*/
+		builder.vertices =
+		{
+		   {{0.0f, -0.5f}, { 1.0f, 0.0f, 0.0f }},
+		   {{0.5f, 0.5f}, { 0.0f, 1.0f, 0.0f }},
+		   {{-0.5f, 0.5f},  { 0.0f, 0.0f, 1.0f }}
+		};
+		builder.indicies = { 0,1,2 };
+		
 		auto modelVertices = std::make_shared<VkModel>(device, builder);
 
 		auto triangle = GameObject::CreateGameObject();
@@ -74,7 +83,6 @@ namespace engine
 	Triangle::Triangle()
 	{
 		LoadGameObjects();
-		
 	}
 
 	Triangle::~Triangle() {}

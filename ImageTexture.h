@@ -1,5 +1,4 @@
 #pragma once
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <string>
 #include "types.h"
@@ -19,8 +18,10 @@ namespace engine
 		void FreeImage() { stbi_image_free(pixels); }
 		i32 GetTexW() const { return texW; }
 		i32 GetTexH() const { return texH; }
+		static VkImageView CreateImageView(VkDevice device,VkImage image, VkFormat format);
 	private:
 		void Init();
+		void CreateTextureImageView();
 		const std::string filepath;
 		i32 texW;
 		i32 texH;
@@ -29,6 +30,7 @@ namespace engine
 		stbi_uc* pixels;
 		VkDeviceCtx& device;
 		VkImage textureImage;
+		VkImageView textureImageView;
 		VkDeviceMemory textureImageMemory;
 	};
 }
