@@ -67,7 +67,8 @@ namespace engine
 			VkMemoryPropertyFlags properties,
 			VkImage& image,
 			VkDeviceMemory& imageMemory);
-
+		void CreateImage(ui32 width, ui32 height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags imageFlag, VkMemoryPropertyFlags memPropertyFlags, VkImage& img, VkDeviceMemory& memDevice);
+		void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 		VkPhysicalDeviceProperties properties;
 
 	private:

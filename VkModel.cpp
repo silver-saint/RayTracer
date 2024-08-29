@@ -111,6 +111,27 @@ namespace engine
     }
     void VkModel::CreateImageBuffer()
     {
+        VkImageCreateInfo imageInfo{};
+        imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageInfo.extent.width = static_cast<uint32_t>(VkTexture.GetTexW());
+        imageInfo.extent.height = static_cast<uint32_t>(VkTexture.GetTexH());
+        imageInfo.extent.depth = 1;
+        imageInfo.mipLevels = 1;
+        imageInfo.arrayLayers = 1;
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+        device.CreateBuffer(VkTexture.GetImageSize(),
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+            stagingBuffer,
+            stagingBufferMemory);
+        void* data;
+        vkMapMemory(device.GetDevice(), stagingBufferMemory, 0, VkTexture.GetImageSize(), 0, &data);
+        memcpy(data, VkTexture.GetSrcPixels(), static_cast<size_t>(VkTexture.GetImageSize()));
+        vkUnmapMemory(device.GetDevice(), stagingBufferMemory);
+        VkTexture.FreeImage();
     }
 }
 //namespace engine
