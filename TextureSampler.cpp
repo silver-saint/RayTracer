@@ -32,6 +32,7 @@ namespace engine
 		samplerInfo.minLod = 0.0f;
 		samplerInfo.maxLod = 0.0f;
 
+
 		if (vkCreateSampler(device.GetDevice(), &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create texture sampler!");
 		}

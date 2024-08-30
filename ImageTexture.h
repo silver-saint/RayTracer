@@ -9,7 +9,7 @@ namespace engine
 	class ImageTexture
 	{
 	public:
-		ImageTexture(VkDeviceCtx& deviceRef, const std::string& path, i32 texW, i32 TexH, i32 TexChannels);
+		ImageTexture(VkDeviceCtx& deviceRef, const std::string& path, i32 texW, i32 TexH);
 		~ImageTexture();
 		ImageTexture(const ImageTexture&) = delete;
 		ImageTexture& operator=(const ImageTexture&) = delete;
@@ -25,7 +25,6 @@ namespace engine
 		const std::string filepath;
 		i32 texW;
 		i32 texH;
-		i32 texChannels;
 		VkDeviceSize imageSize;
 		stbi_uc* pixels;
 		VkDeviceCtx& device;

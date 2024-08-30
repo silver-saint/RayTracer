@@ -4,13 +4,12 @@
 
 namespace engine
 {
-	ImageTexture::ImageTexture(VkDeviceCtx& deviceRef, const std::string& path, const i32 TexW, const i32 TexH, const i32 TexChannels)
+	ImageTexture::ImageTexture(VkDeviceCtx& deviceRef, const std::string& path, const i32 TexW, const i32 TexH)
 		: 
 		device(deviceRef),
 		filepath(path),
 		texH(TexH),
 		texW(TexW),
-		texChannels(TexChannels),
 		imageSize(texH* texW * 4)
 	{
 		Init();
@@ -51,6 +50,7 @@ namespace engine
 
 	void ImageTexture::Init()
 	{
+		i32 texChannels;
 		pixels = stbi_load(filepath.c_str(), &texW, &texH, &texChannels, STBI_rgb_alpha);
 
 		if (!pixels)

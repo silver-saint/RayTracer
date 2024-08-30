@@ -6,7 +6,8 @@
 #include "RenderSystem.h"
 #include "Renderer.h"
 #include "Menu.h"
-
+#include "ImageTexture.h"
+#include "TextureSampler.h"
 namespace engine
 {
 	class Rectangle
@@ -25,7 +26,8 @@ namespace engine
 		VkDeviceCtx device = { window };
 		Renderer renderer = { window, device };
 		std::vector<GameObject> gameObjects;
-
+		ImageTexture imgTex {device, "Textures/cubetexture.png", 836, 900 };
+		TextureSampler sampler {device};
 	};
 
 }
