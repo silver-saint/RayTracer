@@ -39,15 +39,15 @@ namespace engine
 		VkDeviceCtx(VkDeviceCtx&&) = delete;
 		VkDeviceCtx& operator=(VkDeviceCtx&&) = delete;
 
-		VkCommandPool GetCommandPool() { return commandPool; }
-		VkDevice GetDevice() { return device; }
-		VkSurfaceKHR GetSurface() { return surface; }
-		VkQueue GetGraphicsQueue() { return graphicsQueue; }
-		VkQueue GetPresentQueue() { return presentQueue; }
+		VkCommandPool GetCommandPool() const { return commandPool; }
+		VkDevice GetDevice() const { return device; }
+		VkSurfaceKHR GetSurface() const { return surface; }
+		VkQueue GetGraphicsQueue() const { return graphicsQueue; }
+		VkQueue GetPresentQueue() const { return presentQueue; }
+		VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice; }
 		SwapChainSupportDetails GetSwapChainSupport() { return QuerySwapChainSupport(physicalDevice); }
 		uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		QueueFamilyIndices FindPhysicalQueueFamilies() { return FindQueueFamilies(physicalDevice); }
-
 		VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, 
 										   VkImageTiling tiling, VkFormatFeatureFlags features);
 		void CreateBuffer(

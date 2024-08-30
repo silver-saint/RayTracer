@@ -150,6 +150,7 @@
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="TextureSampler.cpp" />
     <ClCompile Include="VkModel.cpp" />
     <ClCompile Include="VkSwapChain.cpp" />
     <ClCompile Include="Triangle.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderSystem.h" />
+    <ClInclude Include="TextureSampler.h" />
     <ClInclude Include="VkModel.h" />
     <ClInclude Include="VkSwapChain.h" />
     <ClInclude Include="Triangle.h" />
