@@ -4,13 +4,13 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include "VkDeviceCtx.h"
-#include "ImageTexture.h"
 namespace engine
 {
 	struct Vertex
 	{
 		glm::vec2 pos;
 		glm::vec3 color;
+		glm::vec2 texCoord;
 		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
 		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
 	};
@@ -23,7 +23,7 @@ namespace engine
 	{
 	public:
 		VkModel() = delete;
-		VkModel(VkDeviceCtx& deviceRef, const Builder& builder);
+		VkModel(VkDeviceCtx& deviceRef,  const Builder& builder);
 		~VkModel();
 		VkModel(const VkDeviceCtx&) = delete;
 		VkModel& operator=(const VkDeviceCtx&) = delete;
@@ -37,11 +37,9 @@ namespace engine
 		VkBuffer vertexBuffer;
 		VkDeviceMemory vertexBufferMemory;
 		ui32 vertexCount;
-
 		VkBuffer indexBuffer;
 		VkDeviceMemory indexBufferMemory;
 		ui32 indexCount;
 		bool hasIndexBuffer = false;
-
 	};
 }

@@ -4,6 +4,7 @@
 #include "VkWindow.h"
 #include "VkDeviceCtx.h"
 #include "VkSwapChain.h"
+#include "Descriptors.h"
 #include <cassert>
 namespace engine
 {

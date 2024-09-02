@@ -3,7 +3,7 @@
 #include "VkDeviceCtx.h"
 #include "Pipeline.h"
 #include "GameObject.h"
-
+#include "Descriptors.h"
 #include <memory>
 #include <vector>
 
@@ -18,21 +18,20 @@ namespace engine
 
 	class RenderSystem {
 	public:
-		RenderSystem(VkDeviceCtx& deviceCtxRef, VkRenderPass renderPass);
+		RenderSystem(VkDeviceCtx& deviceCtxRef, VkRenderPass renderPass, Descriptors& descriptorRef);
 		~RenderSystem();
 
 		RenderSystem(const RenderSystem&) = delete;
 		RenderSystem& operator=(const RenderSystem&) = delete;
 		void RenderObjects(VkCommandBuffer cmdbuffer, std::vector<GameObject>& gameObjects);
-
+		VkPipelineLayout GetPipelineLayout() const { return pipelineLayout; }
 	private:
 		void createPipelineLayout();
 		void createPipeline(VkRenderPass renderPass);
-		
-
 		VkDeviceCtx& device;
-
+		Descriptors& descriptors;
 		std::unique_ptr<Pipeline> Vkpipeline;
 		VkPipelineLayout pipelineLayout;
+
 	};
-}  // namespace lve
+}  // namespace engine

@@ -5,14 +5,14 @@ namespace engine
 {
 	void Triangle::run()
 	{
-		RenderSystem renderSystem = {device, renderer.GetSwapChainRenderPass()};
+		//RenderSystem renderSystem = {device, renderer.GetSwapChainRenderPass(), };
 		while (window.IsOpen())
 		{
 			glfwPollEvents();
 			if (auto commandbuffer = renderer.BeginFrame())
 			{
 				renderer.BeginSwapChainRenderPass(commandbuffer);
-				renderSystem.RenderObjects(commandbuffer, gameObjects);
+			//	renderSystem.RenderObjects(commandbuffer, gameObjects);
 				renderer.EndSwapChainRenderPass(commandbuffer);
 				renderer.EndFrame();
 			}

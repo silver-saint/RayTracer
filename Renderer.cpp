@@ -4,7 +4,7 @@
 namespace engine
 {
 	Renderer::Renderer(VkWindow& window, VkDeviceCtx& deviceCtx)
-		: window{window}, device{deviceCtx}
+		: window{ window }, device{ deviceCtx }
 	{
 		RecreateSwapChain();
 		CreateCmdBuffers();

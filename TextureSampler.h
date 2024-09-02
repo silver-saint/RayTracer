@@ -10,6 +10,7 @@ namespace engine
 		~TextureSampler();
 		TextureSampler(const TextureSampler&) = delete;
 		TextureSampler& operator=(const TextureSampler&) = delete;
+		VkSampler GetTextureSampler() const { return textureSampler; }
 	private:
 		void Init();
 		VkDeviceCtx& device;

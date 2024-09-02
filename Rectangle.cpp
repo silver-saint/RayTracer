@@ -9,13 +9,14 @@ engine::Rectangle::~Rectangle() {}
 
 void engine::Rectangle::run()
 {
-	RenderSystem renderSystem = { device, renderer.GetSwapChainRenderPass() };
+	RenderSystem renderSystem = { device, renderer.GetSwapChainRenderPass(), descriptor};
 	while (window.IsOpen())
 	{
 		glfwPollEvents();
 		if (auto commandbuffer = renderer.BeginFrame())
 		{
 			renderer.BeginSwapChainRenderPass(commandbuffer);
+			vkCmdBindDescriptorSets(commandbuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderSystem.GetPipelineLayout(), 0, 1, descriptor.GetDescriptorSetAt(renderer.GetFrameIndex()), 0, nullptr);
 			renderSystem.RenderObjects(commandbuffer, gameObjects);
 			renderer.EndSwapChainRenderPass(commandbuffer);
 			renderer.EndFrame();
@@ -29,10 +30,10 @@ void engine::Rectangle::LoadGameObjects()
 	Builder builder;
 	builder.vertices =
 	{
-	   {{-0.5f, -0.5f}, { 1.0f, 1.0f, 0.0f }},
-	   {{0.5f, -0.5f}, { 1.0f, 1.0f, 0.0f }},
-	   {{0.5f, 0.5f},  { 1.0f, 1.0f, 0.0f }},
-	   {{-0.5f, 0.5f}, { 1.0f, 1.0f, 0.0f }},
+	   {{-0.5f, -0.5f}, { 1.0f, 1.0f, 0.0f }, {1.0f, 0.0f}},
+	   {{0.5f, -0.5f}, { 1.0f, 1.0f, 0.0f }, {0.0f, 0.0f}},
+	   {{0.5f, 0.5f},  { 1.0f, 1.0f, 0.0f }, {0.0f, 1.0f}},
+	   {{-0.5f, 0.5f}, { 1.0f, 1.0f, 0.0f }, {1.0f, 1.0f}},
 	};
 	builder.indicies = { 0,1,2,2,3,0 };
 

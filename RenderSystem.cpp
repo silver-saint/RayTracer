@@ -6,11 +6,10 @@
 #include <array>
 #include <cassert>
 #include <stdexcept>
-
 namespace engine
 {
-	RenderSystem::RenderSystem(VkDeviceCtx& deviceCtxRef, VkRenderPass renderPass)
-		:device{deviceCtxRef}
+	RenderSystem::RenderSystem(VkDeviceCtx& deviceCtxRef, VkRenderPass renderPass, Descriptors& descriptorRef)
+		:device{deviceCtxRef}, descriptors {descriptorRef}
 	{
 
 		createPipelineLayout();
@@ -50,7 +49,7 @@ namespace engine
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo {};
 		pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount         = 1;
-		pipelineLayoutInfo.pSetLayouts            = nullptr;
+		pipelineLayoutInfo.pSetLayouts            = descriptors.GetDescriptorSetLayout();
 		pipelineLayoutInfo.pushConstantRangeCount = 1;
 		pipelineLayoutInfo.pPushConstantRanges    = &pushConstantRange;
 

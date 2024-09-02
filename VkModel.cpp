@@ -6,9 +6,11 @@ namespace engine
 {
     std::vector<VkVertexInputAttributeDescription> Vertex::GetAttributeDescriptions()
     {
+
         //binding location format offset
         return { {0,0,VK_FORMAT_R32G32_SFLOAT,offsetof(Vertex, pos)}, 
-                 {1,0,VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)}};
+                 {1,0,VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)},
+                 {2,0,VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, texCoord)}};
     }
 
     std::vector<VkVertexInputBindingDescription> Vertex::GetBindingDescriptions()
@@ -45,6 +47,7 @@ namespace engine
         if (hasIndexBuffer)
         {
             vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
         }
 
     }

@@ -6,8 +6,7 @@
 #include "RenderSystem.h"
 #include "Renderer.h"
 #include "Menu.h"
-#include "ImageTexture.h"
-#include "TextureSampler.h"
+#include "Descriptors.h"
 namespace engine
 {
 	class Rectangle
@@ -23,11 +22,10 @@ namespace engine
 		static constexpr ui32 WIDTH = 800;
 		static constexpr ui32 HEIGHT = 800;
 		VkWindow window = { WIDTH, HEIGHT, "Rectangle" };
-		VkDeviceCtx device = { window };
-		Renderer renderer = { window, device };
+		VkDeviceCtx device = {window};
+		Descriptors descriptor { device };
+		Renderer renderer = {window, device};
 		std::vector<GameObject> gameObjects;
-		ImageTexture imgTex {device, "Textures/cubetexture.png", 836, 900 };
-		TextureSampler sampler {device};
 	};
 
 }

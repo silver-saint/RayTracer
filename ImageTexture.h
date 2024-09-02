@@ -18,6 +18,8 @@ namespace engine
 		void FreeImage() { stbi_image_free(pixels); }
 		i32 GetTexW() const { return texW; }
 		i32 GetTexH() const { return texH; }
+		VkImageView GetImageView() const { return textureImageView; }
+
 		static VkImageView CreateImageView(VkDevice device,VkImage image, VkFormat format);
 	private:
 		void Init();
