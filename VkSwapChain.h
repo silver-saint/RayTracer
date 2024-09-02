@@ -16,11 +16,11 @@ namespace engine
 		VkSwapChain(const VkSwapChain&) = delete;
 		VkSwapChain& operator=(const VkSwapChain&) = delete;
 		VkFramebuffer GetFrameBuffer(size_t idx) const { return swapChainFramebuffers[idx]; }
-		VkRenderPass GetRenderPass() { return renderPass; }
+		VkRenderPass GetRenderPass() const { return renderPass; }
 		VkImageView GetImageView(size_t idx) const { return swapChainImageViews[idx]; }
 		size_t GetImageCount() const { return swapChainImages.size(); }
-		VkFormat GetSwapChainImageFormat() { return swapChainImageFormat; }
-		VkExtent2D GetSwapChainExtent() { return swapChainExtent; }
+		VkFormat GetSwapChainImageFormat() const { return swapChainImageFormat; }
+		VkExtent2D GetSwapChainExtent() const { return swapChainExtent; }
 		ui32 Width() const { return swapChainExtent.width; }
 		ui32 Height() const { return swapChainExtent.height; }
 		float ExtentAspectRatio() 

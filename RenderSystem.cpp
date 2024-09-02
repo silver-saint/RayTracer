@@ -49,7 +49,7 @@ namespace engine
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo {};
 		pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount         = 0;
+		pipelineLayoutInfo.setLayoutCount         = 1;
 		pipelineLayoutInfo.pSetLayouts            = nullptr;
 		pipelineLayoutInfo.pushConstantRangeCount = 1;
 		pipelineLayoutInfo.pPushConstantRanges    = &pushConstantRange;

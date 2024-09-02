@@ -21,7 +21,7 @@ namespace engine
 	private:
 		void LoadGameObjects();
 		static constexpr ui32 WIDTH = 800;
-		static constexpr ui32 HEIGHT = 600;
+		static constexpr ui32 HEIGHT = 800;
 		VkWindow window = { WIDTH, HEIGHT, "Rectangle" };
 		VkDeviceCtx device = { window };
 		Renderer renderer = { window, device };
