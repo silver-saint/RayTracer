@@ -144,13 +144,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Descriptors.cpp" />
-    <ClCompile Include="ImageTexture.cpp" />
+    <ClCompile Include="TextureImage.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="TextureImageView.cpp" />
     <ClCompile Include="TextureSampler.cpp" />
     <ClCompile Include="VkModel.cpp" />
     <ClCompile Include="VkSwapChain.cpp" />
@@ -161,12 +162,13 @@
   <ItemGroup>
     <ClInclude Include="Descriptors.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="ImageTexture.h" />
+    <ClInclude Include="TextureImage.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderSystem.h" />
+    <ClInclude Include="TextureImageView.h" />
     <ClInclude Include="TextureSampler.h" />
     <ClInclude Include="VkModel.h" />
     <ClInclude Include="VkSwapChain.h" />

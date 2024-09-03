@@ -1,21 +1,18 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include "ImageTexture.h"
+#include "TextureImage.h"
 #include <stdexcept>
 
 namespace engine
 {
-	ImageTexture::ImageTexture(VkDeviceCtx& deviceRef, const std::string& path, const i32 TexW, const i32 TexH)
+	TextureImage::TextureImage(VkDeviceCtx& deviceRef, const std::string& path)
 		: 
 		device(deviceRef),
-		filepath(path),
-		texH(TexH),
-		texW(TexW),
-		imageSize(texH* texW * 4)
+		filepath(path)
 	{
 		Init();
 	}
 
-	ImageTexture::~ImageTexture()
+	TextureImage::~TextureImage()
 	{
 
 		vkDestroyImageView(device.GetDevice(), textureImageView, nullptr);
@@ -23,12 +20,12 @@ namespace engine
 		vkFreeMemory(device.GetDevice(), textureImageMemory, nullptr);
 	}
 
-	void ImageTexture::CreateTextureImageView()
+	void TextureImage::CreateTextureImageView()
 	{
 		textureImageView = CreateImageView(device.GetDevice(), textureImage, VK_FORMAT_R8G8B8A8_SRGB);
 	}
 
-	VkImageView ImageTexture::CreateImageView(VkDevice device, VkImage image, VkFormat format)
+	VkImageView TextureImage::CreateImageView(VkDevice device, VkImage image, VkFormat format)
 	{
 		VkImageViewCreateInfo viewInfo {};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -48,16 +45,17 @@ namespace engine
 		return imageView;
 	}
 
-	void ImageTexture::Init()
+	void TextureImage::Init()
 	{
-		i32 texChannels;
-		pixels = stbi_load(filepath.c_str(), &texW, &texH, &texChannels, STBI_rgb_alpha);
+		i32 texWidth, texHeight, texChannels;
+
+		pixels = stbi_load(filepath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		VkDeviceSize imageSize = texWidth * texHeight * 4;
 
 		if (!pixels)
 		{
 			throw std::runtime_error("failed to load texture image!");
 		}
-
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
 		device.CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
@@ -69,10 +67,10 @@ namespace engine
 
 		stbi_image_free(pixels);
 
-		device.CreateImage(texW, texH, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+		device.CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
 
 		device.TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-		device.CopyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texW), static_cast<uint32_t>(texH), 1);
+		device.CopyBufferToImage(stagingBuffer, textureImage, static_cast<ui32>(texWidth), static_cast<ui32>(texHeight), 1);
 		device.TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		vkDestroyBuffer(device.GetDevice(), stagingBuffer, nullptr);
 		vkFreeMemory(device.GetDevice(), stagingBufferMemory, nullptr);

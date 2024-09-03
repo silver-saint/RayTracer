@@ -1,6 +1,6 @@
 #pragma once
 #include "VkDeviceCtx.h"
-#include "ImageTexture.h"
+#include "TextureImage.h"
 #include <vulkan/vulkan.h>
 namespace engine
 {
