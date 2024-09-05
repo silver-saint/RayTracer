@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
-#include "VkDeviceCtx.h"
+#include "Device.h"
 #include "VkSwapChain.h"
-#include "ImageTexture.h"
+#include "TextureImage.h"
 #include "TextureSampler.h"
 #include "vulkan/vulkan.h"
 namespace engine
 {
+	/*
 	class Descriptors
 	{
 	public:
@@ -23,8 +24,8 @@ namespace engine
 		std::vector<VkDescriptorSet> descriptorSets;
 		VkDescriptorPool descriptorPool;
 		std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
-		ImageTexture imgTex{ device, "Textures/cubetexture.png", 836, 900 };
+		TextureImage texImg {device, "Textures/cubetexture.png"};
 		TextureSampler sampler{ device };
 	};
-
+	*/
 }

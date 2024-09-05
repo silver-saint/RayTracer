@@ -8,6 +8,7 @@
 #include <stdexcept>
 namespace engine
 {
+	/*
 	RenderSystem::RenderSystem(VkDeviceCtx& deviceCtxRef, VkRenderPass renderPass, Descriptors& descriptorRef)
 		:device{deviceCtxRef}, descriptors {descriptorRef}
 	{
@@ -67,4 +68,5 @@ namespace engine
 		pipelineConfig.pipelineLayout = pipelineLayout;
 		Vkpipeline                    = std::make_unique<Pipeline>(device, "shaders/vert.spv", "shaders/frag.spv", pipelineConfig);
 	}
+	*/
 }

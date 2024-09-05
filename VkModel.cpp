@@ -4,6 +4,7 @@
 #include <array>
 namespace engine
 {
+    /*
     std::vector<VkVertexInputAttributeDescription> Vertex::GetAttributeDescriptions()
     {
 
@@ -112,5 +113,6 @@ namespace engine
         vkDestroyBuffer(device.GetDevice(), stagingBuffer, nullptr);
         vkFreeMemory(device.GetDevice(), stagingBufferMemory, nullptr);
     }
+    */
 }
 //namespace engine

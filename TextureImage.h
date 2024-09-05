@@ -2,10 +2,11 @@
 #include <stb_image.h>
 #include <string>
 #include "types.h"
-#include "VkDeviceCtx.h"
+#include "Device.h"
 #include <vulkan/vulkan.h>
 namespace engine
 {
+	/*
 	class TextureImage
 	{
 	public:
@@ -26,4 +27,5 @@ namespace engine
 		VkImageView textureImageView;
 		VkDeviceMemory textureImageMemory;
 	};
+	*/
 }

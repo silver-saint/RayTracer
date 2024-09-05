@@ -1,6 +1,7 @@
 #include "TextureSampler.h"
 namespace engine
 {
+	/*
 	TextureSampler::TextureSampler(VkDeviceCtx& deviceRef)
 		: device(deviceRef)
 	{
@@ -37,4 +38,5 @@ namespace engine
 			throw std::runtime_error("failed to create texture sampler!");
 		}
 	}
+	*/
 } //namespace engine

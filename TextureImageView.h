@@ -1,9 +1,10 @@
 #pragma once
-#include "VkDeviceCtx.h"
+#include "Device.h"
 #include "TextureImage.h"
 #include <vulkan/vulkan.h>
 namespace engine
 {
+	/*
 	class TextureImageView
 	{
 	public:
@@ -14,4 +15,5 @@ namespace engine
 		VkDeviceCtx& device;
 		VkImageView textureImageView;
 	};
+	*/
 } //namespace engine

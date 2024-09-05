@@ -2,6 +2,7 @@
 #include <array>
 namespace engine
 {
+	/*
 	Descriptors::Descriptors(VkDeviceCtx& deviceRef)
 		: device(deviceRef)
 	{
@@ -73,7 +74,7 @@ namespace engine
 			VkDescriptorImageInfo imageInfo {};
 
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = imgTex.GetImageView();
+			imageInfo.imageView = texImg.GetImageView();
 			imageInfo.sampler = sampler.GetTextureSampler();
 			std::array<VkWriteDescriptorSet, 1> descriptorWrites {};
 			
@@ -88,4 +89,5 @@ namespace engine
 			vkUpdateDescriptorSets(device.GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 		}
 	}
+	*/
 } // namespace engine

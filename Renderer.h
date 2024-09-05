@@ -1,13 +1,14 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include "VkWindow.h"
-#include "VkDeviceCtx.h"
+#include "Window.h"
+#include "Device.h"
 #include "VkSwapChain.h"
 #include "Descriptors.h"
 #include <cassert>
 namespace engine
 {
+	/*
 	class Renderer
 	{
 	public:
@@ -46,4 +47,5 @@ namespace engine
 		   i32 currFrameIdx = 0;
 		   bool isFrameStarted = false;
 	};
+	*/
 }

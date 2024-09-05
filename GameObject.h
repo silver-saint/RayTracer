@@ -4,6 +4,7 @@
 #include <memory>
 namespace engine
 {
+	/*
 	struct TransformComponent
 	{
 		glm::vec2 translation = {};
@@ -32,5 +33,5 @@ namespace engine
 		GameObject(id_t objId) : id{ objId } {}
 		id_t id;
 	};
-
+	*/
 }

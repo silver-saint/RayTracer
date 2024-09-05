@@ -1,8 +1,9 @@
 #pragma once
-#include "VkDeviceCtx.h"
+#include "Device.h"
 #include <vulkan/vulkan.h>
 namespace engine
 {
+	/*
 	class TextureSampler
 	{
 	public:
@@ -16,5 +17,5 @@ namespace engine
 		VkDeviceCtx& device;
 		VkSampler textureSampler;
 	};
-
+	*/
 }

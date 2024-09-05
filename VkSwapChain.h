@@ -1,11 +1,12 @@
 #pragma once
-#include "VkDeviceCtx.h"
+#include "Device.h"
 #include <memory>
 #include <array>
 #include <string>
 namespace engine
 
 {
+	/*
 	class VkSwapChain
 	{
 	public:
@@ -76,5 +77,5 @@ namespace engine
 		std::vector<VkFence> imagesInFlight;
 		size_t currentFrame = 0;
 	};
-
+	*/
 } //namespace engine

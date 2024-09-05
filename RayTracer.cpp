@@ -1,9 +1,8 @@
-#include "Triangle.h"
-#include "Rectangle.h"
+#include "App.h"
 
 int main() {
 
-    engine::Rectangle app;
+    engine::vk::App app;
     app.run();
     
     return EXIT_SUCCESS;

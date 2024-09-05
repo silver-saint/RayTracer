@@ -7,6 +7,7 @@
 #include <cassert>
 namespace engine
 {
+	/*
 	Pipeline::Pipeline(VkDeviceCtx& deviceRef, const std::string& vertexFP, const std::string& fragmentFP, const PipeLineConfigInfo& configInfo)
 		: device{ deviceRef }
 	{
@@ -190,5 +191,6 @@ namespace engine
 		}
 
 	}
+	*/
 }
 //namespace engine

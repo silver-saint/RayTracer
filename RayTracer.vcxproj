@@ -144,38 +144,36 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Descriptors.cpp" />
+    <ClCompile Include="Device.cpp" />
     <ClCompile Include="TextureImage.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RayTracer.cpp" />
-    <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="TextureImageView.cpp" />
     <ClCompile Include="TextureSampler.cpp" />
     <ClCompile Include="VkModel.cpp" />
     <ClCompile Include="VkSwapChain.cpp" />
-    <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="VkDeviceCtx.cpp" />
-    <ClCompile Include="VkWindow.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Descriptors.h" />
+    <ClInclude Include="Device.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="TextureImage.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Pipeline.h" />
-    <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="App.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="TextureImageView.h" />
     <ClInclude Include="TextureSampler.h" />
     <ClInclude Include="VkModel.h" />
     <ClInclude Include="VkSwapChain.h" />
-    <ClInclude Include="Triangle.h" />
     <ClInclude Include="types.h" />
-    <ClInclude Include="VkDeviceCtx.h" />
-    <ClInclude Include="VkWindow.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,9 @@
 #include "VkSwapChain.h"
-#include "ImageTexture.h"
+#include "TextureImage.h"
 
 namespace engine
 {
+	/*
 	VkSwapChain::VkSwapChain(VkDeviceCtx& deviceRef, VkExtent2D extent)
 		: device{ deviceRef }, windowExtent{ extent }
 	{
@@ -230,7 +231,7 @@ namespace engine
 		swapChainImageViews.resize(swapChainImages.size());
 		for (size_t i = 0; i < swapChainImages.size(); i++)
 		{
-			swapChainImageViews[i] = ImageTexture::CreateImageView(device.GetDevice(), swapChainImages[i], swapChainImageFormat);
+			swapChainImageViews[i] = TextureImage::CreateImageView(device.GetDevice(), swapChainImages[i], swapChainImageFormat);
 		}
 	}
 
@@ -391,5 +392,5 @@ namespace engine
 			}
 		}
 	}
-
+	*/
 } // namespace engine

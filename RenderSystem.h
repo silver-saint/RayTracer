@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VkDeviceCtx.h"
+#include "Device.h"
 #include "Pipeline.h"
 #include "GameObject.h"
 #include "Descriptors.h"
@@ -9,6 +9,7 @@
 
 namespace engine 
 {
+	/*
 	struct PushConstantData {
 		glm::vec2 offset;
 		alignas(16) glm::vec3 color;
@@ -32,6 +33,7 @@ namespace engine
 		Descriptors& descriptors;
 		std::unique_ptr<Pipeline> Vkpipeline;
 		VkPipelineLayout pipelineLayout;
-
+		
 	};
+	*/
 }  // namespace engine

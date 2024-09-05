@@ -4,6 +4,7 @@
 
 namespace engine
 {
+	/*
 	TextureImage::TextureImage(VkDeviceCtx& deviceRef, const std::string& path)
 		: 
 		device(deviceRef),
@@ -75,4 +76,5 @@ namespace engine
 		vkDestroyBuffer(device.GetDevice(), stagingBuffer, nullptr);
 		vkFreeMemory(device.GetDevice(), stagingBufferMemory, nullptr);
 	}
+	*/
 } // namespace engine

@@ -1,9 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "VkDeviceCtx.h"
+#include "Device.h"
 namespace engine
 {
+	/*
 	struct PipeLineConfigInfo 
 	{
 		PipeLineConfigInfo() = default;
@@ -45,4 +46,5 @@ namespace engine
 		VkShaderModule vertexShaderModule;
 		VkShaderModule fragmentShaderModule;
 	};
+	*/
 }
