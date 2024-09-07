@@ -1,22 +1,22 @@
 #include "Device.h"
 
-engine::vk::Device::Device(Window& windowRef)
+vk::engine::Device::Device(Window& windowRef)
 	: win(windowRef)
 {
 	Init();
 }
 
-engine::vk::Device::~Device()
+vk::engine::Device::~Device()
 {
 	vkDestroyInstance(instance, nullptr);
 }
 
-void engine::vk::Device::Init()
+void vk::engine::Device::Init()
 {
 	CreateInstance();
 }
 
-void engine::vk::Device::CreateInstance()
+void vk::engine::Device::CreateInstance()
 {
 	VkApplicationInfo appInfo{};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -25,17 +25,18 @@ void engine::vk::Device::CreateInstance()
 	appInfo.engineVersion = VK_API_VERSION_1_3;
 	appInfo.apiVersion = VK_API_VERSION_1_3;
 	
-	ui32 glfwExtensionsCount = 0;
-	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionsCount);
+	ui32 SDLExtensionsCount = 0;
+	SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, NULL);
+	const char** SDLExtensions = new const char*[SDLExtensionsCount];
+	SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, SDLExtensions);
+
 	std::vector<const char*> requiredExtensions;
-
-	for (uint32_t i = 0; i < glfwExtensionsCount; i++) {
-		
-		requiredExtensions.emplace_back(glfwExtensions[i]);
+	for (ui32 i = 0; i < SDLExtensionsCount; i++)
+	{
+		requiredExtensions.emplace_back(SDLExtensions[i]);
 	}
-
 	requiredExtensions.emplace_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-	
+
 	VkInstanceCreateInfo instanceInfo{};
 	instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceInfo.pNext = nullptr;

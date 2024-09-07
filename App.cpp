@@ -1,9 +1,7 @@
 #include "App.h"
 
-namespace engine
+namespace vk::engine
 {
-	namespace vk
-	{
 		App::App()
 		{
 			run();
@@ -16,10 +14,8 @@ namespace engine
 
 			while (window.IsOpen())
 			{
-				glfwPollEvents();
+				window.PollEvents();
 			}
 			//vkDeviceWaitIdle(device.GetDevice());
 		}
-
-	} // namespace vk
-} // namespace engine
+} // namespace vk::engine

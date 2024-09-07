@@ -1,9 +1,7 @@
 #include "Window.h"
 
-namespace engine
+namespace vk::engine
 {
-	namespace vk
-	{
 		Window::Window(i32 w, i32 h, const std::string& name)
 			: width(w), height(h), windowName(name)
 		{
@@ -13,46 +11,32 @@ namespace engine
 
 		Window::~Window()
 		{
-			glfwDestroyWindow(window);
+			SDL_DestroyWindow(window);
+			SDL_Quit();
 		}
-
-		bool Window::IsOpen()
+		void Window::PollEvents()
 		{
-			return !glfwWindowShouldClose(window);
-		}
-		void Window::FrameBufferResizedCallBack(GLFWwindow* window, i32 w, i32 h)
-		{
-			auto win = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
-			win->frameBufferResized = true;
-			win->width = w;
-			win->height = h;
-		}
-
-		void Window::GetWinSurface(VkInstance inst, VkSurfaceKHR* surface)
-		{
-			if (glfwCreateWindowSurface(inst, window, nullptr, surface) != VK_SUCCESS)
+			SDL_Event e;
+			while (SDL_PollEvent(&e) != 0)
 			{
-				throw std::runtime_error("failed to create window surface!");
+				switch (e.type)
+				{
+				case SDL_QUIT: isOpen = false;
+					break;
+				}
 			}
 		}
-
 		void Window::InitWindow()
 		{
-
-			if (!glfwInit())
+			if (SDL_Init(SDL_INIT_EVERYTHING) != NULL)
 			{
-				throw std::runtime_error("Error, couldn't init GLFW");
+				throw std::runtime_error("Cannot init SDL");
 			}
-
-			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-			glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-			window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+			window = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
 			if (!window)
 			{
-				throw std::runtime_error("Error, couldn't init Window.");
+				throw std::runtime_error("Error, couldn't init SDL Window");
 			}
-			glfwSetWindowUserPointer(window, this);
-			glfwSetFramebufferSizeCallback(window, FrameBufferResizedCallBack);
+			isOpen = true;
 		}
-	} //namespace vk
-} //namespace engine
+} //namespace vk::engine

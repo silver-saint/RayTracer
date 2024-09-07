@@ -1,8 +1,8 @@
 #include "App.h"
 
-int main() {
+int main(int argc, char** argv) {
 
-    engine::vk::App app;
+    vk::engine::App app;
     app.run();
     
     return EXIT_SUCCESS;

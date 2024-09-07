@@ -1,14 +1,12 @@
 #pragma once
-#include <vulkan/vulkan.h>
 #include "types.h"
 #include "Window.h"
+#include <vulkan/vulkan.h>
 #include <vector>
 
 
-namespace engine
+namespace vk::engine
 {
-	namespace vk
-	{
 
 #ifdef NDEBUG
 		const bool VALIDATIONLAYERS = false;
@@ -29,5 +27,4 @@ namespace engine
 			VkInstance instance;
 			Window& win;
 		};
-	}
 }

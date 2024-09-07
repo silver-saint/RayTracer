@@ -3,10 +3,8 @@
 #include <vector>
 #include "Window.h"
 #include "Device.h"
-namespace engine
+namespace vk::engine
 {
-	namespace vk 
-	{
 		class App
 		{
 		public:
@@ -21,6 +19,5 @@ namespace engine
 			Window window{ WIDTH, HEIGHT, "Rectangle" };
 			Device device{ window };
 		};
-	} //namespace vk
 
-} //namespace engine
+} //namespace vk::engine

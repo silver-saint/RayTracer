@@ -1,16 +1,14 @@
 #pragma once
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_vulkan.h>
 #include "types.h"
 #include <string>
 #include <stdexcept>
 
 
 
-namespace engine
+namespace vk::engine
 {
-	namespace vk
-	{
 		class Window
 		{
 		public:
@@ -20,21 +18,17 @@ namespace engine
 			Window(const Window&) = delete;
 			Window& operator=(const Window&) = delete;
 			~Window();
-			bool IsOpen();
-			VkExtent2D GetExtent() { return { static_cast<ui32>(width), static_cast<ui32>(height) }; }
-			int WasWindowResized() { return frameBufferResized; }
-			void ResetWindowResizedFlag() { frameBufferResized = false; };
-			void GetWinSurface(VkInstance inst, VkSurfaceKHR* surface);
-			GLFWwindow* GetGlfwWin() { return window; };
+		[[nodiscard]] bool IsOpen() const { return isOpen; };
+			void PollEvents();
+		[[nodiscard]] SDL_Window* GetWindow() { return window; };
 		private:
-			static void FrameBufferResizedCallBack(GLFWwindow* window, i32 w, i32 h);
 			void InitWindow();
 			const std::string windowName;
 			i32 width;
 			i32 height;
-			GLFWwindow* window;
+			SDL_Window* window;
+			bool isOpen;
 			bool frameBufferResized = false;
 		};
-	}
 }
-//namespace engine
+//namespace vk::engine
