@@ -30,6 +30,11 @@ void vk::engine::Device::CreateInstance()
 	const char** SDLExtensions = new const char*[SDLExtensionsCount];
 	SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, SDLExtensions);
 
+	for (unsigned int i = 0; i < SDLExtensionsCount; i++)
+	{
+		printf("%u: %s\n", i, SDLExtensions[i]);
+	}
+
 	std::vector<const char*> requiredExtensions;
 	for (ui32 i = 0; i < SDLExtensionsCount; i++)
 	{

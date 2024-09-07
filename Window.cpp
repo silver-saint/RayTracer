@@ -32,7 +32,7 @@ namespace vk::engine
 			{
 				throw std::runtime_error("Cannot init SDL");
 			}
-			window = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+			window = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_VULKAN);
 			if (!window)
 			{
 				throw std::runtime_error("Error, couldn't init SDL Window");
