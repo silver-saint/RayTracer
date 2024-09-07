@@ -25,7 +25,9 @@ namespace vk::engine
 		private:
 			void Init();
 			void CreateInstance();
+			bool CheckValidationLayerSupport();
 			VkInstance instance;
 			Window& win;
+			const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 		};
 }

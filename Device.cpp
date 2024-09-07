@@ -18,6 +18,10 @@ void vk::engine::Device::Init()
 
 void vk::engine::Device::CreateInstance()
 {
+	if (VALIDATIONLAYERS && !CheckValidationLayerSupport())
+	{
+		throw std::runtime_error("Validation layers could not be initialized");
+	}
 	VkApplicationInfo appInfo{};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pApplicationName = "RayTracer";
@@ -29,11 +33,6 @@ void vk::engine::Device::CreateInstance()
 	SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, NULL);
 	const char** SDLExtensions = new const char*[SDLExtensionsCount];
 	SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, SDLExtensions);
-
-	for (unsigned int i = 0; i < SDLExtensionsCount; i++)
-	{
-		printf("%u: %s\n", i, SDLExtensions[i]);
-	}
 
 	std::vector<const char*> requiredExtensions;
 	for (ui32 i = 0; i < SDLExtensionsCount; i++)
@@ -47,7 +46,15 @@ void vk::engine::Device::CreateInstance()
 	instanceInfo.pNext = nullptr;
 	instanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 	instanceInfo.enabledExtensionCount = static_cast<ui32>(requiredExtensions.size());
-	instanceInfo.enabledLayerCount = 0;
+	if (VALIDATIONLAYERS)
+	{
+		instanceInfo.enabledLayerCount = static_cast<ui32>(validationLayers.size());
+		instanceInfo.ppEnabledLayerNames = validationLayers.data();
+	}
+	else
+	{
+		instanceInfo.enabledLayerCount = 0;
+	}
 	instanceInfo.pApplicationInfo = &appInfo;
 	instanceInfo.ppEnabledExtensionNames = requiredExtensions.data();
 	
@@ -60,4 +67,28 @@ void vk::engine::Device::CreateInstance()
 
 
 
+}
+
+bool vk::engine::Device::CheckValidationLayerSupport()
+{
+	uint32_t layerCount;
+	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+	std::vector<VkLayerProperties> availableLayers(layerCount);
+	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+	bool layerFound = false;
+	for (const char* layerName : validationLayers) 
+	{
+	for (const auto& layerProperties : availableLayers) {
+		if (strcmp(layerName, layerProperties.layerName) == 0) {
+			layerFound = true;
+			break;
+		}
+	}
+
+	if (!layerFound) {
+		return false;
+	}
+}
+	return true;
 }

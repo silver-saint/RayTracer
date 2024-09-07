@@ -16,7 +16,7 @@ namespace vk::engine
 		private:
 			static constexpr ui32 WIDTH = 800;
 			static constexpr ui32 HEIGHT = 800;
-			Window window{ WIDTH, HEIGHT, "Rectangle" };
+			Window window{ WIDTH, HEIGHT, "RayTracer" };
 			Device device{ window };
 		};
 
