@@ -1,94 +1,242 @@
 #include "Device.h"
-
-vk::engine::Device::Device(Window& windowRef)
-	: win(windowRef)
+#include <iostream>
+#include <map>
+namespace vk::engine
 {
-	Init();
-}
-
-vk::engine::Device::~Device()
-{
-	vkDestroyInstance(instance, nullptr);
-}
-
-void vk::engine::Device::Init()
-{
-	CreateInstance();
-}
-
-void vk::engine::Device::CreateInstance()
-{
-	if (VALIDATIONLAYERS && !CheckValidationLayerSupport())
+	Device::Device(Window& windowRef)
+		: win(windowRef)
 	{
-		throw std::runtime_error("Validation layers could not be initialized");
-	}
-	VkApplicationInfo appInfo{};
-	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	appInfo.pApplicationName = "RayTracer";
-	appInfo.pEngineName = "none";
-	appInfo.engineVersion = VK_API_VERSION_1_3;
-	appInfo.apiVersion = VK_API_VERSION_1_3;
-	
-	ui32 SDLExtensionsCount = 0;
-	SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, NULL);
-	const char** SDLExtensions = new const char*[SDLExtensionsCount];
-	SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, SDLExtensions);
-
-	std::vector<const char*> requiredExtensions;
-	for (ui32 i = 0; i < SDLExtensionsCount; i++)
-	{
-		requiredExtensions.emplace_back(SDLExtensions[i]);
-	}
-	requiredExtensions.emplace_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-
-	VkInstanceCreateInfo instanceInfo{};
-	instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-	instanceInfo.pNext = nullptr;
-	instanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
-	instanceInfo.enabledExtensionCount = static_cast<ui32>(requiredExtensions.size());
-	if (VALIDATIONLAYERS)
-	{
-		instanceInfo.enabledLayerCount = static_cast<ui32>(validationLayers.size());
-		instanceInfo.ppEnabledLayerNames = validationLayers.data();
-	}
-	else
-	{
-		instanceInfo.enabledLayerCount = 0;
-	}
-	instanceInfo.pApplicationInfo = &appInfo;
-	instanceInfo.ppEnabledExtensionNames = requiredExtensions.data();
-	
-	if (vkCreateInstance(&instanceInfo, nullptr, &instance) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Cannot create Instance");
+		Init();
 	}
 
-		
-
-
-
-}
-
-bool vk::engine::Device::CheckValidationLayerSupport()
-{
-	uint32_t layerCount;
-	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-
-	std::vector<VkLayerProperties> availableLayers(layerCount);
-	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-	bool layerFound = false;
-	for (const char* layerName : validationLayers) 
+	Device::~Device()
 	{
-	for (const auto& layerProperties : availableLayers) {
-		if (strcmp(layerName, layerProperties.layerName) == 0) {
-			layerFound = true;
-			break;
+		if (VALIDATIONLAYERS) {
+			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+		}
+		vkDestroyInstance(instance, nullptr);
+	}
+
+	void vk::engine::Device::Init()
+	{
+		CreateInstance();
+	}
+
+	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		VkDebugUtilsMessageTypeFlagsEXT messageType,
+		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+		void* pUserData) {
+
+		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+
+		return VK_FALSE;
+	}
+	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+		if (func != nullptr) {
+			return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
+		}
+		else {
+			return VK_ERROR_EXTENSION_NOT_PRESENT;
+		}
+	}
+	void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+		if (func != nullptr) {
+			func(instance, debugMessenger, pAllocator);
 		}
 	}
 
-	if (!layerFound) {
-		return false;
+	void Device::CreateInstance()
+	{
+		if (VALIDATIONLAYERS && !CheckValidationLayerSupport())
+		{
+			throw std::runtime_error("Validation layers could not be initialized");
+		}
+		VkApplicationInfo appInfo{};
+		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		appInfo.pApplicationName = "RayTracer";
+		appInfo.pEngineName = "none";
+		appInfo.engineVersion = VK_API_VERSION_1_3;
+		appInfo.apiVersion = VK_API_VERSION_1_3;
+
+		std::vector<const char*> requiredExtensions = GetRequiredExtensions();
+		requiredExtensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+
+		VkInstanceCreateInfo instanceInfo{};
+		instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		instanceInfo.pNext = nullptr;
+		instanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+		instanceInfo.enabledExtensionCount = static_cast<ui32>(requiredExtensions.size());
+
+		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+		if (VALIDATIONLAYERS)
+		{
+			instanceInfo.enabledLayerCount = static_cast<ui32>(validationLayers.size());
+			instanceInfo.ppEnabledLayerNames = validationLayers.data();
+
+			PopulateDebugMessengerCreateInfo(debugCreateInfo);
+			instanceInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+		}
+		else
+		{
+			instanceInfo.enabledLayerCount = 0;
+			instanceInfo.pNext = nullptr;
+		}
+		instanceInfo.pApplicationInfo = &appInfo;
+		instanceInfo.ppEnabledExtensionNames = requiredExtensions.data();
+
+		if (vkCreateInstance(&instanceInfo, nullptr, &instance) != VK_SUCCESS)
+		{
+			throw std::runtime_error("Cannot create Instance");
+		}
+
+
+
+
+
 	}
-}
-	return true;
-}
+
+	void Device::PickPhysicalDevice()
+	{
+		ui32 deviceCount = 0;
+		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+		if (deviceCount == 0) {
+			throw std::runtime_error("failed to find GPUs with Vulkan support!");
+		}
+		std::vector<VkPhysicalDevice> devices(deviceCount);
+		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+		std::multimap<int, VkPhysicalDevice> candidates;
+
+		for (const auto& device : devices) {
+			int score = RateDeviceSuitability(device);
+			candidates.insert(std::make_pair(score, device));
+		}
+
+		// Check if the best candidate is suitable at all
+		if (candidates.rbegin()->first > 0) {
+			physicalDevice = candidates.rbegin()->second;
+		}
+		else {
+			throw std::runtime_error("failed to find a suitable GPU!");
+		}
+	}
+
+	bool Device::isDeviceSuitable(VkPhysicalDevice device)
+	{
+		QueueFamilyIndices indices = FindQueueFamilies(device);
+		return indices.isComplete();
+	}
+
+	i32 Device::RateDeviceSuitability(VkPhysicalDevice device)
+	{
+		VkPhysicalDeviceProperties deviceProperties;
+		VkPhysicalDeviceFeatures deviceFeatures;
+		vkGetPhysicalDeviceProperties(device, &deviceProperties);
+		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+		i32 score = 0;
+
+		// Discrete GPUs have a significant performance advantage
+		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+			score += 1000;
+		}
+
+		// Maximum possible size of textures affects graphics quality
+		score += deviceProperties.limits.maxImageDimension2D;
+
+		// Application can't function without geometry shaders
+		if (!deviceFeatures.geometryShader) {
+			return 0;
+		}
+
+		return score;
+	}
+
+	QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device)
+	{
+		QueueFamilyIndices indices;
+		
+		ui32 queueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+		i32 i = 0;
+		for (const auto& queueFamily : queueFamilies)
+		{
+			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+			{
+				indices.graphicsFamily = i;
+			}
+
+			i++;
+		}
+		return indices;
+	}
+
+	void Device::SetupDebugMessenger()
+	{
+		if (!VALIDATIONLAYERS)
+		{
+			return;
+		}
+		VkDebugUtilsMessengerCreateInfoEXT debugInfo;
+		PopulateDebugMessengerCreateInfo(debugInfo);
+
+		if (CreateDebugUtilsMessengerEXT(instance, &debugInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
+			throw std::runtime_error("failed to set up debug messenger!");
+		}
+
+	}
+
+	bool Device::CheckValidationLayerSupport()
+	{
+		uint32_t layerCount;
+		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+		std::vector<VkLayerProperties> availableLayers(layerCount);
+		vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+		bool layerFound = false;
+		for (const char* layerName : validationLayers)
+		{
+			for (const auto& layerProperties : availableLayers) {
+				if (strcmp(layerName, layerProperties.layerName) == 0) {
+					layerFound = true;
+					break;
+				}
+			}
+
+			if (!layerFound) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	void Device::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debugInfo)
+	{
+		debugInfo = {};
+		debugInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		debugInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		debugInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		debugInfo.pfnUserCallback = debugCallback;
+	}
+
+	std::vector<const char*> vk::engine::Device::GetRequiredExtensions()
+	{
+		ui32 SDLExtensionsCount = 0;
+		SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, NULL);
+		const char** SDLExtensions = new const char* [SDLExtensionsCount];
+		SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, SDLExtensions);
+
+		std::vector<const char*> extensions(SDLExtensions, SDLExtensions + SDLExtensionsCount);
+
+		if (VALIDATIONLAYERS) {
+			extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+		}
+
+		return extensions;
+	}
+} //namespace vk::engine
