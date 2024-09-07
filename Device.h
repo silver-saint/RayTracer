@@ -16,7 +16,7 @@ namespace vk::engine
 #endif
 		struct QueueFamilyIndices {
 			std::optional<uint32_t> graphicsFamily;
-			bool isComplete() { return graphicsFamily.has_value() };
+			bool isComplete() { return graphicsFamily.has_value(); };
 		};
 
 		class Device
@@ -28,10 +28,11 @@ namespace vk::engine
 			Device& operator=(const Device&) = delete;
 		private:
 			void Init();
-			//instance
+			// vulkan instance
 			void CreateInstance();
-			//device
+			//device layer
 			void PickPhysicalDevice();
+			void CreateLogicalDevice();
 			bool isDeviceSuitable(VkPhysicalDevice device);
 			i32 RateDeviceSuitability(VkPhysicalDevice device);
 			//queues
@@ -41,10 +42,16 @@ namespace vk::engine
 			bool CheckValidationLayerSupport();
 			void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 			std::vector<const char*> GetRequiredExtensions();
+			
+			//member variables
 			VkInstance instance;
+			Window& win;
+
 			VkDebugUtilsMessengerEXT debugMessenger;
 			VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-			Window& win;
+			VkQueue graphicsQueue;
+			VkDevice device;
+			
 			const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 		};
 }

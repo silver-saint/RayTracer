@@ -11,9 +11,11 @@ namespace vk::engine
 
 	Device::~Device()
 	{
+
 		if (VALIDATIONLAYERS) {
 			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 		}
+		vkDestroyDevice(device, nullptr);
 		vkDestroyInstance(instance, nullptr);
 	}
 
@@ -123,6 +125,41 @@ namespace vk::engine
 		}
 	}
 
+	void Device::CreateLogicalDevice()
+	{
+		QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
+
+		VkDeviceQueueCreateInfo queueInfo{};
+		queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueInfo.queueFamilyIndex = indices.graphicsFamily.value();
+		queueInfo.queueCount = 1;
+
+		float queuePriority = 1.0f;
+		queueInfo.pQueuePriorities = &queuePriority;
+
+		VkPhysicalDeviceFeatures deviceFeatures{};
+
+		VkDeviceCreateInfo deviceInfo{};
+		deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		deviceInfo.pQueueCreateInfos = &queueInfo;
+		deviceInfo.queueCreateInfoCount = 1;
+		deviceInfo.pEnabledFeatures = &deviceFeatures;
+		deviceInfo.enabledExtensionCount = 0;
+
+		if (VALIDATIONLAYERS) {
+			deviceInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			deviceInfo.ppEnabledLayerNames = validationLayers.data();
+		}
+		else 
+		{
+			deviceInfo.enabledLayerCount = 0;
+		}
+		if (vkCreateDevice(physicalDevice, &deviceInfo, nullptr, &device) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create logical device!");
+		}
+		vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+	}
+
 	bool Device::isDeviceSuitable(VkPhysicalDevice device)
 	{
 		QueueFamilyIndices indices = FindQueueFamilies(device);
@@ -169,6 +206,10 @@ namespace vk::engine
 			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
 				indices.graphicsFamily = i;
+			}
+			if (indices.isComplete())
+			{
+				break;
 			}
 
 			i++;
