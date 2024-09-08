@@ -8,7 +8,11 @@
 
 namespace vk::engine
 {
-
+	struct SwapChainSupportDetails {
+		VkSurfaceCapabilitiesKHR capabilities;
+		std::vector<VkSurfaceFormatKHR> formats;
+		std::vector<VkPresentModeKHR> presentModes;
+	};
 #ifdef NDEBUG
 		const bool VALIDATIONLAYERS = false;
 #else
@@ -34,9 +38,17 @@ namespace vk::engine
 			void PickPhysicalDevice();
 			void CreateLogicalDevice();
 			bool isDeviceSuitable(VkPhysicalDevice device);
+			bool CheckDeviceExtension(VkPhysicalDevice device);
 			i32 RateDeviceSuitability(VkPhysicalDevice device);
 			//queues
 			QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
+			//swapchain
+			SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
+			//surface
+			VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+			//extent;
+			VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
 			//validation layer functions;
 			void SetupDebugMessenger();
 			bool CheckValidationLayerSupport();
@@ -53,5 +65,8 @@ namespace vk::engine
 			VkDevice device;
 			
 			const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
+			const std::vector<const char*> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+
+			VkSurfaceKHR surface;
 		};
 }
