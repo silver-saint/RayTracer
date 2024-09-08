@@ -4,7 +4,7 @@
 
 #include "App.h"
 
-namespace engine::vk
+namespace vk::engine
 {
     App::App()
     {
@@ -18,7 +18,7 @@ namespace engine::vk
 
         while (window.IsOpen())
         {
-            glfwPollEvents();
+            window.PollEvents();
         }
         //vkDeviceWaitIdle(device.GetDevice());
     }
