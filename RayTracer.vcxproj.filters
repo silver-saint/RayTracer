@@ -21,9 +21,6 @@
     <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -38,13 +35,13 @@
     <ClInclude Include="types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WinInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

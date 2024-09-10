@@ -17,8 +17,9 @@ namespace vk::engine
 	{
 
 		if (VALIDATIONLAYERS) {
-			vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+		//	vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 		}
+		vkDestroySurfaceKHR(instance, surface, nullptr);
 		vkDestroyDevice(device, nullptr);
 		vkDestroyInstance(instance, nullptr);
 	}
@@ -26,6 +27,9 @@ namespace vk::engine
 	void vk::engine::Device::Init()
 	{
 		CreateInstance();
+		PickPhysicalDevice();
+		CreateLogicalDevice();
+
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -133,34 +137,44 @@ namespace vk::engine
 	{
 		QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
 
-		VkDeviceQueueCreateInfo queueInfo{};
-		queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueInfo.queueFamilyIndex = indices.graphicsFamily.value();
-		queueInfo.queueCount = 1;
-
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+		std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 		float queuePriority = 1.0f;
-		queueInfo.pQueuePriorities = &queuePriority;
+		for (uint32_t queueFamily : uniqueQueueFamilies) {
+			VkDeviceQueueCreateInfo queueCreateInfo{};
+			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex = queueFamily;
+			queueCreateInfo.queueCount = 1;
+			queueCreateInfo.pQueuePriorities = &queuePriority;
+			queueCreateInfos.push_back(queueCreateInfo);
+		}
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
-		VkDeviceCreateInfo deviceInfo{};
-		deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		deviceInfo.pQueueCreateInfos = &queueInfo;
-		deviceInfo.queueCreateInfoCount = 1;
-		deviceInfo.pEnabledFeatures = &deviceFeatures;
-		deviceInfo.enabledExtensionCount = static_cast<ui32>(deviceExtensions.size());
-		deviceInfo.ppEnabledExtensionNames = deviceExtensions.data();
+
+		VkDeviceCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+
+		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+		createInfo.pQueueCreateInfos = queueCreateInfos.data();
+
+		createInfo.pEnabledFeatures = &deviceFeatures;
+
+		createInfo.enabledExtensionCount = 0;
+
 		if (VALIDATIONLAYERS) {
-			deviceInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-			deviceInfo.ppEnabledLayerNames = validationLayers.data();
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames = validationLayers.data();
 		}
-		else 
-		{
-			deviceInfo.enabledLayerCount = 0;
+		else {
+			createInfo.enabledLayerCount = 0;
 		}
-		if (vkCreateDevice(physicalDevice, &deviceInfo, nullptr, &device) != VK_SUCCESS) {
+
+		if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create logical device!");
 		}
+
 		vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+		vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 	}
 
 	bool Device::isDeviceSuitable(VkPhysicalDevice device)
@@ -238,6 +252,7 @@ namespace vk::engine
 	QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device)
 	{
 		QueueFamilyIndices indices;
+
 		
 		ui32 queueFamilyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
@@ -248,6 +263,12 @@ namespace vk::engine
 		i32 i = 0;
 		for (const auto& queueFamily : queueFamilies)
 		{
+			VkBool32 presentSupport = false;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+			if (presentSupport)
+			{
+				indices.presentFamily = i;
+			}
 			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
 				indices.graphicsFamily = i;
@@ -269,6 +290,17 @@ namespace vk::engine
 		return details;
 	}
 
+	void Device::CreateSurface()
+	{
+		VkWin32SurfaceCreateInfoKHR createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+		createInfo.hwnd = win.GetHWND();
+		createInfo.hinstance = win.GetInstance();
+		if (vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create window surface!");
+		}
+	}
+	/*
 	VkSurfaceFormatKHR Device::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 	{
 		for (const auto& availableFormat : availableFormats) {
@@ -287,11 +319,10 @@ namespace vk::engine
 		}
 		else {
 			int width, height;
-			SDL_GL_GetDrawableSize(win.GetWindow(), &width, &height);
 
 			VkExtent2D actualExtent = {
-				static_cast<uint32_t>(width),
-				static_cast<uint32_t>(height)
+				static_cast<ui32>(width),
+				static_cast<ui32>(height)
 			};
 
 			actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
@@ -300,7 +331,7 @@ namespace vk::engine
 			return actualExtent;
 		}
 	}
-
+	*/
 	void Device::SetupDebugMessenger()
 	{
 		if (!VALIDATIONLAYERS)
@@ -351,17 +382,30 @@ namespace vk::engine
 
 	std::vector<const char*> vk::engine::Device::GetRequiredExtensions()
 	{
-		ui32 SDLExtensionsCount = 0;
-		SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, NULL);
-		const char** SDLExtensions = new const char* [SDLExtensionsCount];
-		SDL_Vulkan_GetInstanceExtensions(win.GetWindow(), &SDLExtensionsCount, SDLExtensions);
+		const std::vector<const char*> requiredExt = { "VK_KHR_surface", "VK_KHR_win32_surface"};
+		ui32 count = 0;
+		vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, nullptr);
+		std::vector<VkExtensionProperties> requiredExtensions(count);
+		vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, requiredExtensions.data());
 
-		std::vector<const char*> extensions(SDLExtensions, SDLExtensions + SDLExtensionsCount);
+		std::vector< const char*> currentExtensions;
 
-		if (VALIDATIONLAYERS) {
-			extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+		for (size_t extensions = 0; extensions < requiredExt.size(); extensions++)
+		{
+			for (size_t currExt = 0; currExt < requiredExtensions.size(); currExt++)
+			{
+				const std::string name = requiredExtensions[currExt].extensionName;
+				if (name == requiredExt[currExt])
+				{
+					currentExtensions.push_back(requiredExtensions[currExt].extensionName);
+				}
+			}
 		}
 
-		return extensions;
+		if (VALIDATIONLAYERS) {
+			currentExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+		}
+
+		return currentExtensions;
 	}
 } //namespace vk::engine

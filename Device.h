@@ -1,4 +1,5 @@
 #pragma once
+#define VK_USE_PLATFORM_WIN32_KHR
 #include "types.h"
 #include "Window.h"
 #include <optional>
@@ -20,7 +21,8 @@ namespace vk::engine
 #endif
 		struct QueueFamilyIndices {
 			std::optional<uint32_t> graphicsFamily;
-			bool isComplete() { return graphicsFamily.has_value(); };
+			std::optional<uint32_t> presentFamily;
+			bool isComplete() { return graphicsFamily.has_value() && presentFamily.has_value(); };
 		};
 
 		class Device
@@ -45,9 +47,10 @@ namespace vk::engine
 			//swapchain
 			SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
 			//surface
-			VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+			void CreateSurface();
+			//VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 			//extent;
-			VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+			//VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
 			//validation layer functions;
 			void SetupDebugMessenger();
@@ -63,10 +66,11 @@ namespace vk::engine
 			VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 			VkQueue graphicsQueue;
 			VkDevice device;
-			
+			VkQueue presentQueue;
 			const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 			const std::vector<const char*> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
 			VkSurfaceKHR surface;
+
 		};
 }

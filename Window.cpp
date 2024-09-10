@@ -2,8 +2,9 @@
 
 namespace vk::engine
 {
-		Window::Window(i32 w, i32 h, const std::string& name)
-			: width(w), height(h), windowName(name)
+		Window::Window(i32 w, i32 h, const std::wstring& name) noexcept
+		: width(w), height(h), windowName(name),
+			hInstance(GetModuleHandle(nullptr)) 
 		{
 
 			InitWindow();
@@ -11,32 +12,68 @@ namespace vk::engine
 
 		Window::~Window()
 		{
-			SDL_DestroyWindow(window);
-			SDL_Quit();
+			DestroyWindow(hwnd);
 		}
 		void Window::PollEvents()
 		{
-			SDL_Event e;
-			while (SDL_PollEvent(&e) != 0)
+			ProcessMessages();
+		}
+		bool Window::ProcessMessages()
+		{
+			MSG msg = {};
+			while (GetMessage(&msg, nullptr, 0,0) > 0)
 			{
-				switch (e.type)
-				{
-				case SDL_QUIT: isOpen = false;
-					break;
-				}
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
 			}
+			return msg.wParam;
+		}
+		LRESULT Window::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+		{
+			switch (msg)
+			{
+			case WM_CLOSE: 
+				if(MessageBox(hwnd, L"Do you really want to close?", L"RayTracer", MB_OKCANCEL) == IDOK)
+				{
+					PostQuitMessage(0);
+					return 0;
+				}
+				break;
+			default: return DefWindowProc(hwnd, msg, wParam, lParam);
+			}
+			return -1;
 		}
 		void Window::InitWindow()
 		{
-			if (SDL_Init(SDL_INIT_EVERYTHING) != NULL)
+			RECT windowRect = {};
+			windowRect.left = 100;
+			windowRect.bottom = 100;
+			windowRect.right = windowRect.left + width;
+			windowRect.top = windowRect.bottom + height;
+
+			WNDCLASSEX winClass;
+			winClass = {};
+			winClass.cbSize = sizeof(winClass);
+			winClass.lpszClassName = windowName.c_str();
+			winClass.lpfnWndProc = WinProc;
+			winClass.cbClsExtra = 0;
+			winClass.cbWndExtra = 0;
+			winClass.hIcon = nullptr;
+			winClass.hCursor = nullptr;
+			winClass.hbrBackground = nullptr;
+			winClass.lpszMenuName = nullptr;
+			winClass.hIconSm = nullptr;
+			winClass.style = CS_VREDRAW | CS_HREDRAW;
+			winClass.hInstance = hInstance;
+			RegisterClassEx(&winClass);
+			hwnd = CreateWindowEx(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW, 
+				   CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.top - windowRect.bottom, nullptr, nullptr, 
+				   hInstance, nullptr);
+			if (!hwnd)
 			{
-				throw std::runtime_error("Cannot init SDL");
+				MessageBox(hwnd, L"Couldn't init hwnd", L"Error!", MB_OK);
+				throw std::runtime_error("Hwnd initialization failure");
 			}
-			window = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_VULKAN);
-			if (!window)
-			{
-				throw std::runtime_error("Error, couldn't init SDL Window");
-			}
-			isOpen = true;
+			ShowWindow(hwnd, SW_SHOW);
 		}
 } //namespace vk::engine

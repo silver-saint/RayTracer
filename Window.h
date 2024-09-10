@@ -1,10 +1,8 @@
 #pragma once
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
 #include "types.h"
 #include <string>
 #include <stdexcept>
-
+#include "WinInstance.h"
 
 
 namespace vk::engine
@@ -14,19 +12,23 @@ namespace vk::engine
 		public:
 
 			Window() = delete;
-			Window(i32 w, i32 h, const std::string& name);
+			Window(i32 w, i32 h, const std::wstring& name) noexcept;
 			Window(const Window&) = delete;
 			Window& operator=(const Window&) = delete;
 			~Window();
 		[[nodiscard]] bool IsOpen() const { return isOpen; };
 			void PollEvents();
-		[[nodiscard]] SDL_Window* GetWindow() { return window; };
+		[[nodiscard]] HINSTANCE GetInstance() const { return hInstance; };
+		[[nodiscard]] HWND GetHWND() const { return hwnd; }
+		static LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		private:
 			void InitWindow();
-			const std::string windowName;
+			bool ProcessMessages();
+			HWND hwnd;
+			HINSTANCE hInstance;
+			const std::wstring windowName;
 			i32 width;
 			i32 height;
-			SDL_Window* window;
 			bool isOpen;
 			bool frameBufferResized = false;
 		};
