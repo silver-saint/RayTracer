@@ -7,34 +7,6 @@
 #include <algorithm> 
 namespace vk::engine
 {
-	Device::Device(Window& windowRef)
-		: win(windowRef)
-	{
-		Init();
-	}
-
-	Device::~Device()
-	{
-
-		if (VALIDATIONLAYERS) {
-		   //vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-		}
-		vkDestroyInstance(instance, nullptr);
-
-		vkDestroySurfaceKHR(instance, surface, nullptr);
-		vkDestroyDevice(device, nullptr);
-	}
-
-	void vk::engine::Device::Init()
-	{
-		CreateInstance();
-		SetupDebugMessenger();
-		CreateSurface();
-		PickPhysicalDevice();
-		CreateLogicalDevice();
-
-	}
-
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 		VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -59,6 +31,34 @@ namespace vk::engine
 		if (func != nullptr) {
 			func(instance, debugMessenger, pAllocator);
 		}
+	}
+
+	Device::Device(Window& windowRef)
+		: win(windowRef)
+	{
+		Init();
+	}
+
+	Device::~Device()
+	{
+
+		if (VALIDATIONLAYERS) {
+			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+		}
+		vkDestroySurfaceKHR(instance, surface, nullptr);
+		vkDestroyDevice(device, nullptr);
+		vkDestroyInstance(instance, nullptr);
+
+	}
+
+	void vk::engine::Device::Init()
+	{
+		CreateInstance();
+		SetupDebugMessenger();
+		CreateSurface();
+		PickPhysicalDevice();
+		CreateLogicalDevice();
+
 	}
 
 	void Device::CreateInstance()
