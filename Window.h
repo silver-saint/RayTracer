@@ -20,6 +20,7 @@ namespace vk::engine
 			void PollEvents();
 		[[nodiscard]] HINSTANCE GetInstance() const { return hInstance; };
 		[[nodiscard]] HWND GetHWND() const { return hwnd; }
+		[[nodiscard]] void GetFrameBufferSize(i32& width, i32& height);
 		static LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		private:
 			void InitWindow();

@@ -32,6 +32,17 @@ namespace vk::engine
 			~Device();
 			Device(const Device&) = delete;
 			Device& operator=(const Device&) = delete;
+			//swapchain
+			SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
+			//Getters
+			[[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice; }
+			[[nodiscard]] VkDevice GetDevice() const { return device; }
+			[[nodiscard]] VkSurfaceKHR GetSurface() const { return surface; }
+			VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+			VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+			VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+			//queues
+			QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 		private:
 			void Init();
 			// vulkan instance
@@ -42,16 +53,12 @@ namespace vk::engine
 			bool isDeviceSuitable(VkPhysicalDevice device);
 			bool CheckDeviceExtension(VkPhysicalDevice device);
 			i32 RateDeviceSuitability(VkPhysicalDevice device);
-			//queues
-			QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
-			//swapchain
-			SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
+
+		
+
 			//surface
 			void CreateSurface();
-			//VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-			//extent;
-			//VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-
+			
 			//validation layer functions;
 			void SetupDebugMessenger();
 			bool CheckValidationLayerSupport();

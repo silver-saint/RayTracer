@@ -3,6 +3,7 @@
 #include <vector>
 #include "Window.h"
 #include "Device.h"
+#include "SwapChain.h"
 namespace vk::engine
 {
 		class App
@@ -18,6 +19,7 @@ namespace vk::engine
 			static constexpr ui32 HEIGHT = 800;
 			Window window{ WIDTH, HEIGHT, L"RayTracer" };
 			Device device{ window };
+			SwapChain swapChain{ device };
 		};
 
 } //namespace vk::engine

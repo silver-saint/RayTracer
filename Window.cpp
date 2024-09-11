@@ -31,6 +31,13 @@ namespace vk::engine
 			}
 			return msg.wParam;
 		}
+		void Window::GetFrameBufferSize(i32& width, i32& height)
+		{
+			RECT rect;
+			GetClientRect(hwnd, &rect);
+			width = rect.right - rect.left;
+			height = rect.top - rect.bottom;
+		}
 		LRESULT Window::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			switch (msg)

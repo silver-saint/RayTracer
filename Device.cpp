@@ -7,7 +7,7 @@
 #include <algorithm> 
 namespace vk::engine
 {
-	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+	static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 		VkDebugUtilsMessageTypeFlagsEXT messageType,
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -255,6 +255,14 @@ namespace vk::engine
 	QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device)
 	{
 		QueueFamilyIndices indices;
+		
+		bool extensionsSupported = CheckDeviceExtension(device);
+
+		bool swapChainAdequate = false;
+		if (extensionsSupported) {
+			SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device);
+			swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+		}
 
 		
 		ui32 queueFamilyCount = 0;
@@ -289,6 +297,23 @@ namespace vk::engine
 	SwapChainSupportDetails Device::QuerySwapChainSupport(VkPhysicalDevice device)
 	{
 		SwapChainSupportDetails details;
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+
+		uint32_t formatCount;
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
+
+		if (formatCount != 0) {
+			details.formats.resize(formatCount);
+			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
+		}
+
+		uint32_t presentModeCount;
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
+
+		if (presentModeCount != 0) {
+			details.presentModes.resize(presentModeCount);
+			vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
+		}
 
 		return details;
 	}
@@ -303,7 +328,6 @@ namespace vk::engine
 			throw std::runtime_error("failed to create window surface!");
 		}
 	}
-	/*
 	VkSurfaceFormatKHR Device::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 	{
 		for (const auto& availableFormat : availableFormats) {
@@ -321,8 +345,8 @@ namespace vk::engine
 			return capabilities.currentExtent;
 		}
 		else {
-			int width, height;
-
+			i32 width, height;
+			win.GetFrameBufferSize(width, height);
 			VkExtent2D actualExtent = {
 				static_cast<ui32>(width),
 				static_cast<ui32>(height)
@@ -334,7 +358,18 @@ namespace vk::engine
 			return actualExtent;
 		}
 	}
-	*/
+
+	VkPresentModeKHR Device::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
+	{
+		for (const auto& availablePresentMode : availablePresentModes) {
+			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+				return availablePresentMode;
+			}
+		}
+
+		return VK_PRESENT_MODE_FIFO_KHR;
+	}
+	
 	void Device::SetupDebugMessenger()
 	{
 		if (!VALIDATIONLAYERS)
@@ -380,7 +415,7 @@ namespace vk::engine
 		debugInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 		debugInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
 		debugInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-		debugInfo.pfnUserCallback = debugCallback;
+		debugInfo.pfnUserCallback = DebugCallback;
 	}
 
 	std::vector<const char*> vk::engine::Device::GetRequiredExtensions()
