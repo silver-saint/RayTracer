@@ -17,16 +17,19 @@ namespace vk::engine
 	{
 
 		if (VALIDATIONLAYERS) {
-		//	vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+		   //vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 		}
+		vkDestroyInstance(instance, nullptr);
+
 		vkDestroySurfaceKHR(instance, surface, nullptr);
 		vkDestroyDevice(device, nullptr);
-		vkDestroyInstance(instance, nullptr);
 	}
 
 	void vk::engine::Device::Init()
 	{
 		CreateInstance();
+		SetupDebugMessenger();
+		CreateSurface();
 		PickPhysicalDevice();
 		CreateLogicalDevice();
 
@@ -382,22 +385,20 @@ namespace vk::engine
 
 	std::vector<const char*> vk::engine::Device::GetRequiredExtensions()
 	{
-		const std::vector<const char*> requiredExt = { "VK_KHR_surface", "VK_KHR_win32_surface"};
+		const std::vector<const char*> requiredExt = { "VK_KHR_surface", "VK_KHR_win32_surface" }; 
 		ui32 count = 0;
-		vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, nullptr);
-		std::vector<VkExtensionProperties> requiredExtensions(count);
-		vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, requiredExtensions.data());
-
-		std::vector< const char*> currentExtensions;
-
-		for (size_t extensions = 0; extensions < requiredExt.size(); extensions++)
+		std::vector<const char*> currentExtensions;
+		vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr);
+		std::vector<VkExtensionProperties> extensionProperties(count);
+		vkEnumerateInstanceExtensionProperties(nullptr, &count, extensionProperties.data());
+		
+		for (const char* required : requiredExt)
 		{
-			for (size_t currExt = 0; currExt < requiredExtensions.size(); currExt++)
+			for (const auto& instanceProperty : extensionProperties)
 			{
-				const std::string name = requiredExtensions[currExt].extensionName;
-				if (name == requiredExt[currExt])
+				if (strcmp(required, instanceProperty.extensionName) == 0)
 				{
-					currentExtensions.push_back(requiredExtensions[currExt].extensionName);
+					currentExtensions.push_back(required);
 				}
 			}
 		}
@@ -405,7 +406,7 @@ namespace vk::engine
 		if (VALIDATIONLAYERS) {
 			currentExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 		}
-
+		
 		return currentExtensions;
 	}
 } //namespace vk::engine

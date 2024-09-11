@@ -2,12 +2,11 @@
 
 namespace vk::engine
 {
-		App::App()
-		{
-			run();
-		}
-
-		App::~App() {}
+	App::App()
+	{
+		run();
+	}
+	App::~App() {}
 
 		void App::run()
 		{

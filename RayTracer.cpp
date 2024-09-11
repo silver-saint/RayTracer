@@ -2,8 +2,6 @@
 
 int main(int argc, char** argv) {
 
-    vk::engine::App app;
-    app.run();
-    
+    vk::engine::App app;    
     return EXIT_SUCCESS;
  }

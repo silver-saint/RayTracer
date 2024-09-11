@@ -16,7 +16,10 @@ namespace vk::engine
 		}
 		void Window::PollEvents()
 		{
-			ProcessMessages();
+			if (ProcessMessages() == 0)
+			{
+				isOpen = false;
+			}
 		}
 		bool Window::ProcessMessages()
 		{
@@ -74,6 +77,7 @@ namespace vk::engine
 				MessageBox(hwnd, L"Couldn't init hwnd", L"Error!", MB_OK);
 				throw std::runtime_error("Hwnd initialization failure");
 			}
+			isOpen = true;
 			ShowWindow(hwnd, SW_SHOW);
 		}
 } //namespace vk::engine

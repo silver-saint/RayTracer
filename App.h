@@ -12,8 +12,8 @@ namespace vk::engine
 			~App();
 			App& operator=(const App&) = delete;
 			App(const App&) = delete;
-			void run();
 		private:
+			void run();
 			static constexpr ui32 WIDTH = 800;
 			static constexpr ui32 HEIGHT = 800;
 			Window window{ WIDTH, HEIGHT, L"RayTracer" };
