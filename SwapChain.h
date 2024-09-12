@@ -17,7 +17,12 @@ namespace vk::engine
 		void Init();
 		//SwapChain
 		void CreateSwapChain();
+		void CreateImageViews();
 		Device& device;
 		VkSwapchainKHR swapChain;
+		std::vector<VkImage> swapChainImages;
+		std::vector<VkImageView> swapChainImageViews;
+		VkFormat swapChainImageFormat;
+		VkExtent2D swapChainExtent;
 	};
 }

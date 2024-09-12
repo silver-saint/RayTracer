@@ -10,6 +10,9 @@ namespace vk::engine
 
 	SwapChain::~SwapChain()
 	{
+		for (auto imageView : swapChainImageViews) {
+			vkDestroyImageView(device.GetDevice(), imageView, nullptr);
+		}
 		vkDestroySwapchainKHR(device.GetDevice(), swapChain, nullptr);
 	}
 
@@ -67,13 +70,39 @@ namespace vk::engine
 		if (vkCreateSwapchainKHR(device.GetDevice(), &swapChainInfo, nullptr, &swapChain) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create swap chain!");
 		}
-		/*
+		
 		vkGetSwapchainImagesKHR(device.GetDevice(), swapChain, &imageCount, nullptr);
 		swapChainImages.resize(imageCount);
 		vkGetSwapchainImagesKHR(device.GetDevice(), swapChain, &imageCount, swapChainImages.data());
 
 		swapChainImageFormat = surfaceFormat.format;
 		swapChainExtent = extent;
-		*/
+		
+	}
+	void SwapChain::CreateImageViews()
+	{
+		swapChainImageViews.resize(swapChainImages.size());
+		for (size_t i = 0; i < swapChainImages.size(); i++) {
+			VkImageViewCreateInfo imageViewInfo = {};
+			imageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			imageViewInfo.pNext = nullptr;
+			imageViewInfo.flags = 0;
+			imageViewInfo.image = swapChainImages[i];
+			imageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			imageViewInfo.format = swapChainImageFormat;
+			imageViewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+			imageViewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+			imageViewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+			imageViewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+			imageViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			imageViewInfo.subresourceRange.baseMipLevel = 0;
+			imageViewInfo.subresourceRange.levelCount = 1;
+			imageViewInfo.subresourceRange.baseArrayLayer = 0;
+			imageViewInfo.subresourceRange.layerCount = 1;
+			if (vkCreateImageView(device.GetDevice(), &imageViewInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
+				throw std::runtime_error("failed to create image views!");
+			}
+		}
+		
 	}
 }

@@ -12,7 +12,7 @@ namespace vk::engine
 		VkDebugUtilsMessageTypeFlagsEXT messageType,
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 		void* pUserData) {
-
+		//OutputDebugString(reinterpret_cast<LPCWSTR>(pCallbackData->pMessage) + '\n');
 		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
 		return VK_FALSE;
@@ -154,25 +154,23 @@ namespace vk::engine
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
 
-		VkDeviceCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-
-		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-		createInfo.pQueueCreateInfos = queueCreateInfos.data();
-
-		createInfo.pEnabledFeatures = &deviceFeatures;
-
-		createInfo.enabledExtensionCount = 0;
+		VkDeviceCreateInfo deviceInfo = {};
+		deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		deviceInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+		deviceInfo.pQueueCreateInfos = queueCreateInfos.data();
+		deviceInfo.pEnabledFeatures = &deviceFeatures;
+		deviceInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+		deviceInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
 		if (VALIDATIONLAYERS) {
-			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-			createInfo.ppEnabledLayerNames = validationLayers.data();
+			deviceInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			deviceInfo.ppEnabledLayerNames = validationLayers.data();
 		}
 		else {
-			createInfo.enabledLayerCount = 0;
+			deviceInfo.enabledLayerCount = 0;
 		}
 
-		if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+		if (vkCreateDevice(physicalDevice, &deviceInfo, nullptr, &device) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create logical device!");
 		}
 

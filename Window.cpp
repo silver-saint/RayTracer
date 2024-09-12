@@ -36,7 +36,7 @@ namespace vk::engine
 			RECT rect;
 			GetClientRect(hwnd, &rect);
 			width = rect.right - rect.left;
-			height = rect.top - rect.bottom;
+			height = rect.bottom - rect.top;
 		}
 		LRESULT Window::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
