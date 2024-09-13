@@ -42,9 +42,11 @@ namespace vk::engine
 	Device::~Device()
 	{
 
-		if (VALIDATIONLAYERS) {
+		if (VALIDATIONLAYERS) 
+		{
 			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 		}
+		vkDestroyCommandPool(device, commandPool, nullptr);
 		vkDestroySurfaceKHR(instance, surface, nullptr);
 		vkDestroyDevice(device, nullptr);
 		vkDestroyInstance(instance, nullptr);
@@ -248,6 +250,19 @@ namespace vk::engine
 		}
 
 		return score;
+	}
+
+	void Device::CreateCommandPool()
+	{
+		QueueFamilyIndices queueFamilyIndices = FindQueueFamilies(physicalDevice);
+
+		VkCommandPoolCreateInfo poolInfo = {};
+		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+		if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create command pool!");
+		}
 	}
 
 	QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device)

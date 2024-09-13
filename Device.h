@@ -53,7 +53,8 @@ namespace vk::engine
 			bool isDeviceSuitable(VkPhysicalDevice device);
 			bool CheckDeviceExtension(VkPhysicalDevice device);
 			i32 RateDeviceSuitability(VkPhysicalDevice device);
-
+			//command pool
+			void CreateCommandPool();
 		
 
 			//surface
@@ -78,6 +79,6 @@ namespace vk::engine
 			const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 			VkSurfaceKHR surface;
-
+			VkCommandPool commandPool;
 		};
 }

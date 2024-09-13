@@ -3,7 +3,6 @@
 #include "types.h"
 #include <vector>
 #include "Device.h"
-#include "SwapChain.h"
 namespace vk::engine
 {
 	struct PipelineConfigInfo
@@ -11,7 +10,6 @@ namespace vk::engine
 		PipelineConfigInfo() = default;
 		PipelineConfigInfo(const PipelineConfigInfo&) = delete;
 		PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
-		VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
@@ -21,24 +19,24 @@ namespace vk::engine
 		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
 		std::vector<VkDynamicState> dynamicState;
 		VkPipelineDynamicStateCreateInfo dynamicStateInfo;
-		VkPipelineLayout pipelineLayout = nullptr;
 		VkRenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
-
 	};
 	class Pipeline
 	{
 	public:
 
-		Pipeline(Device& deviceRef);
+		Pipeline(Device& deviceRef,const std::string& vertFP, const std::string& fragFP, const PipelineConfigInfo& pipelineConfig);
 		~Pipeline();
 	private:
-		void Init();
-		void CreateGraphicsPipeline();
+		void CreateGraphicsPipeline(const std::string& vertFP, const std::string& fragFP, const PipelineConfigInfo& pipelineConfig);
 		VkShaderModule CreateShaderModule(const std::vector<char>& code);
+		void SetPipelineConfig(PipelineConfigInfo& pipeline);
 		Device& device;
 		VkPipeline graphicsPipeline;
 		VkShaderModule vertShaderModule;
 		VkShaderModule fragShaderModule;
+		VkPipelineLayout pipelineLayout;
+
 	};
 }

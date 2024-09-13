@@ -1,6 +1,6 @@
 #pragma once
 #include "Device.h"
-
+#include <vulkan/vulkan.h>
 namespace vk::engine
 {
 	class SwapChain
@@ -24,11 +24,15 @@ namespace vk::engine
 		//SwapChain
 		void CreateSwapChain();
 		void CreateImageViews();
+		void CreateRenderPass();
+		void CreateFrameBuffers();
 		Device& device;
 		VkSwapchainKHR swapChain;
 		std::vector<VkImage> swapChainImages;
 		std::vector<VkImageView> swapChainImageViews;
+		std::vector<VkFramebuffer> swapChainFramebuffers;
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
+		VkRenderPass renderPass;
 	};
 }
