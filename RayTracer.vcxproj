@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp" />
+    <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="SwapChain.cpp" />
@@ -152,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="Device.h" />
     <ClInclude Include="App.h" />
+    <ClInclude Include="Pipeline.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="Window.h" />

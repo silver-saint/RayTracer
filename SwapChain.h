@@ -11,7 +11,13 @@ namespace vk::engine
 		~SwapChain();
 		SwapChain(const SwapChain&) = delete;
 		SwapChain& operator=(const SwapChain&) = delete;
-
+		[[nodiscard]] ui32 GetWidth() const { return swapChainExtent.width; }
+		[[nodiscard]] ui32 GetHeight() const { return swapChainExtent.height; }
+		[[nodiscard]] VkExtent2D GetSwapChainExtent() const { return swapChainExtent; }
+		[[nodiscard]] VkFormat GetSwapChainImageFormat() const { return swapChainImageFormat; }
+		[[nodiscard]] f32 GetExtentAspectRatio() const {
+			return static_cast<f32>(swapChainExtent.width) / static_cast<f32>(swapChainExtent.height);
+		}
 	private:
 		//init
 		void Init();
