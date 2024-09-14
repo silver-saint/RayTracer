@@ -6,6 +6,9 @@ namespace vk::engine
 	class SwapChain
 	{
 	public:
+		static constexpr i32 MAX_FRAMES_IN_FLIGHT = 2;
+
+
 		SwapChain() = delete;
 		SwapChain(Device& deviceRef);
 		~SwapChain();
@@ -17,7 +20,9 @@ namespace vk::engine
 		[[nodiscard]] VkFormat GetSwapChainImageFormat() const { return swapChainImageFormat; }
 		[[nodiscard]] f32 GetExtentAspectRatio() const { return static_cast<f32>(swapChainExtent.width) / static_cast<f32>(swapChainExtent.height); }
 		[[nodiscard]] VkRenderPass GetRenderPass() const { return renderPass; }
-		[[nodiscard]] VkFramebuffer GetCurrentFrameBuffer(size_t idx) { return swapChainFramebuffers[idx]; }
+		[[nodiscard]] VkFramebuffer GetCurrentFrameBuffer(size_t idx) const { return swapChainFramebuffers[idx]; }
+		VkResult AcquireNextImage(ui32* imageIndex);
+		VkResult SubmitToCommandBuffer(const VkCommandBuffer* buffers, ui32* imgIdx);
 	private:
 		//init
 		void Init();
@@ -26,6 +31,7 @@ namespace vk::engine
 		void CreateImageViews();
 		void CreateRenderPass();
 		void CreateFrameBuffers();
+		void CreateSyncObjects();
 		Device& device;
 		VkSwapchainKHR swapChain;
 		std::vector<VkImage> swapChainImages;
@@ -34,5 +40,11 @@ namespace vk::engine
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
 		VkRenderPass renderPass;
+
+
+		VkSemaphore imageAvailableSemaphore;
+		VkSemaphore renderFinishedSemaphore;
+		VkFence inFlightFence;
+		size_t currentFrame = 0;
 	};
 }

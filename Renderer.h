@@ -13,6 +13,7 @@ namespace vk::engine
 	private:
 		void Init();
 		void CreateCommandBuffer();
+		void DrawFrame();
 		void BeginRenderPass(VkCommandBuffer buffer, ui32 imgIdx);
 		void EndRenderPass(VkCommandBuffer buffer);
 		VkCommandBuffer commandBuffer;

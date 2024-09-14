@@ -9,8 +9,6 @@ vk::engine::Renderer::Renderer(Window& window, Device& deviceRef)
 void vk::engine::Renderer::Init()
 {
 	CreateCommandBuffer();
-	BeginRenderPass(commandBuffer, imageIdx);
-	EndRenderPass(commandBuffer);
 
 }
 
@@ -25,6 +23,15 @@ void vk::engine::Renderer::CreateCommandBuffer()
 	if (vkAllocateCommandBuffers(device.GetDevice(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate command buffers!");
 	}
+}
+
+void vk::engine::Renderer::DrawFrame()
+{
+	swapChain->AcquireNextImage(&imageIdx);
+	vkResetCommandBuffer(commandBuffer, 0);
+	BeginRenderPass(commandBuffer, imageIdx);
+	swapChain->SubmitToCommandBuffer(&commandBuffer, &imageIdx);
+	
 }
 
 void vk::engine::Renderer::BeginRenderPass(VkCommandBuffer buffer, ui32 imgIdx)

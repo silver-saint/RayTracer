@@ -3,8 +3,6 @@
 #include <vector>
 #include "Window.h"
 #include "Device.h"
-#include "SwapChain.h"
-#include "Pipeline.h"
 #include "Renderer.h"
 namespace vk::engine
 {
@@ -19,9 +17,9 @@ namespace vk::engine
 			void run();
 			static constexpr ui32 WIDTH = 800;
 			static constexpr ui32 HEIGHT = 800;
-			Window window{ WIDTH, HEIGHT, L"RayTracer" };
-			Device device{ window };
-			SwapChain swapChain{ device };
+			Window window = { WIDTH, HEIGHT, L"RayTracer" };
+			Device device = { window };
+			Renderer renderer = { window, device };
 		};
 
 } //namespace vk::engine

@@ -26,6 +26,7 @@ namespace vk::engine
 	{
 	public:
 
+
 		Pipeline(Device& deviceRef,const std::string& vertFP, const std::string& fragFP, const PipelineConfigInfo& pipelineConfig);
 		~Pipeline();
 		void bindCommandBuffer(VkCommandBuffer buffer);

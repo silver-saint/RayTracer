@@ -39,6 +39,8 @@ namespace vk::engine
 			[[nodiscard]] VkDevice GetDevice() const { return device; }
 			[[nodiscard]] VkSurfaceKHR GetSurface() const { return surface; }
 			[[nodiscard]] VkCommandPool GetCommandPool() const { return commandPool; }
+			[[nodiscard]] VkQueue GetGraphicsQueue() const { return graphicsQueue; }
+			[[nodiscard]] VkQueue GetPresentQueue() const { return presentQueue; }
 			VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 			VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 			VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
