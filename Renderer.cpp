@@ -9,6 +9,8 @@ vk::engine::Renderer::Renderer(Window& window, Device& deviceRef)
 void vk::engine::Renderer::Init()
 {
 	CreateCommandBuffer();
+	BeginRenderPass(commandBuffer, imageIdx);
+	EndRenderPass(commandBuffer);
 
 }
 

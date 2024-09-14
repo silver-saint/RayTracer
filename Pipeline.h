@@ -28,6 +28,7 @@ namespace vk::engine
 
 		Pipeline(Device& deviceRef,const std::string& vertFP, const std::string& fragFP, const PipelineConfigInfo& pipelineConfig);
 		~Pipeline();
+		void bindCommandBuffer(VkCommandBuffer buffer);
 	private:
 		void CreateGraphicsPipeline(const std::string& vertFP, const std::string& fragFP, const PipelineConfigInfo& pipelineConfig);
 		VkShaderModule CreateShaderModule(const std::vector<char>& code);

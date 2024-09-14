@@ -147,6 +147,7 @@
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -154,6 +155,7 @@
     <ClInclude Include="Device.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="Pipeline.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="Window.h" />
