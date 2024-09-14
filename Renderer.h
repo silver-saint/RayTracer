@@ -3,6 +3,7 @@
 #include "SwapChain.h"
 #include "Window.h"
 #include "Pipeline.h"
+#include <vector>
 #include <memory>
 namespace vk::engine
 {
@@ -22,6 +23,7 @@ namespace vk::engine
 		std::unique_ptr<Pipeline> pipeline;
 		std::unique_ptr<SwapChain> swapChain;
 		ui32 imageIdx = { 0 };
+		bool isFrameStarted = false;
 	};
 
 }

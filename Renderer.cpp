@@ -31,7 +31,7 @@ void vk::engine::Renderer::DrawFrame()
 	vkResetCommandBuffer(commandBuffer, 0);
 	BeginRenderPass(commandBuffer, imageIdx);
 	swapChain->SubmitToCommandBuffer(&commandBuffer, &imageIdx);
-	
+	EndRenderPass(commandBuffer);
 }
 
 void vk::engine::Renderer::BeginRenderPass(VkCommandBuffer buffer, ui32 imgIdx)

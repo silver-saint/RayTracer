@@ -60,7 +60,7 @@ namespace vk::engine
 		CreateSurface();
 		PickPhysicalDevice();
 		CreateLogicalDevice();
-
+		CreateCommandPool();
 	}
 
 	void Device::CreateInstance()
