@@ -4,6 +4,8 @@
 #include "Window.h"
 #include "Device.h"
 #include "SwapChain.h"
+#include "Pipeline.h"
+#include "Renderer.h"
 namespace vk::engine
 {
 		class App

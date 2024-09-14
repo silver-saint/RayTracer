@@ -15,9 +15,8 @@ namespace vk::engine
 		[[nodiscard]] ui32 GetHeight() const { return swapChainExtent.height; }
 		[[nodiscard]] VkExtent2D GetSwapChainExtent() const { return swapChainExtent; }
 		[[nodiscard]] VkFormat GetSwapChainImageFormat() const { return swapChainImageFormat; }
-		[[nodiscard]] f32 GetExtentAspectRatio() const {
-			return static_cast<f32>(swapChainExtent.width) / static_cast<f32>(swapChainExtent.height);
-		}
+		[[nodiscard]] f32 GetExtentAspectRatio() const { return static_cast<f32>(swapChainExtent.width) / static_cast<f32>(swapChainExtent.height); }
+		[[nodiscard]] VkRenderPass GetRenderPass() const { return renderPass; }
 	private:
 		//init
 		void Init();

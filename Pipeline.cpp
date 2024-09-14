@@ -19,6 +19,11 @@ namespace vk::engine
         
     }
 
+    void Pipeline::bindCommandBuffer(VkCommandBuffer buffer)
+    {
+        vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+    }
+
     static std::vector<char> readFile(const std::string& filename)
     {
         std::ifstream file(filename, std::ios::ate | std::ios::binary);
