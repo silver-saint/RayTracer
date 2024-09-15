@@ -112,14 +112,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.283.0\Include;$(ProjectDir)stb;C:\VulkanSDK\1.3.290.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.3.283.0\Lib;C:\VulkanSDK\1.3.290.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,23 +143,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="vk\App.cpp" />
-    <ClCompile Include="vk\Device.cpp" />
-    <ClCompile Include="vk\Pipeline.cpp" />
-    <ClCompile Include="vk\RayTracer.cpp" />
-    <ClCompile Include="vk\Renderer.cpp" />
-    <ClCompile Include="vk\SwapChain.cpp" />
-    <ClCompile Include="vk\Window.cpp" />
+    <ClCompile Include="dx\App.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dx\App.h" />
+    <ClInclude Include="dx\Window.h" />
     <ClInclude Include="platform\WinInstance.h" />
-    <ClInclude Include="vk\App.h" />
-    <ClInclude Include="vk\Device.h" />
-    <ClInclude Include="vk\Pipeline.h" />
-    <ClInclude Include="vk\Renderer.h" />
-    <ClInclude Include="vk\SwapChain.h" />
-    <ClInclude Include="vk\types.h" />
-    <ClInclude Include="vk\Window.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RayTracer.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="WinIcons\icon_large.jpg" />
+    <Image Include="WinIcons\icon_small.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
