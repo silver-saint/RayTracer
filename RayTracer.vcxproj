@@ -144,22 +144,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dx\App.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dx\App.h" />
     <ClInclude Include="dx\Window.h" />
+    <ClInclude Include="stl.h" />
+    <ClInclude Include="Keyboard.h" />
     <ClInclude Include="platform\WinInstance.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="RayTracer.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="WinIcons\icon_large.jpg" />
-    <Image Include="WinIcons\icon_small.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

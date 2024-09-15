@@ -1,6 +1,5 @@
 #include "dx/Window.h"
-#include "resource.h"
-#include "resource1.h"
+
 namespace dx::engine
 {
 	Window::Window(i32 w, i32 h, const std::wstring& name) noexcept
@@ -62,11 +61,11 @@ namespace dx::engine
 		winClass.lpfnWndProc = WinProc;
 		winClass.cbClsExtra = 0;
 		winClass.cbWndExtra = 0;
-		winClass.hIcon = static_cast<HICON>(LoadImage(hInstance, MAKEINTRESOURCE(IDR_ICON_LARGE1), IMAGE_ICON, 32, 32, 0));
+		winClass.hIcon = nullptr;
 		winClass.hCursor = nullptr;
 		winClass.hbrBackground = nullptr;
 		winClass.lpszMenuName = nullptr;
-		winClass.hIconSm = static_cast<HICON>(LoadImage(hInstance, MAKEINTRESOURCE(IDR_ICON_SM1), IMAGE_ICON, 16,16,0));
+		winClass.hIconSm = nullptr;
 		winClass.style = CS_VREDRAW | CS_HREDRAW;
 		winClass.hInstance = hInstance;
 		RegisterClassEx(&winClass);

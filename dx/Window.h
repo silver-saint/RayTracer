@@ -2,7 +2,6 @@
 #include <string>
 #include <stdexcept>
 #include "../platform/WinInstance.h"
-#include "../types.h"
 
 
 namespace dx::engine
