@@ -2,8 +2,7 @@
 #include "types.h"
 #include <string>
 #include <stdexcept>
-#include "WinInstance.h"
-
+#include "../platform/WinInstance.h"
 
 namespace vk::engine
 {

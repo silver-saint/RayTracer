@@ -9,7 +9,7 @@ vk::engine::Renderer::Renderer(Window& window, Device& deviceRef)
 void vk::engine::Renderer::Init()
 {
 	CreateCommandBuffer();
-
+	DrawFrame();
 }
 
 void vk::engine::Renderer::CreateCommandBuffer()

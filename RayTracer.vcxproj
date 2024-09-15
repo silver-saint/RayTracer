@@ -143,23 +143,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Device.cpp" />
-    <ClCompile Include="Pipeline.cpp" />
-    <ClCompile Include="RayTracer.cpp" />
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="SwapChain.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="vk\App.cpp" />
+    <ClCompile Include="vk\Device.cpp" />
+    <ClCompile Include="vk\Pipeline.cpp" />
+    <ClCompile Include="vk\RayTracer.cpp" />
+    <ClCompile Include="vk\Renderer.cpp" />
+    <ClCompile Include="vk\SwapChain.cpp" />
+    <ClCompile Include="vk\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Device.h" />
-    <ClInclude Include="App.h" />
-    <ClInclude Include="Pipeline.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="SwapChain.h" />
-    <ClInclude Include="types.h" />
-    <ClInclude Include="Window.h" />
-    <ClInclude Include="WinInstance.h" />
+    <ClInclude Include="platform\WinInstance.h" />
+    <ClInclude Include="vk\App.h" />
+    <ClInclude Include="vk\Device.h" />
+    <ClInclude Include="vk\Pipeline.h" />
+    <ClInclude Include="vk\Renderer.h" />
+    <ClInclude Include="vk\SwapChain.h" />
+    <ClInclude Include="vk\types.h" />
+    <ClInclude Include="vk\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
