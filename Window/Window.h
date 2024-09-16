@@ -2,7 +2,7 @@
 #include <string>
 #include <stdexcept>
 #include "../platform/WinInstance.h"
-
+#include "../Keyboard/Keyboard.h"
 
 namespace dx::engine
 {

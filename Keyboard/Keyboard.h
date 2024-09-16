@@ -1,5 +1,5 @@
 #pragma once
-#include "Window/Window.h"
+#include "../Window/Window.h"
 #include <queue>
 #include <bitset>
 
@@ -26,7 +26,6 @@ namespace dx::engine
 	};
 	class Keyboard
 	{
-		friend Window;
 		friend Event;
 
 	public:
@@ -54,7 +53,7 @@ namespace dx::engine
 		template<typename T>
 		static void TrimBuffer(std::queue<T>& buffer) noexcept;
 		static constexpr ui32 keys = 256u;
-		static constexpr ui32 buffer = 16u;
+		static constexpr ui32 bufferSize = 16u;
 		std::bitset<keys> keyStates;
 		std::queue<Event> keyBuffer;
 		std::queue<char> charBuffer;
