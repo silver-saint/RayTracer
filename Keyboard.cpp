@@ -5,12 +5,12 @@ namespace dx::engine
 	Event::Event() noexcept
 		: type{ Type::Invalid }, code{ 0 } {}
 
-	Event::Event(Type type, ui8 code)
+	Event::Event(Type type, ui8 code) noexcept
 		: type{ type }, code{ code } {}
 
 	bool Keyboard::CharIsEmpty() noexcept
 	{
-		return charBuffer.isEmpty();
+		return charBuffer.empty();
 	}
 
 	Event Keyboard::ReadKey() noexcept
@@ -18,7 +18,7 @@ namespace dx::engine
 		if (keyBuffer.size() > 0)
 		{
 			Event e = keyBuffer.front();
-			keyBuffer.Dequeue();
+			keyBuffer.pop();
 			return e;
 		}
 		else

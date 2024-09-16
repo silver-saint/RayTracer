@@ -3,12 +3,89 @@
 #include <../types.h>
 namespace stl
 {
+
+	template<typename T>
+	struct Node
+	{
+		T data;
+		Node<T>* next;
+	};
+
+	template<typename T>
+	class LinkedList
+	{
+	public:
+		LinkedList() = default;
+		LinkedList(T el);
+		LinkedList(const LinkedList&) = delete;
+		LinkedList& operator=(const LinkedList&) = delete;
+		Node<T>* Add(T el);
+		T front() const;
+		T back() const;
+		void PrintLinkedList();
+	private:
+		Node<T>* frontPtr;
+		Node<T>* backPtr;
+	};
+	template<typename T>
+	inline LinkedList<T>::LinkedList(T el)
+		: frontPtr {new Node<T>(el, nullptr)}, backPtr {frontPtr} {}
+
+	template<typename T>
+	inline Node<T>* LinkedList<T>::Add(T el)
+	{
+		Node<T>* temp = new Node<T>(el);
+		while (backPtr->next != nullptr)
+		{
+			backPtr = backPtr->next;
+		}
+		backPtr->next = temp;
+		backPtr = temp;
+
+		return backPtr;
+	}
+
+	template<typename T>
+	inline T LinkedList<T>::front() const
+	{
+		return frontPtr->data;
+	}
+
+	template<typename T>
+	inline T LinkedList<T>::back() const
+	{
+		return backPtr->data;
+	}
+
+	template<typename T>
+	inline void LinkedList<T>::PrintLinkedList()
+	{
+		Node<T>* temp = front;
+		while (temp != nullptr)
+		{
+			auto element = temp->data;
+			temp = temp->next;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 	template <typename T>
 	class Queue
 	{
 	public:
 		Queue() = default;
-		Queue(i32 size);
+		Queue(LinkedList& list);
 		~Queue();
 		void Enqueue(T el);
 		void Dequeue();
@@ -17,83 +94,11 @@ namespace stl
 		T front() const;
 		bool isEmpty() const;
 	private:
-		std::vector<T> data;
+		LinkedList<T> data;
 		i32 MAX_CAPACITY = 64;
 	};
 
-	//Cannot exceed MAX capacity;
-	template<typename T>
-	inline Queue<T>::Queue(i32 size)
-	{
-		if (size >= MAX_CAPACITY)
-		{
-			size = MAX_CAPACITY;
-		}
-		data.reserve(size);
 
-	}
-
-	template<typename T>
-	inline Queue<T>::~Queue()
-	{
-		data.clear();
-	}
-
-	template<typename T>
-	inline void Queue<T>::Enqueue(T el)
-	{
-		if (data.size == data.capacity)
-		{
-			OutputDebugString(L"Cannot enqueue another element");
-		}
-		else
-		{
-			data.push_back(el);
-		}
-	}
-
-	template<typename T>
-	inline void Queue<T>::Dequeue()
-	{
-		if (data.size > 0)
-		{
-			T el = data.front();
-			auto it = std::find(data.begin(), data.end(), el);
-
-			if (it != data.end())
-			{
-				data.erase(it);
-			}
-		}
-		else
-		{
-			OutputDebugString(L"Cannot dequeue another element");
-		}
-	}
-
-	template<typename T>
-	inline T Queue<T>::Peek()
-	{
-		return data.front();
-	}
-
-	template<typename T>
-	inline size_t Queue<T>::size() const
-	{
-		return data.size();
-	}
-
-	template<typename T>
-	inline T Queue<T>::front() const
-	{
-		return data[0];
-	}
-
-	template<typename T>
-	inline bool Queue<T>::isEmpty() const
-	{
-		return data.size() == 0;
-	}
 
 }
 

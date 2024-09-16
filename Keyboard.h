@@ -1,7 +1,8 @@
 #pragma once
 #include "dx/Window.h"
-#include "stl.h";
+#include <queue>
 #include <bitset>
+
 namespace dx::engine
 {
 	class Event
@@ -39,8 +40,8 @@ namespace dx::engine
 		static constexpr ui32 keys = 256u;
 		static constexpr ui32 buffer = 16u;
 		std::bitset<keys> keyStates;
-		stl::Queue<Event> keyBuffer;
-		stl::Queue<char> charBuffer;
+		std::queue<Event> keyBuffer;
+		std::queue<char> charBuffer;
 	};
 
 }
