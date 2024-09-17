@@ -32,16 +32,13 @@
     <ClInclude Include="platform\WinInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dx\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="dx\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stl.h">
+    <ClInclude Include="Window\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

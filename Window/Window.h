@@ -21,7 +21,7 @@ namespace dx::engine
 			~WindowClass();
 			WindowClass& operator=(const WindowClass&) = delete;
 			WindowClass(const WindowClass&) = delete;
-			static const wchar* windowName;
+		 static constexpr const wchar* windowName = L"DirectX RayTracer";
 			static WindowClass wndClass;
 			HINSTANCE hInstance;
 		};
@@ -34,10 +34,10 @@ namespace dx::engine
 		[[nodiscard]] bool IsOpen() const { return isOpen; };
 		void PollEvents();
 		[[nodiscard]] HWND GetHWND() const { return hwnd; }
-		static LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		static Keyboard kbd;
+		static LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
+		static LRESULT CALLBACK HandleMessageThunk(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
+		LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	private:
-		void InitWindow();
 		bool ProcessMessages();
 		HWND hwnd;
 		i32 width;

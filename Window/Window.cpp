@@ -4,16 +4,14 @@ namespace dx::engine
 {
 	Window::WindowClass Window::WindowClass::wndClass;
 
-	Window::WindowClass::WindowClass()
+	Window::WindowClass::WindowClass() noexcept
 		:hInstance{ GetModuleHandle(nullptr) }
 	{
-
-		windowName = L"RayTracer";
 		WNDCLASSEX winClass;
 		winClass = {};
 		winClass.cbSize = sizeof(winClass);
 		winClass.lpszClassName = GetName();
-		winClass.lpfnWndProc = nullptr;
+		winClass.lpfnWndProc = HandleMessageSetup;
 		winClass.cbClsExtra = 0;
 		winClass.cbWndExtra = 0;
 		winClass.hIcon = nullptr;
@@ -41,7 +39,22 @@ namespace dx::engine
 		: width(w), height(h)
 	{
 
-		InitWindow();
+		RECT windowRect = {};
+		windowRect.left = 100;
+		windowRect.bottom = 100;
+		windowRect.right = windowRect.left + width;
+		windowRect.top = windowRect.bottom + height;
+		AdjustWindowRect(&windowRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+		hwnd = CreateWindowEx(0, WindowClass::GetName(),name, WS_OVERLAPPEDWINDOW,
+			CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.top - windowRect.bottom, nullptr, nullptr,
+			WindowClass::GetInstance(), this);
+		if (!hwnd)
+		{
+			MessageBox(hwnd, L"Couldn't init hwnd", L"Error!", MB_OK);
+			return;
+		}
+		isOpen = true;
+		ShowWindow(hwnd, SW_SHOW);
 	}
 
 	Window::~Window()
@@ -55,18 +68,27 @@ namespace dx::engine
 			isOpen = false;
 		}
 	}
-	bool Window::ProcessMessages()
+	LRESULT CALLBACK Window::HandleMessageSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{
-		MSG msg = {};
-		while (GetMessage(&msg, nullptr, 0, 0) > 0)
+		if (msg == WM_NCCREATE)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			
+			//extract the ptr and link the pointer to the window procedure.
+			const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
+			Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
+			SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
+			SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMessageThunk));
+
+			return pWnd->HandleMessage(hwnd, msg, wParam, lParam);
 		}
-		return msg.wParam;
+		//if we get a message before NCCREATE we handle it here
+		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
-	LRESULT Window::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK Window::HandleMessageThunk(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+	{
+		Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		return pWnd->HandleMessage(hwnd, msg, wParam, lParam);
+	}
+	LRESULT Window::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{
 		switch (msg)
 		{
@@ -77,43 +99,21 @@ namespace dx::engine
 				return 0;
 			}
 			break;
-		case WM_KEYDOWN: kbd.onKeyPressed(static_cast<ui8>(wParam));
-			break;
-		case WM_KEYUP: kbd.onKeyReleased(static_cast<ui8>(wParam));
-			break;
-		case WM_CHAR: kbd.onChar(static_cast<ui8>(wParam));
-			break;
-		default: return DefWindowProc(hwnd, msg, wParam, lParam);
+
 		}
-		return -1;
+		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
-	void Window::InitWindow()
+	bool Window::ProcessMessages()
 	{
-		RECT windowRect = {};
-		windowRect.left = 100;
-		windowRect.bottom = 100;
-		windowRect.right = windowRect.left + width;
-		windowRect.top = windowRect.bottom + height;
-		hwnd = CreateWindowEx(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.top - windowRect.bottom, nullptr, nullptr,
-			hInstance, nullptr);
-		if (!hwnd)
+		MSG msg = {};
+		while (GetMessage(&msg, nullptr, 0, 0) > 0)
 		{
-			MessageBox(hwnd, L"Couldn't init hwnd", L"Error!", MB_OK);
-			throw std::runtime_error("Hwnd initialization failure");
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+				
 		}
-		isOpen = true;
-		ShowWindow(hwnd, SW_SHOW);
+		return msg.wParam;
 	}
-	const wchar* Window::WindowClass::GetName() noexcept
-	{
-		return nullptr;
-	}
-	HINSTANCE Window::WindowClass::GetInstance() noexcept
-	{
-		return HINSTANCE();
-	}
-	Window::WindowClass::~WindowClass()
-	{
-	}
+
+	
 }
