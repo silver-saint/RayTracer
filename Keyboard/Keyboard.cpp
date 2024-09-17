@@ -1,4 +1,5 @@
 #include "Keyboard.h"
+#include "../Window/Window.h"
 
 namespace dx::engine
 {
@@ -46,12 +47,12 @@ namespace dx::engine
 
 	void Keyboard::EnableAutorepeat() noexcept
 	{
-		autorepeatEnabled = true;
+		autoRepeatEnabled = true;
 	}
 
 	void Keyboard::DisableAutorepeat() noexcept
 	{
-		autorepeatEnabled = false;
+		autoRepeatEnabled = false;
 	}
 
 	Event Keyboard::ReadKey() noexcept
@@ -94,7 +95,7 @@ namespace dx::engine
 
 	bool Keyboard::AutorepeatIsEnabled() const noexcept
 	{
-		return autorepeatEnabled;
+		return autoRepeatEnabled;
 	}
 
 	void Keyboard::onKeyPressed(ui8 keycode) noexcept

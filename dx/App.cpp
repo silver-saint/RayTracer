@@ -9,10 +9,7 @@ namespace dx::engine
 
 	void App::run()
 	{
+		window.ProcessMessages();
 
-		while (window.IsOpen())
-		{
-			window.PollEvents();
-		}
 	}
 } // namespace dx::engine;

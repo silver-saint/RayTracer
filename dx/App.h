@@ -1,5 +1,6 @@
 #pragma once
 #include "../Window/Window.h"
+#include "../types.h"
 namespace dx::engine
 {
 	class App

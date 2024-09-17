@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <stdexcept>
+#include "../types.h"
 #include "../platform/WinInstance.h"
 #include "../Keyboard/Keyboard.h"
 
@@ -31,17 +31,16 @@ namespace dx::engine
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 		~Window();
-		[[nodiscard]] bool IsOpen() const { return isOpen; };
-		void PollEvents();
 		[[nodiscard]] HWND GetHWND() const { return hwnd; }
 		static LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		static LRESULT CALLBACK HandleMessageThunk(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
-	private:
 		bool ProcessMessages();
+	public:
+		Keyboard kbd;
+	private:
 		HWND hwnd;
 		i32 width;
 		i32 height;
-		bool isOpen;
 	};
 } //namespace dx::engine

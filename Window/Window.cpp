@@ -1,4 +1,4 @@
-#include "../Window/Window.h"
+#include "Window.h"
 
 namespace dx::engine
 {
@@ -53,20 +53,12 @@ namespace dx::engine
 			MessageBox(hwnd, L"Couldn't init hwnd", L"Error!", MB_OK);
 			return;
 		}
-		isOpen = true;
 		ShowWindow(hwnd, SW_SHOW);
 	}
 
 	Window::~Window()
 	{
 		DestroyWindow(hwnd);
-	}
-	void Window::PollEvents()
-	{
-		if (ProcessMessages() == 0)
-		{
-			isOpen = false;
-		}
 	}
 	LRESULT CALLBACK Window::HandleMessageSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{
@@ -92,6 +84,15 @@ namespace dx::engine
 	{
 		switch (msg)
 		{
+		case WM_KEYDOWN:
+			kbd.onKeyPressed(static_cast<ui8>(wParam));
+			break;
+		case WM_KEYUP:
+			kbd.onKeyReleased(static_cast<ui8>(wParam));
+			break;
+		case WM_CHAR:
+			kbd.onChar(static_cast<ui8>(wParam));
+			break;
 		case WM_CLOSE:
 			if (MessageBox(hwnd, L"Do you really want to close?", L"RayTracer", MB_OKCANCEL) == IDOK)
 			{
@@ -103,6 +104,7 @@ namespace dx::engine
 		}
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
+
 	bool Window::ProcessMessages()
 	{
 		MSG msg = {};
@@ -110,7 +112,11 @@ namespace dx::engine
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-				
+			if (kbd.KeyIsPressed(VK_SPACE))
+			{
+				MessageBox(nullptr, L"Kur", L"Mur", 0);
+				return -1;
+			}
 		}
 		return msg.wParam;
 	}

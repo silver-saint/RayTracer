@@ -153,13 +153,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dx\App.cpp" />
-    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Keyboard\Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dx\App.h" />
-    <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Keyboard\Keyboard.h" />
     <ClInclude Include="platform\WinInstance.h" />
     <ClInclude Include="Window\Window.h" />
   </ItemGroup>
