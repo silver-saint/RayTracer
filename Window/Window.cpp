@@ -28,6 +28,7 @@ namespace dx::engine
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			
 		}
 		return msg.wParam;
 	}
@@ -41,6 +42,12 @@ namespace dx::engine
 				PostQuitMessage(0);
 				return 0;
 			}
+			break;
+		case WM_KEYDOWN: kbd.onKeyPressed(static_cast<ui8>(wParam));
+			break;
+		case WM_KEYUP: kbd.onKeyReleased(static_cast<ui8>(wParam));
+			break;
+		case WM_CHAR: kbd.onChar(static_cast<ui8>(wParam));
 			break;
 		default: return DefWindowProc(hwnd, msg, wParam, lParam);
 		}

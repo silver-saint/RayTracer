@@ -26,8 +26,8 @@ namespace dx::engine
 	};
 	class Keyboard
 	{
-		friend Event;
-
+		friend class Window;
+		friend class Event;
 	public:
 		Keyboard() = default;
 		Keyboard(const Keyboard&) = delete;

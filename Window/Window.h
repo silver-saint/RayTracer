@@ -20,6 +20,7 @@ namespace dx::engine
 		[[nodiscard]] HINSTANCE GetInstance() const { return hInstance; };
 		[[nodiscard]] HWND GetHWND() const { return hwnd; }
 		static LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+		static Keyboard kbd;
 	private:
 		void InitWindow();
 		bool ProcessMessages();

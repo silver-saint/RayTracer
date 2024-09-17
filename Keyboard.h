@@ -33,16 +33,15 @@ namespace dx::engine
 		Keyboard() = default;
 		Keyboard(const Keyboard&) = delete;
 		Keyboard& operator=(const Keyboard&) = delete;
+	public:
 		bool KeyIsPressed(ui8 code) const noexcept { return keyStates[code]; }
 		Event ReadKey() noexcept;
 		bool KeyIsEmpty() const noexcept;
 		void ClearKey() noexcept;
-
 		char ReadChar() noexcept;
 		bool CharIsEmpty() noexcept;
 		void ClearChar() noexcept;
 		void Clear() noexcept;
-
 		void EnableAutorepeat() noexcept;
 		void DisableAutorepeat() noexcept;
 		bool AutorepeatIsEnabled() const noexcept;
@@ -53,18 +52,19 @@ namespace dx::engine
 		void ClearState() noexcept;
 		template<typename T>
 		static void TrimBuffer(std::queue<T>& buffer) noexcept;
-		static constexpr ui32 keys = 256u;
-		static constexpr ui32 buffer = 16u;
-		std::bitset<keys> keyStates;
+	private:
+		static constexpr ui32 sKeys = 256u;
+		static constexpr ui32 sBufferSize = 16u;
+		std::bitset<sKeys> keyStates;
 		std::queue<Event> keyBuffer;
 		std::queue<char> charBuffer;
-		bool autorepeatEnabled = false;
+		bool autoRepeatEnabled = { false };
 	};
 
 	template<typename T>
 	inline void Keyboard::TrimBuffer(std::queue<T>& buffer) noexcept
 	{
-		while (buffer.size() > bufferSize)
+		while (buffer.size() > sBufferSize)
 		{
 			buffer.pop();
 		}
