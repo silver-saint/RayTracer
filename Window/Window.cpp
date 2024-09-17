@@ -2,9 +2,43 @@
 
 namespace dx::engine
 {
-	Window::Window(i32 w, i32 h, const std::wstring& name) noexcept
-		: width(w), height(h), windowName(name),
-		hInstance(GetModuleHandle(nullptr))
+	Window::WindowClass Window::WindowClass::wndClass;
+
+	Window::WindowClass::WindowClass()
+		:hInstance{ GetModuleHandle(nullptr) }
+	{
+
+		windowName = L"RayTracer";
+		WNDCLASSEX winClass;
+		winClass = {};
+		winClass.cbSize = sizeof(winClass);
+		winClass.lpszClassName = GetName();
+		winClass.lpfnWndProc = nullptr;
+		winClass.cbClsExtra = 0;
+		winClass.cbWndExtra = 0;
+		winClass.hIcon = nullptr;
+		winClass.hCursor = nullptr;
+		winClass.hbrBackground = nullptr;
+		winClass.lpszMenuName = nullptr;
+		winClass.hIconSm = nullptr;
+		winClass.style = CS_VREDRAW | CS_HREDRAW;
+		winClass.hInstance = GetInstance();
+		RegisterClassEx(&winClass);
+	}
+	HINSTANCE Window::WindowClass::GetInstance() noexcept
+	{
+		return wndClass.hInstance;
+	}
+	const wchar* Window::WindowClass::GetName() noexcept
+	{
+		return windowName;
+	}
+	Window::WindowClass::~WindowClass()
+	{
+		UnregisterClass(wndClass.windowName, GetInstance());
+	}
+	Window::Window(i32 w, i32 h, const wchar* name) noexcept
+		: width(w), height(h)
 	{
 
 		InitWindow();
@@ -60,22 +94,6 @@ namespace dx::engine
 		windowRect.bottom = 100;
 		windowRect.right = windowRect.left + width;
 		windowRect.top = windowRect.bottom + height;
-
-		WNDCLASSEX winClass;
-		winClass = {};
-		winClass.cbSize = sizeof(winClass);
-		winClass.lpszClassName = windowName.c_str();
-		winClass.lpfnWndProc = WinProc;
-		winClass.cbClsExtra = 0;
-		winClass.cbWndExtra = 0;
-		winClass.hIcon = nullptr;
-		winClass.hCursor = nullptr;
-		winClass.hbrBackground = nullptr;
-		winClass.lpszMenuName = nullptr;
-		winClass.hIconSm = nullptr;
-		winClass.style = CS_VREDRAW | CS_HREDRAW;
-		winClass.hInstance = hInstance;
-		RegisterClassEx(&winClass);
 		hwnd = CreateWindowEx(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.top - windowRect.bottom, nullptr, nullptr,
 			hInstance, nullptr);
@@ -86,5 +104,16 @@ namespace dx::engine
 		}
 		isOpen = true;
 		ShowWindow(hwnd, SW_SHOW);
+	}
+	const wchar* Window::WindowClass::GetName() noexcept
+	{
+		return nullptr;
+	}
+	HINSTANCE Window::WindowClass::GetInstance() noexcept
+	{
+		return HINSTANCE();
+	}
+	Window::WindowClass::~WindowClass()
+	{
 	}
 }
