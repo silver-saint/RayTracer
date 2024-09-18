@@ -11,9 +11,10 @@ namespace dx::engine
 		App& operator=(const App&) = delete;
 		App(const App&) = delete;
 	private:
-		void run();
+		int Run();
+		void DoFrame();
 		static constexpr ui32 WIDTH = 800;
 		static constexpr ui32 HEIGHT = 800;
-		Window window = { WIDTH, HEIGHT, L"RayTracer" };
+		Window window;
 	};
 } // namespace dx::engine

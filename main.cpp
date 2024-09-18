@@ -1,4 +1,4 @@
-#include "dx/App.h"
+#include "App/App.h"
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PWSTR pCmdLine, int nCmdShow) {

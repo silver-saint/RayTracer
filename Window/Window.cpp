@@ -84,6 +84,15 @@ namespace dx::engine
 	{
 		switch (msg)
 		{
+		case WM_CLOSE:
+			if (MessageBox(hwnd, L"Do you really want to close?", L"RayTracer", MB_OKCANCEL) == IDOK)
+			{
+				PostQuitMessage(0);
+			}
+			break;
+		case WM_KILLFOCUS:
+			kbd.ClearState();
+			break;
 		case WM_KEYDOWN:
 			kbd.onKeyPressed(static_cast<ui8>(wParam));
 			break;
@@ -93,33 +102,28 @@ namespace dx::engine
 		case WM_CHAR:
 			kbd.onChar(static_cast<ui8>(wParam));
 			break;
-		case WM_CLOSE:
-			if (MessageBox(hwnd, L"Do you really want to close?", L"RayTracer", MB_OKCANCEL) == IDOK)
-			{
-				PostQuitMessage(0);
-				return 0;
-			}
-			break;
 
 		}
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
 
-	bool Window::ProcessMessages()
+
+	std::optional<i32> Window::ProcessMessages()
 	{
 		MSG msg = {};
-		while (GetMessage(&msg, nullptr, 0, 0) > 0)
+		while (PeekMessage(&msg, nullptr,0, 0, PM_REMOVE))
 		{
+			if (msg.message == WM_QUIT)
+			{
+				return msg.wParam;
+			}
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			if (kbd.KeyIsPressed(VK_SPACE))
-			{
-				MessageBox(nullptr, L"Kur", L"Mur", 0);
-				return -1;
-			}
 		}
-		return msg.wParam;
+		return {};
 	}
+
+
 
 	
 }

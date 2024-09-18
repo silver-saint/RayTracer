@@ -3,7 +3,7 @@
 #include "../types.h"
 #include "../platform/WinInstance.h"
 #include "../Keyboard/Keyboard.h"
-
+#include <optional>
 namespace dx::engine
 {
 	class Window
@@ -35,7 +35,7 @@ namespace dx::engine
 		static LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		static LRESULT CALLBACK HandleMessageThunk(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
-		bool ProcessMessages();
+		static std::optional<i32> ProcessMessages();
 	public:
 		Keyboard kbd;
 	private:
