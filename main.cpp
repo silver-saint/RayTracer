@@ -20,13 +20,15 @@ bool operator==(const Vector3& u, const Vector3& v)
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PWSTR pCmdLine, int nCmdShow) {
+  /*
     Vector3 u = {-1,3,4};
     Vector3 v = { 1,2,3 };
     int Res = u.normalize();
-    /*
+    */
+    
     dx::engine::App app;
     return EXIT_SUCCESS;
-    */
+    
 }
 
 Vector3 Vector3::operator+(const Vector3& u)

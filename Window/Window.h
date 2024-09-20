@@ -3,7 +3,9 @@
 #include "../types.h"
 #include "../platform/WinInstance.h"
 #include "../Keyboard/Keyboard.h"
+#include "../dx/Graphics.h"
 #include <optional>
+#include <memory>
 namespace dx::engine
 {
 	class Window
@@ -32,6 +34,7 @@ namespace dx::engine
 		Window& operator=(const Window&) = delete;
 		~Window();
 		[[nodiscard]] HWND GetHWND() const { return hwnd; }
+		[[nodiscard]] Graphics& Gfx() { return *pGfx; }
 		static LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		static LRESULT CALLBACK HandleMessageThunk(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -42,5 +45,6 @@ namespace dx::engine
 		HWND hwnd;
 		i32 width;
 		i32 height;
+		std::unique_ptr<Graphics> pGfx;
 	};
 } //namespace dx::engine

@@ -45,7 +45,7 @@ namespace dx::engine
 		windowRect.right = windowRect.left + width;
 		windowRect.top = windowRect.bottom + height;
 		AdjustWindowRect(&windowRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
-		hwnd = CreateWindowEx(0, WindowClass::GetName(),name, WS_OVERLAPPEDWINDOW,
+		hwnd = CreateWindow(WindowClass::GetName(),name, WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.top - windowRect.bottom, nullptr, nullptr,
 			WindowClass::GetInstance(), this);
 		if (!hwnd)
@@ -53,7 +53,8 @@ namespace dx::engine
 			MessageBox(hwnd, L"Couldn't init hwnd", L"Error!", MB_OK);
 			return;
 		}
-		ShowWindow(hwnd, SW_SHOW);
+		ShowWindow(hwnd, SW_SHOWDEFAULT);
+		pGfx = std::make_unique<Graphics>(hwnd);
 	}
 
 	Window::~Window()
