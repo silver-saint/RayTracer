@@ -16,6 +16,16 @@ void Graphics::Draw(HWND hWnd, ui32 width, ui32 height)
 	CreateTheCommandQueue();
 	CreateTheSwapChain(hWnd, width, height);
 	CreateTheRenderTargetView();
+	CreateTheFrameResource();
+	CreateACommandAllocator();
+	CreateACommandList();
+	CreateTheFenceValue();
+	RenderLoop();
+	ClearRenderTargetView();
+	ClearBuffer();
+	PresentBuffer();
+	SubmitCommandQueue();
+	PresentFrame();
 }
 
 void Graphics::CreateTheDebugLayer()
@@ -102,6 +112,108 @@ void Graphics::CreateTheRenderTargetView()
 	if (FAILED(rtvHeapCreated))
 	{
 		MessageBox(nullptr, L"Initialization of RTV heap failed", L"Error", MB_OK);
+		return;
+	}
+	HRESULT rtvHeapSizeAcquired = m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	if (FAILED(rtvHeapSizeAcquired))
+	{
+		MessageBox(nullptr, L"Acquiring of RTV heap size failed", L"Error", MB_OK);
+		return;
+	}
+}
+
+void Graphics::CreateTheFrameResource()
+{
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvdescHeap->GetCPUDescriptorHandleForHeapStart());
+	for (UINT buffer = 0; buffer < m_backBuffers.size(); buffer++)
+	{
+		HRESULT GetCurrentBuffer = m_swapChain->GetBuffer(buffer, IID_PPV_ARGS(&m_backBuffers[buffer]));
+		if (FAILED(GetCurrentBuffer))
+		{
+			MessageBox(nullptr, L"Couldn't acquire buffer.", L"Error", MB_OK);
+			return;
+		}
+		m_device->CreateRenderTargetView(m_backBuffers[buffer].Get(), nullptr, rtvHandle);
+		rtvHandle.Offset(m_rtvDescriptorSize);
+	}
+}
+
+void Graphics::CreateACommandAllocator()
+{
+	HRESULT cmdAllocCreated = m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator));
+	if (FAILED(cmdAllocCreated))
+	{
+		MessageBox(nullptr, L"Initialization of cmd allocator failed", L"Error", MB_OK);
+		return;
+	}
+}
+
+void Graphics::CreateACommandList()
+{
+	HRESULT cmdList = m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator.Get(), nullptr, IID_PPV_ARGS(&m_gCommandList));
+	if (FAILED(cmdList))
+	{
+		MessageBox(nullptr, L"Initialization of cmdlist failed", L"Error", MB_OK);
+		return;
+	}
+	m_gCommandList->Close();
+}
+
+void Graphics::CreateTheFenceValue()
+{
+	m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)); 
+
+	//fence signaling
+	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	if (!m_fenceEvent)
+	{
+		MessageBox(nullptr, L"Failed to create fence event", L"Error", MB_OK);
+		return;
+	}
+}
+
+void Graphics::RenderLoop()
+{
+	m_currentBackBufferIdx = m_swapChain->GetCurrentBackBufferIndex();
+	m_currentBackBuffer = m_backBuffers[m_currentBackBufferIdx];
+	m_commandAllocator->Reset();
+	m_gCommandList->Reset(m_commandAllocator.Get(), nullptr);
+}
+
+void Graphics::ClearRenderTargetView()
+{
+	const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentBackBuffer.Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	m_gCommandList->ResourceBarrier(1, &barrier);
+}
+
+void Graphics::ClearBuffer()
+{
+	std::array<f32, 4> clearColor = { 0.0f, 0.5f, 0.0f, 1.0f };
+	const CD3DX12_CPU_DESCRIPTOR_HANDLE rtv{ m_rtvdescHeap->GetCPUDescriptorHandleForHeapStart(), INT(m_currentBackBufferIdx), m_rtvDescriptorSize };
+	m_gCommandList->ClearRenderTargetView(rtv, clearColor.data(), 0, nullptr);
+}
+
+void Graphics::PresentBuffer()
+{
+	const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentBackBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	m_gCommandList->ResourceBarrier(1, &barrier);
+}
+
+void Graphics::SubmitCommandQueue()
+{
+	m_gCommandList->Close();
+	std::array<ID3D12CommandList* const, 1> commandLists = { m_gCommandList.Get() };
+	m_queue->ExecuteCommandLists(commandLists.size(), commandLists.data());
+	m_queue->Signal(m_fence.Get(), m_fenceValue);
+}
+
+void Graphics::PresentFrame()
+{
+	m_swapChain->Present(0, 0);
+	m_fence->SetEventOnCompletion(m_fenceValue - 1, m_fenceEvent);
+	if (::WaitForSingleObject(m_fenceEvent, INFINITE) == WAIT_FAILED)
+	{
+		MessageBox(nullptr, L"Failed to wait for event", L"Error", MB_OK);
 		return;
 	}
 }

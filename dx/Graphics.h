@@ -34,7 +34,7 @@ private:
 	Microsoft::WRL::ComPtr< ID3D12Debug6> m_debugController;
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource2>, s_bufferCount> m_backBuffers;
 	
-	ui32 m_fenceValue = 0;
+	ui64 m_fenceValue = 0;
 	ui32 m_currentBackBufferIdx = 0;
 	ui32 m_rtvDescriptorSize = 0;
 	HANDLE m_fenceEvent = nullptr;
@@ -47,4 +47,14 @@ private:
 	void CreateTheCommandQueue();
 	void CreateTheSwapChain(HWND hWnd, ui32 width, ui32 height);
 	void CreateTheRenderTargetView();
+	void CreateTheFrameResource();
+	void CreateACommandAllocator();
+	void CreateACommandList();
+	void CreateTheFenceValue();
+	void RenderLoop();
+	void ClearRenderTargetView();
+	void ClearBuffer();
+	void PresentBuffer();
+	void SubmitCommandQueue();
+	void PresentFrame();
 };
