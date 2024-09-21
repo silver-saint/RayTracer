@@ -16,10 +16,10 @@ public:
 #else
 	const bool DEBUGLAYER = true;
 #endif
-	Graphics(HWND hWnd);
+	Graphics(HWND hWnd, ui32 width, ui32 height);
 	Graphics(const Graphics& rhs) = delete;
 	Graphics& operator=(const Graphics& rhs) = delete;
-	void Draw(HWND hWnd);
+	void Draw(HWND hWnd, ui32 width, ui32 height);
 private:
 	static constexpr UINT s_bufferCount = 2;
 	Microsoft::WRL::ComPtr<IDXGIFactory7> m_dxgiFactory;
@@ -38,19 +38,13 @@ private:
 	ui32 m_currentBackBufferIdx = 0;
 	ui32 m_rtvDescriptorSize = 0;
 	HANDLE m_fenceEvent = nullptr;
+	i32 width;
+	i32 height;
 private:
-	void CreateDebugLayer();
-	void CreateDXGIFactory();
-	void CreateD3D12Device();
-	void CreateCommandQueue();
-	void CreateSwapChain(HWND hWnd);
-	void CreateDescriptorHeap();
-	void CreateCommandAllocator();
-	void CreateGraphicsCommandList();
-	void CreateFence();
-	void RenderLoop();
-	void ClearRenderTarget();
-	void SubmitCommandList();
-	void PresentFrame();
-
+	void CreateTheDebugLayer();
+	void CreateTheDXGIFactory();
+	void CreateTheD3D12Device();
+	void CreateTheCommandQueue();
+	void CreateTheSwapChain(HWND hWnd, ui32 width, ui32 height);
+	void CreateTheRenderTargetView();
 };

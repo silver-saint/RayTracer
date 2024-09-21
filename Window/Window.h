@@ -33,6 +33,8 @@ namespace dx::engine
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 		~Window();
+		[[nodiscard]] i32 GetWindowWidth() const { return width; }
+		[[nodiscard]] i32 GetWindowHeight() const { return height; }
 		[[nodiscard]] HWND GetHWND() const { return hwnd; }
 		[[nodiscard]] Graphics& Gfx() { return *pGfx; }
 		static LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;

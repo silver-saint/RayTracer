@@ -10,7 +10,7 @@ namespace dx::engine
 
 	void App::DoFrame()
 	{
-		window.Gfx().Draw(window.GetHWND());
+		window.Gfx().Draw(window.GetHWND(), window.GetWindowWidth(), window.GetWindowHeight());
 		if (window.kbd.KeyIsPressed(VK_SPACE))
 		{
 			MessageBox(nullptr, L"Kur", L"Mur", 0);
