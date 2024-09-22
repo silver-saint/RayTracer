@@ -30,15 +30,30 @@ void Graphics::Draw(HWND hWnd, ui32 width, ui32 height)
 
 void Graphics::CreateTheDebugLayer()
 {
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugController))))
+	if (DEBUGLAYER)
 	{
-		m_debugController->EnableDebugLayer();
+		Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+		{
+			debugController->EnableDebugLayer();
+		}
+		else
+		{
+			MessageBox(nullptr, L"Couldn't init DebugLayer", L"Error", MB_OK);
+			return;
+		}
 	}
 }
 
 void Graphics::CreateTheDXGIFactory()
 {
-	CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&m_dxgiFactory));
+	HRESULT initDXGIFactory = CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory));
+	if (FAILED(initDXGIFactory))
+	{
+		MessageBox(nullptr, L"Couldn't init Factory", L"Error", MB_OK);
+		return;
+
+	}
 
 }
 

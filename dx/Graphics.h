@@ -21,25 +21,28 @@ public:
 	Graphics& operator=(const Graphics& rhs) = delete;
 	void Draw(HWND hWnd, ui32 width, ui32 height);
 private:
-	static constexpr UINT s_bufferCount = 2;
-	Microsoft::WRL::ComPtr<IDXGIFactory7> m_dxgiFactory;
-	Microsoft::WRL::ComPtr<ID3D12Device10> m_device;
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_queue;
-	Microsoft::WRL::ComPtr<IDXGISwapChain4> m_swapChain;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_rtvdescHeap;
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator;
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_gCommandList;
-	Microsoft::WRL::ComPtr<ID3D12Fence1> m_fence;
-	Microsoft::WRL::ComPtr<ID3D12Resource2> m_currentBackBuffer;
-	Microsoft::WRL::ComPtr< ID3D12Debug6> m_debugController;
-	std::array<Microsoft::WRL::ComPtr<ID3D12Resource2>, s_bufferCount> m_backBuffers;
-	
-	ui64 m_fenceValue = 0;
-	ui32 m_currentBackBufferIdx = 0;
+	static const i32 s_swapChainBufferCount = 2;
+	Microsoft::WRL::ComPtr<IDXGIFactory4> m_dxgiFactory;
+	Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
+	Microsoft::WRL::ComPtr<ID3D12Device> m_device;
+	Microsoft::WRL::ComPtr<ID3D12Fence> m_Fence;
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_CommandQueue;
+	std::array<Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, 2> m_CommandAllocators;
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_CommandList;
+	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, s_swapChainBufferCount> m_swapChainBuffer;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_depthStencilBuffer;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_dsvHeap;
+	i32 m_currBackBuffer = 0;
+	ui64 m_CurrentFence = 0;
 	ui32 m_rtvDescriptorSize = 0;
-	HANDLE m_fenceEvent = nullptr;
-	i32 width;
-	i32 height;
+	ui32 m_dsvDescriptorSize = 0;
+	ui32 m_cbvSrvUavDescriptorSize = 0;
+	D3D_DRIVER_TYPE m_d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
+	DXGI_FORMAT m_BackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	DXGI_FORMAT m_DepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	D3D12_VIEWPORT m_screenViewport;
+	D3D12_RECT m_scissorRect;
 private:
 	void CreateTheDebugLayer();
 	void CreateTheDXGIFactory();
