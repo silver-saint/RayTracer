@@ -70,6 +70,7 @@ void Graphics::CreateTheCommandQueue()
 
 void Graphics::CreateTheSwapChain(HWND hWnd, ui32 width, ui32 height)
 {
+	m_swapChain.Reset();
 	const DXGI_SWAP_CHAIN_DESC1 swapChainDesc =
 	{
 		.Width = width,
@@ -89,6 +90,7 @@ void Graphics::CreateTheSwapChain(HWND hWnd, ui32 width, ui32 height)
 		.Flags = 0,
 	};
 	Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain1;
+
 	HRESULT SwapChainCreated = m_dxgiFactory->CreateSwapChainForHwnd(m_queue.Get(), hWnd, &swapChainDesc, nullptr, nullptr, &swapChain1);
 	if (FAILED(SwapChainCreated))
 	{
@@ -204,7 +206,7 @@ void Graphics::SubmitCommandQueue()
 	m_gCommandList->Close();
 	std::array<ID3D12CommandList* const, 1> commandLists = { m_gCommandList.Get() };
 	m_queue->ExecuteCommandLists(commandLists.size(), commandLists.data());
-	m_queue->Signal(m_fence.Get(), m_fenceValue);
+	m_queue->Signal(m_fence.Get(), m_fenceValue++);
 }
 
 void Graphics::PresentFrame()
