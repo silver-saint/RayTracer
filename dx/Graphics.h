@@ -16,10 +16,10 @@ public:
 #else
 	const bool DEBUGLAYER = true;
 #endif
-	Graphics(HWND hWnd, ui32 width, ui32 height);
+	Graphics(HWND hWnd);
 	Graphics(const Graphics& rhs) = delete;
 	Graphics& operator=(const Graphics& rhs) = delete;
-	void Draw(HWND hWnd, ui32 width, ui32 height);
+	void Draw(HWND hWnd);
 private:
 	static const i32 s_swapChainBufferCount = 2;
 	Microsoft::WRL::ComPtr<IDXGIAdapter4> m_adapter;
@@ -37,28 +37,20 @@ private:
 	i32 m_currBackBuffer = 0;
 	ui64 m_CurrentFence = 0;
 	ui32 m_rtvDescriptorSize = 0;
-	ui32 m_dsvDescriptorSize = 0;
-	ui32 m_cbvSrvUavDescriptorSize = 0;
-	D3D_DRIVER_TYPE m_d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
-	DXGI_FORMAT m_BackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-	DXGI_FORMAT m_DepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	D3D12_VIEWPORT m_screenViewport;
-	D3D12_RECT m_scissorRect;
+	HANDLE m_fenceEvent = nullptr;
 private:
-	void CreateTheDebugLayer();
-	Microsoft::WRL::ComPtr<IDXGIAdapter4> CreateTheDXGIFactoryAndAdadpter();
-	void CreateTheD3D12Device();
-	void CreateTheCommandQueue();
-	void CreateTheSwapChain(HWND hWnd, ui32 width, ui32 height);
-	void CreateTheRenderTargetView();
-	void CreateTheFrameResource();
-	void CreateACommandAllocator();
-	void CreateACommandList();
-	void CreateTheFenceValue();
+	void CreateDebugLayer();
+	void CreateDXGIFactory();
+	void CreateD3D12Device();
+	void CreateCommandQueue();
+	void CreateSwapChain(HWND hWnd);
+	void CreateDescriptorHeap();
+	void CreateCommandAllocator();
+	void CreateGraphicsCommandList();
+	void CreateFence();
 	void RenderLoop();
-	void ClearRenderTargetView();
-	void ClearBuffer();
-	void PresentBuffer();
-	void SubmitCommandQueue();
+	void ClearRenderTarget();
+	void SubmitCommandList();
 	void PresentFrame();
+
 };

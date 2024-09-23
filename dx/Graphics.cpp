@@ -1,52 +1,39 @@
 #include "Graphics.h"
 
-Graphics::Graphics(HWND hWnd, ui32 width, ui32 height)
+Graphics::Graphics(HWND hWnd)
 {
-	Draw(hWnd, width, height);
+    Draw(hWnd);
 }
 
-void Graphics::Draw(HWND hWnd, ui32 width, ui32 height)
+void Graphics::Draw(HWND hWnd)
 {
-	if (DEBUGLAYER)
-	{
-		CreateTheDebugLayer();
-	}
-	CreateTheDXGIFactory();
-	CreateTheD3D12Device();
-	CreateTheCommandQueue();
-	CreateTheSwapChain(hWnd, width, height);
-	CreateTheRenderTargetView();
-	CreateTheFrameResource();
-	CreateACommandAllocator();
-	CreateACommandList();
-	CreateTheFenceValue();
-	RenderLoop();
-	ClearRenderTargetView();
-	ClearBuffer();
-	PresentBuffer();
-	SubmitCommandQueue();
-	PresentFrame();
+    if (DEBUGLAYER)
+    {
+        CreateDebugLayer();
+    }
+   CreateDXGIFactory();
+   CreateD3D12Device();
+   CreateCommandQueue();
+   CreateSwapChain(hWnd);
+   CreateDescriptorHeap();
+   CreateCommandAllocator();
+   CreateGraphicsCommandList();
+   CreateFence();
+   RenderLoop();
+   ClearRenderTarget();
+   SubmitCommandList();
+   PresentFrame();
 }
 
-void Graphics::CreateTheDebugLayer()
+void Graphics::CreateDebugLayer()
 {
-	if (DEBUGLAYER)
-	{
-		Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
-		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
-		{
-			debugController->EnableDebugLayer();
-		}
-		else
-		{
-			MessageBox(nullptr, L"Couldn't init DebugLayer", L"Error", MB_OK);
-			return;
-		}
-	}
+    D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugController));
+    m_debugController->EnableDebugLayer();
 }
 
-Microsoft::WRL::ComPtr<IDXGIAdapter4> Graphics::CreateTheDXGIFactoryAndAdadpter()
+void Graphics::CreateDXGIFactory()
 {
+    CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&m_dxgiFactory));
 
 	UINT createFactoryFlags = 0;
 #if defined(_DEBUG)
@@ -61,182 +48,131 @@ Microsoft::WRL::ComPtr<IDXGIAdapter4> Graphics::CreateTheDXGIFactoryAndAdadpter(
 
 	}
 
+void Graphics::CreateD3D12Device()
+{
+    HRESULT deviceCreated = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_2, IID_PPV_ARGS(&m_device));
+    
+    if (FAILED(deviceCreated))
+    {
+        MessageBox(nullptr, L"Initialization of device failed", L"Error", MB_OK);
+        return;
+    }
 }
 
-void Graphics::CreateTheD3D12Device()
+void Graphics::CreateCommandQueue()
 {
-	HRESULT deviceCreated = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_2, IID_PPV_ARGS(&m_device));
-
-	if (FAILED(deviceCreated))
-	{
-		MessageBox(nullptr, L"Initialization of device failed", L"Error", MB_OK);
-		return;
-	}
+    const D3D12_COMMAND_QUEUE_DESC queueDesc = {
+        .Type = D3D12_COMMAND_LIST_TYPE_DIRECT,
+        .Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
+        .NodeMask = 0
+    };
+    m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_queue));
 }
 
-void Graphics::CreateTheCommandQueue()
+void Graphics::CreateSwapChain(HWND hWnd)
 {
-	const D3D12_COMMAND_QUEUE_DESC queueDesc = {
-		.Type = D3D12_COMMAND_LIST_TYPE_DIRECT,
-		.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
-		.NodeMask = 0
-	};
-	HRESULT cmdQueueCreated = m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_queue));
-	if (FAILED(cmdQueueCreated))
-	{
-		MessageBox(nullptr, L"Initialization of cmd queue failed", L"Error", MB_OK);
-		return;
-	}
-}
+    const DXGI_SWAP_CHAIN_DESC1 swapChainDesc =
+    {
+        .Width = 800,
+        .Height = 600,
+        .Format = DXGI_FORMAT_R8G8B8A8_UNORM,
+        .Stereo = FALSE,
+        .SampleDesc =
+        {
+            .Count = 1,
+            .Quality = 0
+        },
+        .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
+        .BufferCount = s_bufferCount,
+        .Scaling = DXGI_SCALING_STRETCH,
+        .SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD,
+        .AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED,
+        .Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING,
+    };
+    Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain1;
 
-void Graphics::CreateTheSwapChain(HWND hWnd, ui32 width, ui32 height)
-{
-	m_swapChain.Reset();
-	const DXGI_SWAP_CHAIN_DESC1 swapChainDesc =
-	{
-		.Width = width,
-		.Height = height,
-		.Format = DXGI_FORMAT_R8G8B8A8_UNORM,
-		.Stereo = FALSE,
-		.SampleDesc =
-		{
-			.Count = 1,
-			.Quality = 0
-		},
-		.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
-		.BufferCount = s_bufferCount,
-		.Scaling = DXGI_SCALING_STRETCH,
-		.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD,
-		.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED,
-		.Flags = 0,
-	};
-	Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain1;
-
-	HRESULT SwapChainCreated = m_dxgiFactory->CreateSwapChainForHwnd(m_queue.Get(), hWnd, &swapChainDesc, nullptr, nullptr, &swapChain1);
-	if (FAILED(SwapChainCreated))
-	{
-		MessageBox(nullptr, L"Initialization of SwapChain failed", L"Error", MB_OK);
-		return;
-	}
-	swapChain1.As(&m_swapChain);
+    m_dxgiFactory->CreateSwapChainForHwnd(m_queue.Get(), hWnd, &swapChainDesc, nullptr, nullptr, &swapChain1);
+    swapChain1.As(&m_swapChain);
 
 }
 
-void Graphics::CreateTheRenderTargetView()
+void Graphics::CreateDescriptorHeap()
 {
-	const D3D12_DESCRIPTOR_HEAP_DESC rtvDescHeap =
-	{
-		.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV,
-		.NumDescriptors = s_bufferCount,
-		.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
-		.NodeMask = 0,
-	};
-	HRESULT rtvHeapCreated = m_device->CreateDescriptorHeap(&rtvDescHeap, IID_PPV_ARGS(&m_rtvdescHeap));
-	if (FAILED(rtvHeapCreated))
-	{
-		MessageBox(nullptr, L"Initialization of RTV heap failed", L"Error", MB_OK);
-		return;
-	}
-	HRESULT rtvHeapSizeAcquired = m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	if (FAILED(rtvHeapSizeAcquired))
-	{
-		MessageBox(nullptr, L"Acquiring of RTV heap size failed", L"Error", MB_OK);
-		return;
-	}
+    const D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc =
+    {
+        .Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV,
+        .NumDescriptors = s_bufferCount,
+    };
+    m_device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&m_rtvdescHeap));
+    m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvdescHeap->GetCPUDescriptorHandleForHeapStart());
+    for (UINT currentBuffer = 0; currentBuffer < s_bufferCount; currentBuffer++)
+    {
+        m_swapChain->GetBuffer(currentBuffer, IID_PPV_ARGS(&m_backBuffers[currentBuffer]));
+        m_device->CreateRenderTargetView(m_backBuffers[currentBuffer].Get(), nullptr, rtvHandle);
+        rtvHandle.Offset(m_rtvDescriptorSize);
+    }
 }
 
-void Graphics::CreateTheFrameResource()
+void Graphics::CreateCommandAllocator()
 {
-	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvdescHeap->GetCPUDescriptorHandleForHeapStart());
-	for (UINT buffer = 0; buffer < m_backBuffers.size(); buffer++)
-	{
-		HRESULT GetCurrentBuffer = m_swapChain->GetBuffer(buffer, IID_PPV_ARGS(&m_backBuffers[buffer]));
-		if (FAILED(GetCurrentBuffer))
-		{
-			MessageBox(nullptr, L"Couldn't acquire buffer.", L"Error", MB_OK);
-			return;
-		}
-		m_device->CreateRenderTargetView(m_backBuffers[buffer].Get(), nullptr, rtvHandle);
-		rtvHandle.Offset(m_rtvDescriptorSize);
-	}
+    m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator));
 }
 
-void Graphics::CreateACommandAllocator()
+void Graphics::CreateGraphicsCommandList()
 {
-	HRESULT cmdAllocCreated = m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator));
-	if (FAILED(cmdAllocCreated))
-	{
-		MessageBox(nullptr, L"Initialization of cmd allocator failed", L"Error", MB_OK);
-		return;
-	}
+    m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator.Get(), nullptr, IID_PPV_ARGS(&m_gCommandList));
+    //initially have it at closed
+    m_gCommandList->Close();
 }
 
-void Graphics::CreateACommandList()
+void Graphics::CreateFence()
 {
-	HRESULT cmdList = m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator.Get(), nullptr, IID_PPV_ARGS(&m_gCommandList));
-	if (FAILED(cmdList))
-	{
-		MessageBox(nullptr, L"Initialization of cmdlist failed", L"Error", MB_OK);
-		return;
-	}
-	m_gCommandList->Close();
-}
-
-void Graphics::CreateTheFenceValue()
-{
-	m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)); 
-
-	//fence signaling
-	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-	if (!m_fenceEvent)
-	{
-		MessageBox(nullptr, L"Failed to create fence event", L"Error", MB_OK);
-		return;
-	}
+    m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence));
+    m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (!m_fenceEvent)
+    {
+        MessageBox(nullptr, L"Event couldn't be created", L"Create Event Failed", MB_OK);
+        return;
+    }
 }
 
 void Graphics::RenderLoop()
 {
-	m_currentBackBufferIdx = m_swapChain->GetCurrentBackBufferIndex();
-	m_currentBackBuffer = m_backBuffers[m_currentBackBufferIdx];
-	m_commandAllocator->Reset();
-	m_gCommandList->Reset(m_commandAllocator.Get(), nullptr);
+    m_currentBackBufferIdx = m_swapChain->GetCurrentBackBufferIndex();
+
+    m_currentBackBuffer = m_backBuffers[m_currentBackBufferIdx];
+    m_commandAllocator->Reset();
+    m_gCommandList->Reset(m_commandAllocator.Get(), nullptr);
 }
 
-void Graphics::ClearRenderTargetView()
+void Graphics::ClearRenderTarget()
 {
-	const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentBackBuffer.Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	m_gCommandList->ResourceBarrier(1, &barrier);
+    const CD3DX12_RESOURCE_BARRIER renderStateBarrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentBackBuffer.Get(),
+        D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    m_gCommandList->ResourceBarrier(1, &renderStateBarrier);
+    std::array<f32, 4> clearColor = { 0.4f, 0.4f, 0.4f, 1.0f };
+    const CD3DX12_CPU_DESCRIPTOR_HANDLE rtv{ m_rtvdescHeap->GetCPUDescriptorHandleForHeapStart(), static_cast<INT>(m_currentBackBufferIdx), m_rtvDescriptorSize };
+    m_gCommandList->ClearRenderTargetView(rtv, clearColor.data(), 0, nullptr);
 }
 
-void Graphics::ClearBuffer()
+void Graphics::SubmitCommandList()
 {
-	std::array<f32, 4> clearColor = { 0.0f, 0.5f, 0.0f, 1.0f };
-	const CD3DX12_CPU_DESCRIPTOR_HANDLE rtv{ m_rtvdescHeap->GetCPUDescriptorHandleForHeapStart(), INT(m_currentBackBufferIdx), m_rtvDescriptorSize };
-	m_gCommandList->ClearRenderTargetView(rtv, clearColor.data(), 0, nullptr);
-}
-
-void Graphics::PresentBuffer()
-{
-	const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentBackBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-	m_gCommandList->ResourceBarrier(1, &barrier);
-}
-
-void Graphics::SubmitCommandQueue()
-{
-	m_gCommandList->Close();
-	std::array<ID3D12CommandList* const, 1> commandLists = { m_gCommandList.Get() };
-	m_queue->ExecuteCommandLists(commandLists.size(), commandLists.data());
-	m_queue->Signal(m_fence.Get(), m_fenceValue++);
+    const CD3DX12_RESOURCE_BARRIER presentStateBarrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentBackBuffer.Get(),
+        D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+    m_gCommandList->ResourceBarrier(1, &presentStateBarrier);
+    m_gCommandList->Close();
+    std::array<ID3D12CommandList* const, 1> commandLists = { m_gCommandList.Get() };
+    m_queue->ExecuteCommandLists(commandLists.size(), commandLists.data());
 }
 
 void Graphics::PresentFrame()
 {
-	m_swapChain->Present(0, 0);
-	m_fence->SetEventOnCompletion(m_fenceValue - 1, m_fenceEvent);
-	if (::WaitForSingleObject(m_fenceEvent, INFINITE) == WAIT_FAILED)
-	{
-		MessageBox(nullptr, L"Failed to wait for event", L"Error", MB_OK);
-		return;
-	}
+    m_queue->Signal(m_fence.Get(), m_fenceValue++);
+    m_swapChain->Present(0, 0);
+    m_fence->SetEventOnCompletion(m_fenceValue - 1, m_fenceEvent);
+    if (::WaitForSingleObject(m_fenceEvent, INFINITE) == WAIT_FAILED)
+    {
+        MessageBox(nullptr, L"Wait for fence failed", L"Error", MB_OK);
+    }
 }
