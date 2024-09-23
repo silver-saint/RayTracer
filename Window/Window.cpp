@@ -54,7 +54,7 @@ namespace dx::engine
 			return;
 		}
 		ShowWindow(hwnd, SW_SHOWDEFAULT);
-		pGfx = std::make_unique<Graphics>(hwnd,width, height);
+	//	pGfx = std::make_unique<Graphics>(hwnd,width, height);
 	}
 
 	Window::~Window()

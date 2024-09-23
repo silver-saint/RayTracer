@@ -45,9 +45,15 @@ void Graphics::CreateTheDebugLayer()
 	}
 }
 
-void Graphics::CreateTheDXGIFactory()
+Microsoft::WRL::ComPtr<IDXGIAdapter4> Graphics::CreateTheDXGIFactoryAndAdadpter()
 {
-	HRESULT initDXGIFactory = CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory));
+
+	UINT createFactoryFlags = 0;
+#if defined(_DEBUG)
+	createFactoryFlags = DXGI_CREATE_FACTORY_DEBUG;
+#endif
+
+	HRESULT initDXGIFactory = CreateDXGIFactory2(createFactoryFlags,IID_PPV_ARGS(&m_dxgiFactory));
 	if (FAILED(initDXGIFactory))
 	{
 		MessageBox(nullptr, L"Couldn't init Factory", L"Error", MB_OK);

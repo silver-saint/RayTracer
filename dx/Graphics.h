@@ -22,7 +22,8 @@ public:
 	void Draw(HWND hWnd, ui32 width, ui32 height);
 private:
 	static const i32 s_swapChainBufferCount = 2;
-	Microsoft::WRL::ComPtr<IDXGIFactory4> m_dxgiFactory;
+	Microsoft::WRL::ComPtr<IDXGIAdapter4> m_adapter;
+	Microsoft::WRL::ComPtr<IDXGIFactory2> m_dxgiFactory;
 	Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
 	Microsoft::WRL::ComPtr<ID3D12Device> m_device;
 	Microsoft::WRL::ComPtr<ID3D12Fence> m_Fence;
@@ -45,7 +46,7 @@ private:
 	D3D12_RECT m_scissorRect;
 private:
 	void CreateTheDebugLayer();
-	void CreateTheDXGIFactory();
+	Microsoft::WRL::ComPtr<IDXGIAdapter4> CreateTheDXGIFactoryAndAdadpter();
 	void CreateTheD3D12Device();
 	void CreateTheCommandQueue();
 	void CreateTheSwapChain(HWND hWnd, ui32 width, ui32 height);
