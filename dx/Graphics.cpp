@@ -1,6 +1,7 @@
 #include "Graphics.h"
 
-Graphics::Graphics(HWND hWnd)
+Graphics::Graphics(HWND hWnd, ui32 width, ui32 height)
+    : m_swapChainHeight(height), m_swapChainWidth(width)
 {
     Draw(hWnd);
 }
@@ -27,30 +28,27 @@ void Graphics::Draw(HWND hWnd)
 
 void Graphics::CreateDebugLayer()
 {
+
     D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugController));
     m_debugController->EnableDebugLayer();
+    m_debugController->SetEnableGPUBasedValidation(true);
 }
 
 void Graphics::CreateDXGIFactory()
 {
-    CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&m_dxgiFactory));
 
-	UINT createFactoryFlags = 0;
-#if defined(_DEBUG)
-	createFactoryFlags = DXGI_CREATE_FACTORY_DEBUG;
-#endif
+    HRESULT initDXGIFactory = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&m_dxgiFactory));
+    if (FAILED(initDXGIFactory))
+    {
+        MessageBox(nullptr, L"Couldn't init Factory", L"Error", MB_OK);
+        return;
 
-	HRESULT initDXGIFactory = CreateDXGIFactory2(createFactoryFlags,IID_PPV_ARGS(&m_dxgiFactory));
-	if (FAILED(initDXGIFactory))
-	{
-		MessageBox(nullptr, L"Couldn't init Factory", L"Error", MB_OK);
-		return;
-
-	}
+    }
+}
 
 void Graphics::CreateD3D12Device()
 {
-    HRESULT deviceCreated = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_2, IID_PPV_ARGS(&m_device));
+    HRESULT deviceCreated = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device));
     
     if (FAILED(deviceCreated))
     {
@@ -73,8 +71,8 @@ void Graphics::CreateSwapChain(HWND hWnd)
 {
     const DXGI_SWAP_CHAIN_DESC1 swapChainDesc =
     {
-        .Width = 800,
-        .Height = 600,
+        .Width = m_swapChainWidth,
+        .Height = m_swapChainHeight,
         .Format = DXGI_FORMAT_R8G8B8A8_UNORM,
         .Stereo = FALSE,
         .SampleDesc =
@@ -83,11 +81,11 @@ void Graphics::CreateSwapChain(HWND hWnd)
             .Quality = 0
         },
         .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
-        .BufferCount = s_bufferCount,
+        .BufferCount = s_swapChainBufferCount,
         .Scaling = DXGI_SCALING_STRETCH,
         .SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD,
         .AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED,
-        .Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING,
+        .Flags = 0,
     };
     Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain1;
 
@@ -101,15 +99,15 @@ void Graphics::CreateDescriptorHeap()
     const D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc =
     {
         .Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV,
-        .NumDescriptors = s_bufferCount,
+        .NumDescriptors = s_swapChainBufferCount,
     };
-    m_device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&m_rtvdescHeap));
+    m_device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&m_rtvHeap));
     m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvdescHeap->GetCPUDescriptorHandleForHeapStart());
-    for (UINT currentBuffer = 0; currentBuffer < s_bufferCount; currentBuffer++)
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
+    for (UINT currentBuffer = 0; currentBuffer < s_swapChainBufferCount; currentBuffer++)
     {
-        m_swapChain->GetBuffer(currentBuffer, IID_PPV_ARGS(&m_backBuffers[currentBuffer]));
-        m_device->CreateRenderTargetView(m_backBuffers[currentBuffer].Get(), nullptr, rtvHandle);
+        m_swapChain->GetBuffer(currentBuffer, IID_PPV_ARGS(&m_swapChainBuffer[currentBuffer]));
+        m_device->CreateRenderTargetView(m_swapChainBuffer[currentBuffer].Get(), nullptr, rtvHandle);
         rtvHandle.Offset(m_rtvDescriptorSize);
     }
 }
@@ -128,7 +126,7 @@ void Graphics::CreateGraphicsCommandList()
 
 void Graphics::CreateFence()
 {
-    m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence));
+    m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_Fence));
     m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
     if (!m_fenceEvent)
     {
@@ -139,26 +137,26 @@ void Graphics::CreateFence()
 
 void Graphics::RenderLoop()
 {
-    m_currentBackBufferIdx = m_swapChain->GetCurrentBackBufferIndex();
+    m_currSwapChainBufferIdx = m_swapChain->GetCurrentBackBufferIndex();
 
-    m_currentBackBuffer = m_backBuffers[m_currentBackBufferIdx];
+    m_currentSwapChainBuffer = m_swapChainBuffer[m_currSwapChainBufferIdx];
     m_commandAllocator->Reset();
     m_gCommandList->Reset(m_commandAllocator.Get(), nullptr);
 }
 
 void Graphics::ClearRenderTarget()
 {
-    const CD3DX12_RESOURCE_BARRIER renderStateBarrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentBackBuffer.Get(),
+    const CD3DX12_RESOURCE_BARRIER renderStateBarrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentSwapChainBuffer.Get(),
         D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
     m_gCommandList->ResourceBarrier(1, &renderStateBarrier);
     std::array<f32, 4> clearColor = { 0.4f, 0.4f, 0.4f, 1.0f };
-    const CD3DX12_CPU_DESCRIPTOR_HANDLE rtv{ m_rtvdescHeap->GetCPUDescriptorHandleForHeapStart(), static_cast<INT>(m_currentBackBufferIdx), m_rtvDescriptorSize };
+    const CD3DX12_CPU_DESCRIPTOR_HANDLE rtv{ m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), static_cast<INT>(m_currSwapChainBufferIdx), m_rtvDescriptorSize };
     m_gCommandList->ClearRenderTargetView(rtv, clearColor.data(), 0, nullptr);
 }
 
 void Graphics::SubmitCommandList()
 {
-    const CD3DX12_RESOURCE_BARRIER presentStateBarrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentBackBuffer.Get(),
+    const CD3DX12_RESOURCE_BARRIER presentStateBarrier = CD3DX12_RESOURCE_BARRIER::Transition(m_currentSwapChainBuffer.Get(),
         D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
     m_gCommandList->ResourceBarrier(1, &presentStateBarrier);
     m_gCommandList->Close();
@@ -168,9 +166,9 @@ void Graphics::SubmitCommandList()
 
 void Graphics::PresentFrame()
 {
-    m_queue->Signal(m_fence.Get(), m_fenceValue++);
+    m_queue->Signal(m_Fence.Get(), m_CurrentFence++);
     m_swapChain->Present(0, 0);
-    m_fence->SetEventOnCompletion(m_fenceValue - 1, m_fenceEvent);
+    m_Fence->SetEventOnCompletion(m_CurrentFence - 1, m_fenceEvent);
     if (::WaitForSingleObject(m_fenceEvent, INFINITE) == WAIT_FAILED)
     {
         MessageBox(nullptr, L"Wait for fence failed", L"Error", MB_OK);
