@@ -6,6 +6,7 @@
     <ClCompile Include="Keyboard\Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Window\Window.cpp" />
+    <ClCompile Include="DXContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
@@ -13,5 +14,9 @@
     <ClInclude Include="Keyboard\Keyboard.h" />
     <ClInclude Include="platform\WinInstance.h" />
     <ClInclude Include="Window\Window.h" />
+    <ClInclude Include="DXContext.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

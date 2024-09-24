@@ -10,7 +10,6 @@ namespace dx::engine
 
 	void App::DoFrame()
 	{
-		window.Gfx().Draw(window.GetHWND());
 		if (window.kbd.KeyIsPressed(VK_SPACE))
 		{
 			MessageBox(nullptr, L"Kur", L"Mur", 0);
@@ -19,6 +18,7 @@ namespace dx::engine
 
 	int App::Run()
 	{
+		window.Gfx().OnInit();
 		while (true)
 		{
 			if (const auto ecode = window.ProcessMessages())
@@ -27,6 +27,7 @@ namespace dx::engine
 			}
 			DoFrame();
 		}
+		window.Gfx().OnDestroy();
 		return 0;
 	}
 } // namespace dx::engine;

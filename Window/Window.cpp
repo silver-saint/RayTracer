@@ -103,7 +103,13 @@ namespace dx::engine
 		case WM_CHAR:
 			kbd.onChar(static_cast<ui8>(wParam));
 			break;
-
+		case WM_PAINT:
+			if (pGfx)
+			{
+				pGfx->OnUpdate();
+				pGfx->OnRender();
+			}
+			break;
 		}
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
