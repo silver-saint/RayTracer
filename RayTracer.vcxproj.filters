@@ -19,4 +19,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\shaders.hlsl" />
+  </ItemGroup>
 </Project>

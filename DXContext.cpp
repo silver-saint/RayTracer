@@ -2,7 +2,7 @@
 
 
 DXContext::DXContext(ui32 width, ui32 height)
-	: m_swapChainWidth(width), m_swapChainHeight(height)
+	: m_swapChainWidth{width}, m_swapChainHeight{height}
 {
 	m_aspectRatio = static_cast<f32>(width) / static_cast<f32>(height);
 }
@@ -69,3 +69,4 @@ void DXContext::GetHardwareAdapter(IDXGIFactory1* pFactory, IDXGIAdapter1** ppAd
 
     *ppAdapter = adapter.Detach();
 }
+

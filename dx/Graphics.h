@@ -2,6 +2,13 @@
 #include "../DXContext.h"
 #include <d3dx12.h>
 
+struct Vertex
+{
+    DirectX::XMFLOAT3 position;
+    DirectX::XMFLOAT4 color;
+};
+
+
 class Graphics : public DXContext
 {
 public:
@@ -18,17 +25,26 @@ public:
 	virtual void OnRender() override;
 	virtual void OnDestroy() override;
 private:
+    std::wstring GetFullAssetPath(const std::wstring& assetPath);
+    void GetAssetPath(const std::wstring& assetPath);
     static const ui32 FrameCount = 2;
     // Pipeline objects.
+    D3D12_VIEWPORT m_viewport;
+    D3D12_RECT m_scissorRect;
     Microsoft::WRL::ComPtr<IDXGISwapChain3> m_swapChain;
     Microsoft::WRL::ComPtr<ID3D12Device> m_device;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_renderTargets[FrameCount];
+    std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, FrameCount> m_renderTargets;
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator;
     Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
     ui32 m_rtvDescriptorSize;
+    std::wstring m_assetPath;
+    //App resources
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBuffer;
+    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
 
     // Synchronization objects.
     ui32 m_frameIndex;
@@ -39,6 +55,7 @@ private:
     //swapchain
     ui32 m_width;
     ui32 m_height;
+
     //pass the hwnd object to here, this is dumb, but it gets the job done for now
     HWND m_hwnd;
     void LoadPipeline();
