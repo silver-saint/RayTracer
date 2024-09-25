@@ -25,12 +25,12 @@ public:
 	virtual void OnRender() override;
 	virtual void OnDestroy() override;
 private:
-    std::wstring GetFullAssetPath(const std::wstring& assetPath);
-    void GetAssetPath(const std::wstring& assetPath);
+    std::wstring GetFullAssetPath(LPCWSTR assetName);
+    void GetAssetPath(_Out_writes_(pathSize) WCHAR* path, UINT pathSize);
     static const ui32 FrameCount = 2;
     // Pipeline objects.
-    D3D12_VIEWPORT m_viewport;
-    D3D12_RECT m_scissorRect;
+    CD3DX12_VIEWPORT m_viewport;
+    CD3DX12_RECT m_scissorRect;
     Microsoft::WRL::ComPtr<IDXGISwapChain3> m_swapChain;
     Microsoft::WRL::ComPtr<ID3D12Device> m_device;
     std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, FrameCount> m_renderTargets;

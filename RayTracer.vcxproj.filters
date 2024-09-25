@@ -20,6 +20,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\shaders.hlsl" />
+    <FxCompile Include="Shaders\pixelShader.hlsl" />
+    <FxCompile Include="Shaders\vertShader.hlsl" />
   </ItemGroup>
 </Project>

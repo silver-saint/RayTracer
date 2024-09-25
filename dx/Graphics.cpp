@@ -2,11 +2,13 @@
 
 Graphics::Graphics(HWND hWnd, ui32 width, ui32 height)
 	: DXContext{width, height}, m_frameIndex {0}, m_rtvDescriptorSize{0},
-    m_width{width}, m_height{height}, m_hwnd(hWnd)
+    m_width{width}, m_height{height}, m_hwnd(hWnd),
+    m_viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)),
+    m_scissorRect(0, 0, static_cast<LONG>(width), static_cast<LONG>(height))
 {
-    std::wstring assetPath;
-    GetAssetPath(assetPath);
-    m_assetPath = assetPath;
+    WCHAR assetsPath[512];
+    GetAssetPath(assetsPath, _countof(assetsPath));
+    m_assetPath = assetsPath;
 }
 void PrintError(const std::wstring& errorMsg, bool DebugLayerOn)
 {
@@ -48,18 +50,22 @@ void Graphics::OnDestroy()
     CloseHandle(m_fenceEvent);
 }
 
-std::wstring Graphics::GetFullAssetPath(const std::wstring& assetPath)
+std::wstring Graphics::GetFullAssetPath(LPCWSTR assetName)
 {
-    return m_assetPath + assetPath;
+    return m_assetPath + assetName;
 }
 
-void Graphics::GetAssetPath(const std::wstring& assetPath)
+void Graphics::GetAssetPath(_Out_writes_(pathSize) WCHAR* path, UINT pathSize)
 {
-    if (assetPath.c_str() == nullptr)
+    path = _wgetcwd(path, pathSize);
+
+    if (path == nullptr)
     {
         PrintError(L"AssetPath was null.", DEBUGLAYER);
     }
-    DWORD size = GetModuleFileName(nullptr, (LPWSTR)assetPath.c_str(), assetPath.size());
+    *(path + wcslen(path)) = L'\\';
+    *(path + wcslen(path)) = L'\0';
+
 }
 
 void Graphics::LoadPipeline()
@@ -191,13 +197,14 @@ void Graphics::LoadAssets()
         ui32 compileFlags;
         (DEBUGLAYER) ? compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION : compileFlags = 0;
         
-      HRESULT didVertexShadersCompile = D3DCompileFromFile(GetFullAssetPath(L"Shaders/shaders.hlsl").c_str(), nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr);
+
+      HRESULT didVertexShadersCompile = D3DCompileFromFile(GetFullAssetPath(L"Shaders\\vertShader.hlsl").c_str(), nullptr, nullptr, "main", "vs_5_0", compileFlags, 0, &vertexShader, nullptr);
         
       if (FAILED(didVertexShadersCompile))
       {
           PrintError(L"Failed to compile vertex shaders!", DEBUGLAYER);
       }
-      HRESULT didPixelShadersCompile = D3DCompileFromFile(GetFullAssetPath(L"Shaders/shaders.hlsl").c_str(), nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr);
+      HRESULT didPixelShadersCompile = D3DCompileFromFile(GetFullAssetPath(L"Shaders\\pixelShader.hlsl").c_str(), nullptr, nullptr, "main", "ps_5_0", compileFlags, 0, &pixelShader, nullptr);
       if (FAILED(didPixelShadersCompile))
       {
           PrintError(L"Failed to compile pixel shaders!", DEBUGLAYER);
