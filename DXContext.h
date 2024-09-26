@@ -1,13 +1,14 @@
 #pragma once
-#include "../platform/WinInstance.h"
+#include "platform/WinInstance.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <array>
 #include <dxgi1_6.h>
 #include <d3dcompiler.h>
 #include <string>
-#include <../types.h>
+#include "types.h"
 #include <DirectXMath.h>
+
 class DXContext
 {
 public:

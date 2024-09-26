@@ -6,7 +6,7 @@ Graphics::Graphics(HWND hWnd, ui32 width, ui32 height)
     m_viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)),
     m_scissorRect(0, 0, static_cast<LONG>(width), static_cast<LONG>(height))
 {
-    WCHAR assetsPath[512];
+    WCHAR assetsPath[64];
     GetAssetPath(assetsPath, _countof(assetsPath));
     m_assetPath = assetsPath;
 }
@@ -28,7 +28,6 @@ void Graphics::OnUpdate()
 void Graphics::OnRender()
 {
     PopulateCommandList();
-
     // Execute the command list.
     std::array<ID3D12CommandList*, 1> ppCommandLists = { m_commandList.Get() };
     m_commandQueue->ExecuteCommandLists(ppCommandLists.size(), ppCommandLists.data());
@@ -41,6 +40,7 @@ void Graphics::OnRender()
     }
 
     WaitForPreviousFrame();
+  
 }
 
 void Graphics::OnDestroy()
@@ -57,15 +57,26 @@ std::wstring Graphics::GetFullAssetPath(LPCWSTR assetName)
 
 void Graphics::GetAssetPath(_Out_writes_(pathSize) WCHAR* path, UINT pathSize)
 {
-    path = _wgetcwd(path, pathSize);
-
+    
     if (path == nullptr)
     {
-        PrintError(L"AssetPath was null.", DEBUGLAYER);
+        PrintError(L"Invalid path", DEBUGLAYER);
     }
-    *(path + wcslen(path)) = L'\\';
-    *(path + wcslen(path)) = L'\0';
 
+    DWORD size = GetCurrentDirectory(MAX_PATH, path);
+    if (size == 0 || size == pathSize)
+    {
+        // Method failed or path was truncated.
+        PrintError(L"path was truncated", DEBUGLAYER);
+
+    }
+
+    WCHAR* lastChar = path + wcslen(path) - 1;
+    if (lastChar)
+    {
+        *(lastChar + 1) = L'\\';
+        *(lastChar + 2) = L'\0';
+    }
 }
 
 void Graphics::LoadPipeline()
@@ -254,7 +265,7 @@ void Graphics::LoadAssets()
         { { 0.25f, -0.25f * m_aspectRatio, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
         { { -0.25f, -0.25f * m_aspectRatio, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
     };
-    const ui32 vertexBufferSize = sizeof(triangleVertices);
+    const ui32 vertexBufferSize =  sizeof(Vertex) * triangleVertices.size();
 
     // Note: using upload heaps to transfer static data like vert buffers is not 
    // recommended. Every time the GPU needs it, the upload heap will be marshalled 
@@ -282,7 +293,7 @@ void Graphics::LoadAssets()
     {
         PrintError(L"Failed to map vertices data to buffer.", DEBUGLAYER);
     }
-    memcpy(pVertexDataBegin, triangleVertices.data(), sizeof(triangleVertices));
+    memcpy(pVertexDataBegin, triangleVertices.data(), vertexBufferSize);
     m_vertexBuffer->Unmap(0, nullptr);
 
     // Initialize the vertex buffer view.

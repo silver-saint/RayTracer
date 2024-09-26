@@ -1,7 +1,6 @@
 #include "App/App.h"
-#include "../platform/WinInstance.h"
+#include "platform/WinInstance.h"
 #include <iostream>
-#include <DirectXMath.h>
 
 
 
