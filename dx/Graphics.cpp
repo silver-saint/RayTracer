@@ -359,7 +359,7 @@ void Graphics::PopulateCommandList()
     m_commandList->ResourceBarrier(1, &renderBarrier);
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_frameIndex, m_rtvDescriptorSize);
-
+    m_commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
     // Record commands.
     std::array<const f32, 4>clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_commandList->ClearRenderTargetView(rtvHandle, clearColor.data(), 0, nullptr);
