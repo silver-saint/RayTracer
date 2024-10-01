@@ -259,11 +259,16 @@ void Graphics::LoadAssets()
    // to record yet. The main loop expects it to be closed, so close it now.
     m_commandList->Close();
 
+
+
     const std::vector<Vertex> triangleVertices =
     {
-        { { 0.0f, 0.25f * m_aspectRatio, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-        { { 0.25f, -0.25f * m_aspectRatio, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-        { { -0.25f, -0.25f * m_aspectRatio, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
+        { { -1.0f, -1.0f * m_aspectRatio, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+        { { -1.0f,  1.0f * m_aspectRatio, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+        { {  1.0f,  1.0f * m_aspectRatio, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
+        { {  1.0f,  1.0f * m_aspectRatio, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f} }, 
+        { {  1.0f, -1.0f * m_aspectRatio, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f}},
+        { { -1.0f, -1.0f * m_aspectRatio, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f }}
     };
     const ui32 vertexBufferSize =  sizeof(Vertex) * triangleVertices.size();
 
@@ -365,7 +370,7 @@ void Graphics::PopulateCommandList()
     m_commandList->ClearRenderTargetView(rtvHandle, clearColor.data(), 0, nullptr);
     m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-    m_commandList->DrawInstanced(3, 1, 0, 0);
+    m_commandList->DrawInstanced(6, 1, 0, 0);
 
     // Indicate that the back buffer will now be used to present.
     const auto presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);

@@ -8,7 +8,6 @@ struct Vertex
     DirectX::XMFLOAT4 color;
 };
 
-
 class Graphics : public DXContext
 {
 public:
