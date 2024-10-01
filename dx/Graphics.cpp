@@ -305,7 +305,7 @@ void Graphics::LoadAssets()
 
     // Initialize the vertex buffer view.
     m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
-    m_indexBufferView.Format = DXGI_FORMAT_R32_FLOAT;
+    m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
     m_indexBufferView.SizeInBytes = indexBufferSize;
 
 
