@@ -263,37 +263,71 @@ void Graphics::LoadAssets()
 
     const std::vector<Vertex> triangleVertices =
     {
-        { { -1.0f, -1.0f * m_aspectRatio, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-        { { -1.0f,  1.0f * m_aspectRatio, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-        { {  1.0f,  1.0f * m_aspectRatio, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
-        { {  1.0f,  1.0f * m_aspectRatio, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f} }, 
-        { {  1.0f, -1.0f * m_aspectRatio, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f}},
-        { { -1.0f, -1.0f * m_aspectRatio, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f }}
+        { { -1.0f, 1.0f * m_aspectRatio, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+        { { 1.0f,  -1.0f * m_aspectRatio, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+        { {  -1.0f,  -1.0f * m_aspectRatio, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
+        { {  1.0f, 1.0f * m_aspectRatio, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }
     };
     const ui32 vertexBufferSize =  sizeof(Vertex) * triangleVertices.size();
+    const std::array<DWORD, 6> indexBufferList = { 0,1,2,0,3,1 };
+    const ui32 indexBufferSize =  sizeof(DWORD) * indexBufferList.size();
+
 
     // Note: using upload heaps to transfer static data like vert buffers is not 
    // recommended. Every time the GPU needs it, the upload heap will be marshalled 
    // over. Please read up on Default Heap usage. An upload heap is used here for 
    // code simplicity and because there are very few verts to actually transfer.
-    const CD3DX12_HEAP_PROPERTIES heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-    const CD3DX12_RESOURCE_DESC bufferResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
-    HRESULT uploadDataToUploadHeap = (m_device->CreateCommittedResource(
-        &heapProperties,
+    
+   //Initialize the index buffer view.
+    const CD3DX12_HEAP_PROPERTIES indexUploadHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    const CD3DX12_RESOURCE_DESC indexBufferResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
+    HRESULT indexUploadDataToUploadHeap = (m_device->CreateCommittedResource(
+        &indexUploadHeapProperties,
         D3D12_HEAP_FLAG_NONE,
-        &bufferResourceDesc,
+        &indexBufferResourceDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
-        IID_PPV_ARGS(&m_vertexBuffer)));
-    if (FAILED(uploadDataToUploadHeap))
+        IID_PPV_ARGS(&m_indexBuffer)));
+    if (FAILED(indexUploadDataToUploadHeap))
     {
         PrintError(L"Failed to upload data to upload heap", DEBUGLAYER);
     }
+    //copy the triangle data to index buffer;
+    UINT8* pIndexDataBegin;
+    CD3DX12_RANGE readIndexRange(0, 0);        // We do not intend to read from this resource on the CPU.
+    HRESULT mapIndexBuffer = (m_indexBuffer->Map(0, &readIndexRange, reinterpret_cast<void**>(&pIndexDataBegin)));
+    if (FAILED(mapIndexBuffer))
+    {
+        PrintError(L"Failed to map indicies data to buffer.", DEBUGLAYER);
+    }
+    memcpy(pIndexDataBegin, indexBufferList.data(), indexBufferSize);
+    m_indexBuffer->Unmap(0, nullptr);
+
+    // Initialize the vertex buffer view.
+    m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
+    m_indexBufferView.Format = DXGI_FORMAT_R32_FLOAT;
+    m_indexBufferView.SizeInBytes = indexBufferSize;
+
+
+    const CD3DX12_HEAP_PROPERTIES vertexUploadHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    const CD3DX12_RESOURCE_DESC vertexBufferResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
+    HRESULT vertexUploadDataToUploadHeap = (m_device->CreateCommittedResource(
+        &vertexUploadHeapProperties,
+        D3D12_HEAP_FLAG_NONE,
+        &vertexBufferResourceDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&m_vertexBuffer)));
+    if (FAILED(vertexUploadDataToUploadHeap))
+    {
+        PrintError(L"Failed to upload data to upload heap", DEBUGLAYER);
+    }
+    
 
     // Copy the triangle data to the vertex buffer.
     UINT8* pVertexDataBegin;
-    CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
-    HRESULT mapVertexBuffer = (m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
+    CD3DX12_RANGE readVertexRange(0, 0);        // We do not intend to read from this resource on the CPU.
+    HRESULT mapVertexBuffer = (m_vertexBuffer->Map(0, &readVertexRange, reinterpret_cast<void**>(&pVertexDataBegin)));
     if (FAILED(mapVertexBuffer))
     {
         PrintError(L"Failed to map vertices data to buffer.", DEBUGLAYER);
@@ -369,8 +403,9 @@ void Graphics::PopulateCommandList()
     std::array<const f32, 4>clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_commandList->ClearRenderTargetView(rtvHandle, clearColor.data(), 0, nullptr);
     m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_commandList->IASetIndexBuffer(&m_indexBufferView);
     m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-    m_commandList->DrawInstanced(6, 1, 0, 0);
+    m_commandList->DrawIndexedInstanced(6, 1, 0,0,0);
 
     // Indicate that the back buffer will now be used to present.
     const auto presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
