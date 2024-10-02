@@ -7,6 +7,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Window\Window.cpp" />
     <ClCompile Include="DXContext.cpp" />
+    <ClCompile Include="Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
@@ -15,6 +16,7 @@
     <ClInclude Include="platform\WinInstance.h" />
     <ClInclude Include="Window\Window.h" />
     <ClInclude Include="DXContext.h" />
+    <ClInclude Include="Menu.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

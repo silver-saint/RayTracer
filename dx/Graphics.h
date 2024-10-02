@@ -7,7 +7,14 @@ struct Vertex
     DirectX::XMFLOAT3 position;
     DirectX::XMFLOAT4 color;
 };
-
+struct SceneConstantBuffer
+{
+    f32 radius;
+    DirectX::XMFLOAT2 position;
+    DirectX::XMFLOAT4 borderColor;
+    f32 borderThickness;
+    std::array<f32, 56> stuff;
+};
 class Graphics : public DXContext
 {
 public:
@@ -37,6 +44,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
     ui32 m_rtvDescriptorSize;
@@ -46,11 +54,15 @@ private:
     D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
     Microsoft::WRL::ComPtr<ID3D12Resource>m_indexBuffer;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_constantBuffer;
+    SceneConstantBuffer m_constantBufferData;
     // Synchronization objects.
+    size_t numOfIndicies;
     ui32 m_frameIndex;
     HANDLE m_fenceEvent;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
     ui64 m_fenceValue;
+    ui8* m_pCBvDataBegin;
 
     //swapchain
     ui32 m_width;

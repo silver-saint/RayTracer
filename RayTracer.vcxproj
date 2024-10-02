@@ -164,6 +164,7 @@
     <ClCompile Include="dx\Graphics.cpp" />
     <ClCompile Include="Keyboard\Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="DXContext.h" />
     <ClInclude Include="dx\Graphics.h" />
     <ClInclude Include="Keyboard\Keyboard.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="platform\WinInstance.h" />
     <ClInclude Include="Window\Window.h" />
   </ItemGroup>
