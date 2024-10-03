@@ -313,10 +313,10 @@ void Graphics::LoadAssets()
 		{ { 1.0f,  -1.0f * m_aspectRatio, 0.0f },   { 1.0f, 1.0f, 1.0f, 1.0f } },
 		{ {  -1.0f,  -1.0f * m_aspectRatio, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
 		{ {  1.0f, 1.0f * m_aspectRatio, 0.0f },    { 0.60f, 0.60f, 1.0f, 1.0f } },
-		{ { -0.5f, 0.5f * m_aspectRatio, 0.0f },    { 1.0f, 0.0f, 0.0f, 0.0f } },
-		{ { 0.5f,  -0.5f * m_aspectRatio, 0.0f },   { 1.0f, 0.0f, 0.0f, 0.0f } },
-		{ {  -0.5f,  -0.5f * m_aspectRatio, 0.0f }, { 1.0f, 0.0f, 0.0f, 0.0f } },
-		{ {  0.5f, 0.5f * m_aspectRatio, 0.0f },    { 1.0f, 0.0f, 0.0f, 0.0f } },
+		//{ { -0.5f, 0.5f * m_aspectRatio, 0.0f },    { 1.0f, 0.0f, 0.0f, 0.0f } },
+		//{ { 0.5f,  -0.5f * m_aspectRatio, 0.0f },   { 1.0f, 0.0f, 0.0f, 0.0f } },
+		//{ {  -0.5f,  -0.5f * m_aspectRatio, 0.0f }, { 1.0f, 0.0f, 0.0f, 0.0f } },
+		//{ {  0.5f, 0.5f * m_aspectRatio, 0.0f },    { 1.0f, 0.0f, 0.0f, 0.0f } },
 
 	};
 
@@ -397,7 +397,7 @@ void Graphics::LoadAssets()
 	m_vertexBufferView.SizeInBytes = vertexBufferSize;
 
 	{
-		const UINT constantBufferSize = sizeof(SceneConstantBuffer);    // CB size is required to be 256-byte aligned.
+		const UINT constantBufferSize = sizeof(ConstantBuffer);    // CB size is required to be 256-byte aligned.
 
 		CD3DX12_HEAP_PROPERTIES constantBufferUploadHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 		CD3DX12_RESOURCE_DESC constantBufferResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(constantBufferSize);
@@ -429,9 +429,9 @@ void Graphics::LoadAssets()
 		{
 			PrintError(L"Couldn't map CB buffer", DEBUGLAYER);
 		}
-		m_constantBufferData.position = { 0.0f, 0.0f };
-		m_constantBufferData.borderThickness = 0.0f;
-		m_constantBufferData.radius = 1.0f;
+		m_constantBufferData.position = { 400.0f, 400.0f };
+		m_constantBufferData.borderThickness = 1.0f;
+		m_constantBufferData.radius = 100.0f;
 		m_constantBufferData.borderColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 
@@ -487,7 +487,11 @@ void Graphics::PopulateCommandList()
 	m_commandList->SetGraphicsRootSignature(m_rootSignature.Get());
 	m_commandList->RSSetViewports(1, &m_viewport);
 	m_commandList->RSSetScissorRects(1, &m_scissorRect);
-	
+
+	ID3D12DescriptorHeap* ppHeaps[] = { m_cbvHeap.Get() };
+	m_commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+	m_commandList->SetGraphicsRootDescriptorTable(0, m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 
 
 	// Indicate that the back buffer will be used as a render target.

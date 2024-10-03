@@ -1,9 +1,9 @@
 cbuffer SceneConstantBuffer : register(b0)
 {
     float radius;
+    float borderThickness;
     float2 position;
     float4 borderColor;
-    float borderThickness;
     float padding[56];
 }
 
@@ -18,15 +18,14 @@ float4 main(PSInput input) : SV_TARGET
     float distanceX = abs(input.position.x - position.x);
     float distanceY = abs(input.position.y - position.y);
     
-    if ((distanceX * distanceX + distanceY * distanceY) > (radius * radius))
+    if ((distanceX * distanceX + distanceY * distanceY) < (radius * radius))
     {
-        discard;
+        input.color = float4(1.0f, 0.0f, 0.0f, 1.0f);
     }
     else if
-        ((distanceX * distanceX + distanceY * distanceY) <= (radius * radius)  &&
-         (distanceX * distanceX + distanceY * distanceY) >= ((radius * radius) - (borderThickness * borderThickness)))
+        ((distanceX * distanceX + distanceY * distanceY) < ((radius + borderThickness) * (radius + borderThickness)))
     {
-        input.color = borderColor;
+        input.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
     }
         return input.color;
 }

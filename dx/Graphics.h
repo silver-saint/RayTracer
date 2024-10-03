@@ -7,12 +7,12 @@ struct Vertex
     DirectX::XMFLOAT3 position;
     DirectX::XMFLOAT4 color;
 };
-struct SceneConstantBuffer
+struct ConstantBuffer
 {
     f32 radius;
+    f32 borderThickness;
     DirectX::XMFLOAT2 position;
     DirectX::XMFLOAT4 borderColor;
-    f32 borderThickness;
     std::array<f32, 56> stuff;
 };
 class Graphics : public DXContext
@@ -55,7 +55,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource>m_indexBuffer;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_constantBuffer;
-    SceneConstantBuffer m_constantBufferData;
+    ConstantBuffer m_constantBufferData;
     // Synchronization objects.
     size_t numOfIndicies;
     ui32 m_frameIndex;
