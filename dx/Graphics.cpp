@@ -20,6 +20,10 @@ void Graphics::OnInit()
 {
 	LoadPipeline();
 	LoadAssets();
+	CheckRaytracingSupport();
+	// Command lists are created in the recording state, but there is nothing
+// to record yet. The main loop expects it to be closed, so close it now.
+	m_commandList->Close();
 }
 
 void Graphics::OnUpdate()
@@ -49,6 +53,12 @@ void Graphics::OnDestroy()
 	WaitForPreviousFrame();
 
 	CloseHandle(m_fenceEvent);
+}
+
+void Graphics::ChangeRasterMode()
+{
+	m_raster = !m_raster;
+	Sleep(100);
 }
 
 std::wstring Graphics::GetFullAssetPath(LPCWSTR assetName)
@@ -301,10 +311,6 @@ void Graphics::LoadAssets()
 	{
 		PrintError(L"Initialization of the Command Allocator has failed.", DEBUGLAYER);
 	}
-	// Command lists are created in the recording state, but there is nothing
-   // to record yet. The main loop expects it to be closed, so close it now.
-	m_commandList->Close();
-
 
 
 	const std::vector<Vertex> triangleVertices =
@@ -313,10 +319,6 @@ void Graphics::LoadAssets()
 		{ { 1.0f,  -1.0f * m_aspectRatio, 0.0f },   { 1.0f, 1.0f, 1.0f, 1.0f } },
 		{ {  -1.0f,  -1.0f * m_aspectRatio, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
 		{ {  1.0f, 1.0f * m_aspectRatio, 0.0f },    { 0.60f, 0.60f, 1.0f, 1.0f } },
-		//{ { -0.5f, 0.5f * m_aspectRatio, 0.0f },    { 1.0f, 0.0f, 0.0f, 0.0f } },
-		//{ { 0.5f,  -0.5f * m_aspectRatio, 0.0f },   { 1.0f, 0.0f, 0.0f, 0.0f } },
-		//{ {  -0.5f,  -0.5f * m_aspectRatio, 0.0f }, { 1.0f, 0.0f, 0.0f, 0.0f } },
-		//{ {  0.5f, 0.5f * m_aspectRatio, 0.0f },    { 1.0f, 0.0f, 0.0f, 0.0f } },
 
 	};
 
@@ -429,8 +431,8 @@ void Graphics::LoadAssets()
 		{
 			PrintError(L"Couldn't map CB buffer", DEBUGLAYER);
 		}
-		m_constantBufferData.position = { 400.0f, 400.0f };
-		m_constantBufferData.borderThickness = 1.0f;
+		m_constantBufferData.position = {(m_width / 2) * m_aspectRatio, (m_height / 2) * m_aspectRatio };
+		m_constantBufferData.borderThickness = 0.0f;
 		m_constantBufferData.radius = 100.0f;
 		m_constantBufferData.borderColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 
@@ -500,15 +502,22 @@ void Graphics::PopulateCommandList()
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_frameIndex, m_rtvDescriptorSize);
 	m_commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
-	// Record commands.
 	std::array<const f32, 4>clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-	m_commandList->ClearRenderTargetView(rtvHandle, clearColor.data(), 0, nullptr);
-	m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_commandList->IASetIndexBuffer(&m_indexBufferView);
-	m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-	
-	m_commandList->DrawIndexedInstanced(numOfIndicies, 1, 0, 0, 0);
 
+	if (m_raster)
+	{
+		// Record commands.
+		m_commandList->ClearRenderTargetView(rtvHandle, clearColor.data(), 0, nullptr);
+		m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_commandList->IASetIndexBuffer(&m_indexBufferView);
+		m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+
+		m_commandList->DrawIndexedInstanced(numOfIndicies, 1, 0, 0, 0);
+	}
+	else
+	{
+		m_commandList->ClearRenderTargetView(rtvHandle, clearColor.data(), 0, nullptr);
+	}
 	// Indicate that the back buffer will now be used to present.
 	const auto presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 	m_commandList->ResourceBarrier(1, &presentBarrier);
@@ -548,4 +557,18 @@ void Graphics::WaitForPreviousFrame()
 	}
 
 	m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
+}
+
+void Graphics::CheckRaytracingSupport()
+{
+	D3D12_FEATURE_DATA_D3D12_OPTIONS5 options5 = {};
+	HRESULT checkFeatureSupport = m_device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &options5, sizeof(options5));
+	if (FAILED(checkFeatureSupport))
+	{
+		PrintError(L"Feature level not supported", DEBUGLAYER);
+	}
+	if (options5.RaytracingTier < D3D12_RAYTRACING_TIER_1_0)
+	{
+		PrintError(L"Raytracing not supported on device", DEBUGLAYER);
+	}
 }

@@ -14,7 +14,7 @@ namespace dx::engine
 		window.Gfx().OnRender();
 		if (window.kbd.KeyIsPressed(VK_SPACE))
 		{
-			MessageBox(nullptr, L"Kur", L"Mur", 0);
+			window.Gfx().ChangeRasterMode();
 		}
 	}
 

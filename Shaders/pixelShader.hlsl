@@ -20,7 +20,10 @@ float4 main(PSInput input) : SV_TARGET
     
     if ((distanceX * distanceX + distanceY * distanceY) < (radius * radius))
     {
-        input.color = float4(1.0f, 0.0f, 0.0f, 1.0f);
+        float3 n = normalize(input.color.rgb - float3(0.0f, 0.0f, -1.0f));
+        n += float3(1, 1, 1);
+        n *= 0.5f;
+        input.color = float4(n, 1.0f);
     }
     else if
         ((distanceX * distanceX + distanceY * distanceY) < ((radius + borderThickness) * (radius + borderThickness)))
