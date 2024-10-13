@@ -35,8 +35,8 @@ namespace dx::engine
 		~Window();
 		[[nodiscard]] HWND GetHWND() const { return hwnd; }
 		[[nodiscard]] Graphics& Gfx() { return *pGfx; }
-		[[nodiscard]] ui32 GetWindowWidth() const { return width; }
-		[[nodiscard]] ui32 GetWindowHeight() const { return height; }
+		[[nodiscard]] u32 GetWindowWidth() const { return width; }
+		[[nodiscard]] u32 GetWindowHeight() const { return height; }
 		static LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		static LRESULT CALLBACK HandleMessageThunk(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -45,8 +45,8 @@ namespace dx::engine
 		Keyboard kbd;
 	private:
 		HWND hwnd;
-		ui32 width;
-		ui32 height;
+		u32 width;
+		u32 height;
 		std::unique_ptr<Graphics> pGfx;
 	};
 } //namespace dx::engine

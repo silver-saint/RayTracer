@@ -12,7 +12,7 @@
 class DXContext
 {
 public:
-	DXContext(ui32 m_swapChainWidth, ui32 m_swapChainHeight);
+	DXContext(u32 m_swapChainWidth, u32 m_swapChainHeight);
 	virtual ~DXContext();
 	virtual void OnInit() = 0;
 	virtual void OnUpdate() = 0;
@@ -22,8 +22,8 @@ protected:
 	void GetHardwareAdapter(IDXGIFactory1* pFactory,IDXGIAdapter1** ppAdapter, bool requestHighPerformanceAdapter);
 	f32 m_aspectRatio;
 private:
-	ui32 m_swapChainWidth;
-	ui32 m_swapChainHeight;
+	u32 m_swapChainWidth;
+	u32 m_swapChainHeight;
 	std::wstring m_assetPath;
 };
 

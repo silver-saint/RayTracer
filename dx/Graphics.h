@@ -1,6 +1,7 @@
 #pragma once
 #include "../DXContext.h"
 #include <d3dx12.h>
+#include "../ErrorHandler.h"
 
 
 struct Vertex
@@ -19,12 +20,7 @@ struct ConstantBuffer
 class Graphics : public DXContext
 {
 public:
-#ifdef NDEBUG
-	const bool DEBUGLAYER = false;
-#else
-	const bool DEBUGLAYER = true;
-#endif
-	Graphics(HWND hWnd, ui32 width, ui32 height);
+	Graphics(HWND hWnd, u32 width, u32 height);
 	Graphics(const Graphics& rhs) = delete;
 	Graphics& operator=(const Graphics& rhs) = delete;
 	virtual void OnInit() override;
@@ -35,7 +31,7 @@ public:
 private:
     std::wstring GetFullAssetPath(LPCWSTR assetName);
     void GetAssetPath(_Out_writes_(pathSize) WCHAR* path, UINT pathSize);
-    static const ui32 FrameCount = 2;
+    static const u32 FrameCount = 2;
     // Pipeline objects.
     CD3DX12_VIEWPORT m_viewport;
     CD3DX12_RECT m_scissorRect;
@@ -49,7 +45,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList4> m_commandList;
-    ui32 m_rtvDescriptorSize;
+    u32 m_rtvDescriptorSize;
     std::wstring m_assetPath;
     //App resources
     Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBuffer;
@@ -60,14 +56,14 @@ private:
     ConstantBuffer m_constantBufferData;
     // Synchronization objects.
     size_t numOfIndicies;
-    ui32 m_frameIndex;
+    u32 m_frameIndex;
     HANDLE m_fenceEvent;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
-    ui64 m_fenceValue;
-    ui8* m_pCBvDataBegin;
+    u64 m_fenceValue;
+    u8* m_pCBvDataBegin;
     //swapchain
-    ui32 m_width;
-    ui32 m_height;
+    u32 m_width;
+    u32 m_height;
     //hanky panky
     static inline bool m_raster = false;
     //pass the hwnd object to here, this is dumb, but it gets the job done for now

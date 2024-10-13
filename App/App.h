@@ -13,8 +13,8 @@ namespace dx::engine
 	private:
 		int Run();
 		void DoFrame();
-		static constexpr ui32 WIDTH = 800;
-		static constexpr ui32 HEIGHT = 800;
+		static constexpr u32 WIDTH = 800;
+		static constexpr u32 HEIGHT = 800;
 		Window window;
 	};
 } // namespace dx::engine

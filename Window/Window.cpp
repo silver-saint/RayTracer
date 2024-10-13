@@ -95,13 +95,13 @@ namespace dx::engine
 			kbd.ClearState();
 			break;
 		case WM_KEYDOWN:
-			kbd.onKeyPressed(static_cast<ui8>(wParam));
+			kbd.onKeyPressed(static_cast<u8>(wParam));
 			break;
 		case WM_KEYUP:
-			kbd.onKeyReleased(static_cast<ui8>(wParam));
+			kbd.onKeyReleased(static_cast<u8>(wParam));
 			break;
 		case WM_CHAR:
-			kbd.onChar(static_cast<ui8>(wParam));
+			kbd.onChar(static_cast<u8>(wParam));
 			break;
 		case WM_PAINT:
 			if (pGfx)

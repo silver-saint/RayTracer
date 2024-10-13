@@ -15,14 +15,14 @@ namespace dx::engine
 			Released
 		};
 		Event() noexcept;
-		Event(Type type, ui8 code) noexcept;
+		Event(Type type, u8 code) noexcept;
 		bool isPressed() const noexcept;
 		bool isReleased() const noexcept;
 		bool isValid() const noexcept;
-		ui8 GetCode() const noexcept;
+		u8 GetCode() const noexcept;
 	private:
 		Type type;
-		ui8 code;
+		u8 code;
 	};
 	class Keyboard
 	{
@@ -34,7 +34,7 @@ namespace dx::engine
 		Keyboard(const Keyboard&) = delete;
 		Keyboard& operator=(const Keyboard&) = delete;
 	public:
-		bool KeyIsPressed(ui8 code) const noexcept { return keyStates[code]; }
+		bool KeyIsPressed(u8 code) const noexcept { return keyStates[code]; }
 		Event ReadKey() noexcept;
 		bool KeyIsEmpty() const noexcept;
 		void ClearKey() noexcept;
@@ -46,15 +46,15 @@ namespace dx::engine
 		void DisableAutorepeat() noexcept;
 		bool AutorepeatIsEnabled() const noexcept;
 	private:
-		void onKeyPressed(ui8 keycode) noexcept;
-		void onKeyReleased(ui8 keycode) noexcept;
+		void onKeyPressed(u8 keycode) noexcept;
+		void onKeyReleased(u8 keycode) noexcept;
 		void onChar(char ch) noexcept;
 		void ClearState() noexcept;
 		template<typename T>
 		static void TrimBuffer(std::queue<T>& buffer) noexcept;
 	private:
-		static constexpr ui32 sKeys = 256u;
-		static constexpr ui32 sBufferSize = 16u;
+		static constexpr u32 sKeys = 256u;
+		static constexpr u32 sBufferSize = 16u;
 		std::bitset<sKeys> keyStates;
 		std::queue<Event> keyBuffer;
 		std::queue<char> charBuffer;

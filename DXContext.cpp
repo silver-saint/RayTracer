@@ -1,7 +1,7 @@
 #include "DXContext.h"
 
 
-DXContext::DXContext(ui32 width, ui32 height)
+DXContext::DXContext(u32 width, u32 height)
 	: m_swapChainWidth{width}, m_swapChainHeight{height}
 {
 	m_aspectRatio = static_cast<f32>(width) / static_cast<f32>(height);
@@ -20,7 +20,7 @@ void DXContext::GetHardwareAdapter(IDXGIFactory1* pFactory, IDXGIAdapter1** ppAd
     Microsoft::WRL::ComPtr<IDXGIFactory6> factory6;
     if (SUCCEEDED(pFactory->QueryInterface(IID_PPV_ARGS(&factory6))))
     {
-        for (ui32 adapterIndex = 0; SUCCEEDED(factory6->EnumAdapterByGpuPreference(
+        for (u32 adapterIndex = 0; SUCCEEDED(factory6->EnumAdapterByGpuPreference(
             adapterIndex,
             requestHighPerformanceAdapter == true ? DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE : DXGI_GPU_PREFERENCE_UNSPECIFIED,
             IID_PPV_ARGS(&adapter)));

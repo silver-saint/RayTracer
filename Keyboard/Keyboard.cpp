@@ -6,7 +6,7 @@ namespace dx::engine
 	Event::Event() noexcept
 		: type{ Type::Invalid }, code{ 0 } {}
 
-	Event::Event(Type type, ui8 code) noexcept
+	Event::Event(Type type, u8 code) noexcept
 		: type{ type }, code{ code } {}
 
 	bool Event::isPressed() const noexcept
@@ -24,7 +24,7 @@ namespace dx::engine
 		return type != Type::Invalid;
 	}
 
-	ui8 Event::GetCode() const noexcept
+	u8 Event::GetCode() const noexcept
 	{
 		return code;
 	}
@@ -78,7 +78,7 @@ namespace dx::engine
 	{
 		if (charBuffer.size() > 0u)
 		{
-			ui8 code = charBuffer.front();
+			u8 code = charBuffer.front();
 			charBuffer.pop();
 			return code;
 		}
@@ -98,14 +98,14 @@ namespace dx::engine
 		return autoRepeatEnabled;
 	}
 
-	void Keyboard::onKeyPressed(ui8 keycode) noexcept
+	void Keyboard::onKeyPressed(u8 keycode) noexcept
 	{
 		keyStates[keycode] = true;
 		keyBuffer.push(Event(Event::Type::Pressed, keycode));
 		TrimBuffer(keyBuffer);
 	}
 
-	void Keyboard::onKeyReleased(ui8 keycode) noexcept
+	void Keyboard::onKeyReleased(u8 keycode) noexcept
 	{
 		keyStates[keycode] = false;
 		keyBuffer.push(Event(Event::Type::Released, keycode));

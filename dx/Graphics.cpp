@@ -1,6 +1,5 @@
 #include "Graphics.h"
-
-Graphics::Graphics(HWND hWnd, ui32 width, ui32 height)
+Graphics::Graphics(HWND hWnd, u32 width, u32 height)
 	: DXContext{ width, height }, m_frameIndex{ 0 }, m_rtvDescriptorSize{ 0 },
 	m_width{ width }, m_height{ height }, m_hwnd{ hWnd },
 	m_viewport{ 0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height) },
@@ -11,11 +10,7 @@ Graphics::Graphics(HWND hWnd, ui32 width, ui32 height)
 	GetAssetPath(assetsPath, _countof(assetsPath));
 	m_assetPath = assetsPath;
 }
-void PrintError(const std::wstring& errorMsg, bool DebugLayerOn)
-{
-	MessageBox(nullptr, errorMsg.c_str(), L"Error", MB_OK);
-	(DebugLayerOn ? DebugBreak() : exit(1));
-}
+
 void Graphics::OnInit()
 {
 	LoadPipeline();
@@ -92,7 +87,7 @@ void Graphics::GetAssetPath(_Out_writes_(pathSize) WCHAR* path, UINT pathSize)
 
 void Graphics::LoadPipeline()
 {
-	ui32 dxgiFactoryFlags = 0;
+	u32 dxgiFactoryFlags = 0;
 	if (DEBUGLAYER)
 	{
 		// Enable the debug layer (requires the Graphics Tools "optional feature").
@@ -197,7 +192,7 @@ void Graphics::LoadPipeline()
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
 		// Create a RTV for each frame.
-		for (ui32 n = 0; n < FrameCount; n++)
+		for (u32 n = 0; n < FrameCount; n++)
 		{
 			HRESULT getCurrentBuffer = m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n]));
 			if (FAILED(getCurrentBuffer))
@@ -261,7 +256,7 @@ void Graphics::LoadAssets()
 		Microsoft::WRL::ComPtr<ID3DBlob> pixelShader;
 
 		// Enable better shader debugging with the graphics debugging tools.
-		ui32 compileFlags;
+		u32 compileFlags;
 		(DEBUGLAYER) ? compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION : compileFlags = 0;
 
 
@@ -285,10 +280,10 @@ void Graphics::LoadAssets()
 
 		// Describe and create the graphics pipeline state object (PSO).
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-		psoDesc.InputLayout = { inputElementDescs.data(), (ui32)inputElementDescs.size() };
+		psoDesc.InputLayout = { inputElementDescs.data(), (u32)inputElementDescs.size() };
 		psoDesc.pRootSignature = m_rootSignature.Get();
-		psoDesc.VS = { reinterpret_cast<ui8*>(vertexShader->GetBufferPointer()), vertexShader->GetBufferSize() };
-		psoDesc.PS = { reinterpret_cast<ui8*>(pixelShader->GetBufferPointer()), pixelShader->GetBufferSize() };
+		psoDesc.VS = { reinterpret_cast<u8*>(vertexShader->GetBufferPointer()), vertexShader->GetBufferSize() };
+		psoDesc.PS = { reinterpret_cast<u8*>(pixelShader->GetBufferPointer()), pixelShader->GetBufferSize() };
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		psoDesc.DepthStencilState.DepthEnable = FALSE;
@@ -326,9 +321,9 @@ void Graphics::LoadAssets()
 
 
 
-	const ui32 vertexBufferSize = sizeof(Vertex) * triangleVertices.size();
-	const std::array<ui32, 12> indexBufferList = { 0,1,2,0,3,1,4,5,6,4,7,5 };
-	const ui32 indexBufferSize = sizeof(ui32) * indexBufferList.size();
+	const u32 vertexBufferSize = sizeof(Vertex) * triangleVertices.size();
+	const std::array<u32, 12> indexBufferList = { 0,1,2,0,3,1,4,5,6,4,7,5 };
+	const u32 indexBufferSize = sizeof(u32) * indexBufferList.size();
 	numOfIndicies = indexBufferList.size();
 
 	// Note: using upload heaps to transfer static data like vert buffers is not 
@@ -537,7 +532,7 @@ void Graphics::WaitForPreviousFrame()
 	// maximize GPU utilization.
 
 	// Signal and increment the fence value.
-	const ui64 fence = m_fenceValue;
+	const u64 fence = m_fenceValue;
 	HRESULT isCmdQueueSignaled = m_commandQueue->Signal(m_fence.Get(), fence);
 	if (FAILED(isCmdQueueSignaled))
 	{
