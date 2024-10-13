@@ -56,7 +56,7 @@ return rsc.Generate(m_device.Get(), true);
 
 #include <tuple>
 #include <vector>
-#include "../ErrorHandler.h"
+#include "../types.h"
 
 namespace nv_helpers_dx12
 {

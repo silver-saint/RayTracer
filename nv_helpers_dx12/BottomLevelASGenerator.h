@@ -68,7 +68,7 @@ return buffers;
 #pragma once
 
 #include "d3d12.h"
-
+#include "../types.h"
 #include <vector>
 
 namespace nv_helpers_dx12
@@ -83,18 +83,18 @@ public:
   /// implicit.
   void AddVertexBuffer(ID3D12Resource* vertexBuffer, /// Buffer containing the vertex coordinates,
                                                      /// possibly interleaved with other vertex data
-                       UINT64 vertexOffsetInBytes,   /// Offset of the first vertex in the vertex
+                       u64 vertexOffsetInBytes,   /// Offset of the first vertex in the vertex
                                                      /// buffer
-                       uint32_t vertexCount,         /// Number of vertices to consider
+                       u32 vertexCount,         /// Number of vertices to consider
                                                      /// in the buffer
-                       UINT vertexSizeInBytes,       /// Size of a vertex including all
+                       u32 vertexSizeInBytes,       /// Size of a vertex including all
                                                      /// its other data, used to stride
                                                      /// in the buffer
                        ID3D12Resource* transformBuffer, /// Buffer containing a 4x4 transform
                                                         /// matrix in GPU memory, to be applied
                                                         /// to the vertices. This buffer cannot
                                                         /// be nullptr
-                       UINT64 transformOffsetInBytes,   /// Offset of the transform matrix in the
+                       u64 transformOffsetInBytes,   /// Offset of the transform matrix in the
                                                         /// transform buffer
                        bool isOpaque = true /// If true, the geometry is considered opaque,
                                             /// optimizing the search for a closest hit
@@ -105,23 +105,23 @@ public:
   /// unsigned ints
   void AddVertexBuffer(ID3D12Resource* vertexBuffer, /// Buffer containing the vertex coordinates,
                                                      /// possibly interleaved with other vertex data
-                       UINT64 vertexOffsetInBytes,   /// Offset of the first vertex in the vertex
+                       u64 vertexOffsetInBytes,   /// Offset of the first vertex in the vertex
                                                      /// buffer
-                       uint32_t vertexCount,         /// Number of vertices to consider
+                       u32 vertexCount,         /// Number of vertices to consider
                                                      /// in the buffer
-                       UINT vertexSizeInBytes,       /// Size of a vertex including
+                       u32 vertexSizeInBytes,       /// Size of a vertex including
                                                      /// all its other data,
                                                      /// used to stride in the buffer
                        ID3D12Resource* indexBuffer,  /// Buffer containing the vertex indices
                                                      /// describing the triangles
-                       UINT64 indexOffsetInBytes,    /// Offset of the first index in
+                       u64 indexOffsetInBytes,    /// Offset of the first index in
                                                      /// the index buffer
-                       uint32_t indexCount,          /// Number of indices to consider in the buffer
+                       u32 indexCount,          /// Number of indices to consider in the buffer
                        ID3D12Resource* transformBuffer, /// Buffer containing a 4x4 transform
                                                         /// matrix in GPU memory, to be applied
                                                         /// to the vertices. This buffer cannot
                                                         /// be nullptr
-                       UINT64 transformOffsetInBytes,   /// Offset of the transform matrix in the
+                       u64 transformOffsetInBytes,   /// Offset of the transform matrix in the
                                                         /// transform buffer
                        bool isOpaque = true /// If true, the geometry is considered opaque,
                                             /// optimizing the search for a closest hit
@@ -134,9 +134,9 @@ public:
       ID3D12Device5* device, /// Device on which the build will be performed
       bool allowUpdate,           /// If true, the resulting acceleration structure will
                                   /// allow iterative updates
-      UINT64* scratchSizeInBytes, /// Required scratch memory on the GPU to
+      u64* scratchSizeInBytes, /// Required scratch memory on the GPU to
                                   /// build the acceleration structure
-      UINT64* resultSizeInBytes   /// Required GPU memory to store the
+      u64* resultSizeInBytes   /// Required GPU memory to store the
                                   /// acceleration structure
   );
 
@@ -159,10 +159,10 @@ private:
   std::vector<D3D12_RAYTRACING_GEOMETRY_DESC> m_vertexBuffers = {};
 
   /// Amount of temporary memory required by the builder
-  UINT64 m_scratchSizeInBytes = 0;
+  u64 m_scratchSizeInBytes = 0;
 
   /// Amount of memory required to store the AS
-  UINT64 m_resultSizeInBytes = 0;
+  u64 m_resultSizeInBytes = 0;
 
   /// Flags for the builder, specifying whether to allow iterative updates, or
   /// when to perform an update

@@ -36,6 +36,7 @@ pointers will be bound.
 */
 
 #include "RootSignatureGenerator.h"
+#include "../ErrorHandler.h"
 
 namespace nv_helpers_dx12
 {
