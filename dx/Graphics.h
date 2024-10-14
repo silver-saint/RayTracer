@@ -2,7 +2,7 @@
 #include "../DXContext.h"
 #include <d3dx12.h>
 #include "../ErrorHandler.h"
-
+#include "../nv_helpers_dx12/TopLevelASGenerator.h"
 
 struct Vertex
 {
@@ -16,6 +16,13 @@ struct ConstantBuffer
     DirectX::XMFLOAT2 position;
     DirectX::XMFLOAT4 borderColor;
     std::array<f32, 56> padding;
+};
+
+struct AccelerationStructureBuffers
+{
+    Microsoft::WRL::ComPtr<ID3D12Resource> pScratch;      // Scratch memory for AS builder
+    Microsoft::WRL::ComPtr<ID3D12Resource> pResult;       // Where the AS is
+    Microsoft::WRL::ComPtr<ID3D12Resource> pInstanceDesc; // Hold the matrices of the instances
 };
 class Graphics : public DXContext
 {
@@ -68,6 +75,13 @@ private:
     static inline bool m_raster = false;
     //pass the hwnd object to here, this is dumb, but it gets the job done for now
     HWND m_hwnd;
+    //nvidia stuff
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_bottomLevelAS; // Storage for the bottom Level AS
+
+    nv_helpers_dx12::TopLevelASGenerator m_topLevelASGenerator;
+    AccelerationStructureBuffers m_topLevelASBuffers;
+    std::vector<std::pair< DirectX::XMMATRIX>> m_instances;
+
     void LoadPipeline();
     void LoadAssets();
     void PopulateCommandList();
