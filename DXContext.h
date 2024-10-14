@@ -22,13 +22,17 @@ public:
 	virtual void OnDisplayChanged() {}
 
 	virtual void OnDestroy() = 0;
+	[[nodiscard]] u32 GetWidth() const { return m_width; }
+	[[nodiscard]] u32 GetHeight() const { return m_height; }
+	[[nodiscard]] RECT GetWindowBounds() const { return m_windowBounds; }
 protected:
-	void GetHardwareAdapter(IDXGIFactory1* pFactory,IDXGIAdapter1** ppAdapter, bool requestHighPerformanceAdapter);
+	u32 m_width;
+	u32 m_height;
 	f32 m_aspectRatio;
 	RECT m_windowBounds;
+	u32 m_adapterIDoverride;
 private:
-	u32 m_swapChainWidth;
-	u32 m_swapChainHeight;
-	std::wstring m_assetPath;
+
+
 };
 

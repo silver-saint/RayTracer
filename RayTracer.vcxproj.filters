@@ -8,21 +8,6 @@
     <ClCompile Include="Window\Window.cpp" />
     <ClCompile Include="DXContext.cpp" />
     <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="nv_helpers_dx12\BottomLevelASGenerator.cpp">
-      <Filter>NvidiaHelpers</Filter>
-    </ClCompile>
-    <ClCompile Include="nv_helpers_dx12\RaytracingPipelineGenerator.cpp">
-      <Filter>NvidiaHelpers</Filter>
-    </ClCompile>
-    <ClCompile Include="nv_helpers_dx12\RootSignatureGenerator.cpp">
-      <Filter>NvidiaHelpers</Filter>
-    </ClCompile>
-    <ClCompile Include="nv_helpers_dx12\ShaderBindingTableGenerator.cpp">
-      <Filter>NvidiaHelpers</Filter>
-    </ClCompile>
-    <ClCompile Include="nv_helpers_dx12\TopLevelASGenerator.cpp">
-      <Filter>NvidiaHelpers</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
@@ -32,22 +17,6 @@
     <ClInclude Include="Window\Window.h" />
     <ClInclude Include="DXContext.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="nv_helpers_dx12\BottomLevelASGenerator.h">
-      <Filter>NvidiaHelpers</Filter>
-    </ClInclude>
-    <ClInclude Include="nv_helpers_dx12\RaytracingPipelineGenerator.h">
-      <Filter>NvidiaHelpers</Filter>
-    </ClInclude>
-    <ClInclude Include="nv_helpers_dx12\RootSignatureGenerator.h">
-      <Filter>NvidiaHelpers</Filter>
-    </ClInclude>
-    <ClInclude Include="nv_helpers_dx12\ShaderBindingTableGenerator.h">
-      <Filter>NvidiaHelpers</Filter>
-    </ClInclude>
-    <ClInclude Include="nv_helpers_dx12\TopLevelASGenerator.h">
-      <Filter>NvidiaHelpers</Filter>
-    </ClInclude>
-    <ClInclude Include="DXRHelper.h" />
     <ClInclude Include="ErrorHandler.h" />
   </ItemGroup>
   <ItemGroup>
@@ -56,10 +25,5 @@
   <ItemGroup>
     <FxCompile Include="Shaders\pixelShader.hlsl" />
     <FxCompile Include="Shaders\vertShader.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="NvidiaHelpers">
-      <UniqueIdentifier>{e51ef467-9f6b-4055-891b-6499139c4c2c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

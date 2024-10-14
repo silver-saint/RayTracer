@@ -80,7 +80,6 @@ private:
 
     nv_helpers_dx12::TopLevelASGenerator m_topLevelASGenerator;
     AccelerationStructureBuffers m_topLevelASBuffers;
-    std::vector<std::pair< DirectX::XMMATRIX>> m_instances;
 
     void LoadPipeline();
     void LoadAssets();

@@ -2,7 +2,10 @@
 
 
 DXContext::DXContext(u32 width, u32 height)
-	: m_swapChainWidth{width}, m_swapChainHeight{height}
+    :   m_swapChainWidth{ width },
+        m_swapChainHeight{ height },
+        m_windowBounds{ 0,0,0,0 },
+        m_aspectRatio{ 0.0f }
 {
 	m_aspectRatio = static_cast<f32>(width) / static_cast<f32>(height);
 }

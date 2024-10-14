@@ -165,26 +165,15 @@
     <ClCompile Include="Keyboard\Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="nv_helpers_dx12\BottomLevelASGenerator.cpp" />
-    <ClCompile Include="nv_helpers_dx12\RaytracingPipelineGenerator.cpp" />
-    <ClCompile Include="nv_helpers_dx12\RootSignatureGenerator.cpp" />
-    <ClCompile Include="nv_helpers_dx12\ShaderBindingTableGenerator.cpp" />
-    <ClCompile Include="nv_helpers_dx12\TopLevelASGenerator.cpp" />
     <ClCompile Include="Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
     <ClInclude Include="DXContext.h" />
-    <ClInclude Include="DXRHelper.h" />
     <ClInclude Include="dx\Graphics.h" />
     <ClInclude Include="ErrorHandler.h" />
     <ClInclude Include="Keyboard\Keyboard.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="nv_helpers_dx12\BottomLevelASGenerator.h" />
-    <ClInclude Include="nv_helpers_dx12\RaytracingPipelineGenerator.h" />
-    <ClInclude Include="nv_helpers_dx12\RootSignatureGenerator.h" />
-    <ClInclude Include="nv_helpers_dx12\ShaderBindingTableGenerator.h" />
-    <ClInclude Include="nv_helpers_dx12\TopLevelASGenerator.h" />
     <ClInclude Include="platform\WinInstance.h" />
     <ClInclude Include="Window\Window.h" />
   </ItemGroup>
